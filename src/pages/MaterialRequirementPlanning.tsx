@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Filter, Download, Search } from "lucide-react";
 
 const MaterialRequirementPlanning = () => {
@@ -12,6 +13,7 @@ const MaterialRequirementPlanning = () => {
   const [statusFilter, setStatusFilter] = useState("all");
   const [supplierFilter, setSupplierFilter] = useState("all");
   const [materialFilter, setMaterialFilter] = useState("all");
+  const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false);
 
   const materialData = [
     {
@@ -99,8 +101,36 @@ const MaterialRequirementPlanning = () => {
   };
 
   const handleExport = () => {
-    // Export functionality
-    console.log("Exporting data...");
+    // Export functionality - convert filteredData to CSV
+    const headers = ["Material Code", "Material Name", "Required Qty", "Available Qty", "Shortfall", "Supplier", "Lead Time", "Status", "Planned Date"];
+    const csvContent = [
+      headers.join(","),
+      ...filteredData.map(item => [
+        item.materialCode,
+        item.materialName,
+        item.requiredQty,
+        item.availableQty,
+        item.shortfall,
+        item.supplier,
+        item.leadTime,
+        item.status,
+        item.plannedDate
+      ].join(","))
+    ].join("\n");
+    
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "material-requirements.csv";
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
+
+  const clearFilters = () => {
+    setStatusFilter("all");
+    setSupplierFilter("all");
+    setMaterialFilter("all");
   };
 
   return (
@@ -111,10 +141,73 @@ const MaterialRequirementPlanning = () => {
           <p className="text-muted-foreground">Monitor material requirements, availability, and procurement status</p>
         </div>
         <div className="flex space-x-2">
-          <Button variant="outline" onClick={handleExport}>
-            <Filter className="w-4 h-4 mr-2" />
-            Filter
-          </Button>
+          <Dialog open={isFilterDialogOpen} onOpenChange={setIsFilterDialogOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline">
+                <Filter className="w-4 h-4 mr-2" />
+                Filter
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Filter Material Requirements</DialogTitle>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Material Name</label>
+                  <Select value={materialFilter} onValueChange={setMaterialFilter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="All Materials" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Materials</SelectItem>
+                      <SelectItem value="Aluminum Rods">Aluminum Rods</SelectItem>
+                      <SelectItem value="Rubber Seals">Rubber Seals</SelectItem>
+                      <SelectItem value="Steel Sheets">Steel Sheets</SelectItem>
+                      <SelectItem value="Glass Panels">Glass Panels</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Supplier</label>
+                  <Select value={supplierFilter} onValueChange={setSupplierFilter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="All Suppliers" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Suppliers</SelectItem>
+                      <SelectItem value="TechSupply Inc">TechSupply Inc</SelectItem>
+                      <SelectItem value="MetalCorp Ltd">MetalCorp Ltd</SelectItem>
+                      <SelectItem value="PrecisionParts">PrecisionParts</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Status</label>
+                  <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="All Statuses" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Statuses</SelectItem>
+                      <SelectItem value="Received">Received</SelectItem>
+                      <SelectItem value="Ordered">Ordered</SelectItem>
+                      <SelectItem value="Required">Required</SelectItem>
+                      <SelectItem value="Shortage">Shortage</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="flex justify-end gap-2">
+                <Button variant="outline" onClick={clearFilters}>
+                  Clear All
+                </Button>
+                <Button onClick={() => setIsFilterDialogOpen(false)}>
+                  Apply Filters
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
           <Button variant="outline" onClick={handleExport}>
             <Download className="w-4 h-4 mr-2" />
             Export
@@ -158,52 +251,17 @@ const MaterialRequirementPlanning = () => {
 
           <h3 className="text-lg font-semibold mb-4">Material Requirements Overview</h3>
 
-          {/* Filters */}
+          {/* Search Bar */}
           <div className="flex items-center space-x-4 mb-6">
-            <div className="relative flex-1 max-w-sm">
+            <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <Input
-                placeholder="Search materials..."
+                placeholder="Search materials, codes, or suppliers..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"
               />
             </div>
-            <Select value={materialFilter} onValueChange={setMaterialFilter}>
-              <SelectTrigger className="w-48">
-                <SelectValue placeholder="Material Name" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Materials</SelectItem>
-                <SelectItem value="Aluminum Rods">Aluminum Rods</SelectItem>
-                <SelectItem value="Rubber Seals">Rubber Seals</SelectItem>
-                <SelectItem value="Steel Sheets">Steel Sheets</SelectItem>
-                <SelectItem value="Glass Panels">Glass Panels</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={supplierFilter} onValueChange={setSupplierFilter}>
-              <SelectTrigger className="w-48">
-                <SelectValue placeholder="Supplier" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Suppliers</SelectItem>
-                <SelectItem value="TechSupply Inc">TechSupply Inc</SelectItem>
-                <SelectItem value="MetalCorp Ltd">MetalCorp Ltd</SelectItem>
-                <SelectItem value="PrecisionParts">PrecisionParts</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-48">
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Statuses</SelectItem>
-                <SelectItem value="Received">Received</SelectItem>
-                <SelectItem value="Ordered">Ordered</SelectItem>
-                <SelectItem value="Required">Required</SelectItem>
-                <SelectItem value="Shortage">Shortage</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
 
           {/* Table */}

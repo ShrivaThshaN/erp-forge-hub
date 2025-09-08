@@ -82,7 +82,7 @@ export function ERPSidebar() {
   };
 
   return (
-    <div className="h-screen w-64 bg-erp-sidebar text-sidebar-foreground flex flex-col">
+    <div className="min-h-screen w-64 bg-erp-sidebar text-sidebar-foreground flex flex-col sticky top-0">
       {/* Header */}
       <div className="p-6 border-b border-sidebar-border">
         <div className="flex items-center space-x-3">

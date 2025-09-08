@@ -4,10 +4,20 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Search } from "lucide-react";
 
 const MasterProductionSchedule = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [newSchedule, setNewSchedule] = useState({
+    productName: "",
+    quantity: "",
+    dueDate: "",
+    status: "Scheduled"
+  });
 
   const scheduleData = [
     {
@@ -71,6 +81,20 @@ const MasterProductionSchedule = () => {
     return new Date(dateString).toLocaleDateString();
   };
 
+  const handleAddSchedule = () => {
+    if (newSchedule.productName && newSchedule.quantity && newSchedule.dueDate) {
+      // Add logic to save schedule
+      console.log("Adding new schedule:", newSchedule);
+      setIsAddDialogOpen(false);
+      setNewSchedule({
+        productName: "",
+        quantity: "",
+        dueDate: "",
+        status: "Scheduled"
+      });
+    }
+  };
+
   return (
     <div className="p-6 space-y-6">
       <div className="flex justify-between items-start">
@@ -84,10 +108,80 @@ const MasterProductionSchedule = () => {
         <CardHeader>
           <div className="flex justify-between items-center">
             <CardTitle>Master Production Schedule (MPS)</CardTitle>
-            <Button className="bg-primary hover:bg-primary/90">
-              <Plus className="w-4 h-4 mr-2" />
-              Add New Schedule
-            </Button>
+            <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+              <DialogTrigger asChild>
+                <Button className="bg-primary hover:bg-primary/90">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add New Schedule
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>Add New Production Schedule</DialogTitle>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="productName" className="text-right">
+                      Product Name
+                    </Label>
+                    <Input
+                      id="productName"
+                      value={newSchedule.productName}
+                      onChange={(e) => setNewSchedule({ ...newSchedule, productName: e.target.value })}
+                      className="col-span-3"
+                    />
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="quantity" className="text-right">
+                      Quantity
+                    </Label>
+                    <Input
+                      id="quantity"
+                      type="number"
+                      value={newSchedule.quantity}
+                      onChange={(e) => setNewSchedule({ ...newSchedule, quantity: e.target.value })}
+                      className="col-span-3"
+                    />
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="dueDate" className="text-right">
+                      Due Date
+                    </Label>
+                    <Input
+                      id="dueDate"
+                      type="date"
+                      value={newSchedule.dueDate}
+                      onChange={(e) => setNewSchedule({ ...newSchedule, dueDate: e.target.value })}
+                      className="col-span-3"
+                    />
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="status" className="text-right">
+                      Status
+                    </Label>
+                    <Select value={newSchedule.status} onValueChange={(value) => setNewSchedule({ ...newSchedule, status: value })}>
+                      <SelectTrigger className="col-span-3">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Scheduled">Scheduled</SelectItem>
+                        <SelectItem value="In Progress">In Progress</SelectItem>
+                        <SelectItem value="Completed">Completed</SelectItem>
+                        <SelectItem value="Delayed">Delayed</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <div className="flex justify-end gap-2">
+                  <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button onClick={handleAddSchedule} className="bg-primary hover:bg-primary/90">
+                    Add Schedule
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
           <p className="text-sm text-muted-foreground">Plan and manage production schedules and work orders</p>
         </CardHeader>
