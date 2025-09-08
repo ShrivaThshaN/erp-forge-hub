@@ -57,6 +57,21 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        erp: {
+          sidebar: "hsl(var(--erp-sidebar))",
+          "sidebar-active": "hsl(var(--erp-sidebar-active))",
+          success: "hsl(var(--erp-success))",
+          warning: "hsl(var(--erp-warning))",
+          danger: "hsl(var(--erp-danger))",
+          info: "hsl(var(--erp-info))",
+        },
+        status: {
+          completed: "hsl(var(--status-completed))",
+          progress: "hsl(var(--status-progress))",
+          pending: "hsl(var(--status-pending))",
+          delayed: "hsl(var(--status-delayed))",
+          scheduled: "hsl(var(--status-scheduled))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
