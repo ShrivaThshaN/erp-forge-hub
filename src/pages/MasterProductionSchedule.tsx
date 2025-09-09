@@ -21,39 +21,44 @@ const MasterProductionSchedule = () => {
 
   const scheduleData = [
     {
-      productName: "Widget A v3",
+      productName: "Glass Dining Table",
       workOrderId: "WO-2024-001", 
-      quantity: 120,
-      dueDate: "2024-01-31T18:30:00.000Z",
-      status: "Completed"
-    },
-    {
-      productName: "Gadget B v3",
-      workOrderId: "WO-2024-002",
-      quantity: 200, 
-      dueDate: "2024-02-01T18:30:00.000Z",
-      status: "In Progress"
-    },
-    {
-      productName: "Component C v3", 
-      workOrderId: "WO-2024-003",
-      quantity: 150,
-      dueDate: "2024-02-02T18:30:00.000Z", 
+      customerOrder: "CO-2024-001",
+      quantity: 1,
+      dueDate: "2024-02-10T18:30:00.000Z",
       status: "Scheduled"
     },
     {
-      productName: "Assembly D v3",
-      workOrderId: "WO-2024-004",
-      quantity: 180,
-      dueDate: "2024-02-03T18:30:00.000Z",
-      status: "Delayed" 
+      productName: "Steel Office Desk",
+      workOrderId: "WO-2024-002",
+      customerOrder: "CO-2024-002",
+      quantity: 2, 
+      dueDate: "2024-02-15T18:30:00.000Z",
+      status: "In Progress"
     },
     {
-      productName: "Module E v3",
-      workOrderId: "WO-2024-005", 
-      quantity: 90,
-      dueDate: "2024-02-04T18:30:00.000Z",
-      status: "In Progress"
+      productName: "Aluminum Window Frame", 
+      workOrderId: "WO-2024-003",
+      customerOrder: "CO-2024-003",
+      quantity: 10,
+      dueDate: "2024-02-18T18:30:00.000Z", 
+      status: "Scheduled"
+    },
+    {
+      productName: "Rubber Gasket Set",
+      workOrderId: "WO-2024-004",
+      customerOrder: "CO-2024-004",
+      quantity: 50,
+      dueDate: "2024-02-20T18:30:00.000Z",
+      status: "Completed"
+    },
+    {
+      productName: "Motor Assembly Unit",
+      workOrderId: "WO-2024-005",
+      customerOrder: "CO-2024-005",
+      quantity: 5,
+      dueDate: "2024-02-22T18:30:00.000Z",
+      status: "Scheduled" 
     }
   ];
 
@@ -206,6 +211,7 @@ const MasterProductionSchedule = () => {
                 <TableRow>
                   <TableHead>Product Name</TableHead>
                   <TableHead>Work Order ID</TableHead>
+                  <TableHead>Customer Order</TableHead>
                   <TableHead>Quantity</TableHead>
                   <TableHead>Due Date</TableHead>
                   <TableHead>Status</TableHead>
@@ -216,6 +222,7 @@ const MasterProductionSchedule = () => {
                   <TableRow key={index}>
                     <TableCell className="font-medium">{item.productName}</TableCell>
                     <TableCell>{item.workOrderId}</TableCell>
+                    <TableCell className="font-medium text-primary">{item.customerOrder}</TableCell>
                     <TableCell>{item.quantity}</TableCell>
                     <TableCell>{formatDate(item.dueDate)}</TableCell>
                     <TableCell>{getStatusBadge(item.status)}</TableCell>

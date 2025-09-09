@@ -16,60 +16,106 @@ const MaterialRequirementPlanning = () => {
   const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false);
 
   const materialData = [
+    // Glass Dining Table (CO-2024-001) requirements
     {
-      materialCode: "MAT-0001",
-      materialName: "Aluminum Rods", 
-      requiredQty: 180,
-      availableQty: 1,
-      shortfall: 255,
-      supplier: "TechSupply Inc",
-      leadTime: "14 days",
-      status: "Received",
-      plannedDate: "4/9/2025"
-    },
-    {
-      materialCode: "MAT-0002",
-      materialName: "Aluminum Rods",
-      requiredQty: 359, 
-      availableQty: 408,
-      shortfall: 407,
-      supplier: "MetalCorp Ltd",
-      leadTime: "13 days", 
+      materialCode: "MAT-GT-001",
+      materialName: "Tempered Glass Top", 
+      requiredQty: 1,
+      availableQty: 0,
+      shortfall: 1,
+      supplier: "Premium Glass Solutions",
+      leadTime: "7 days",
       status: "Required",
-      plannedDate: "5/9/2025"
+      plannedDate: "2024-01-10",
+      relatedOrder: "CO-2024-001"
     },
     {
-      materialCode: "MAT-0003", 
-      materialName: "Rubber Seals",
-      requiredQty: 374,
-      availableQty: 356,
-      shortfall: 159,
-      supplier: "PrecisionParts",
-      leadTime: "11 days",
-      status: "Ordered",
-      plannedDate: "6/9/2025"
+      materialCode: "MAT-GT-002",
+      materialName: "Steel Table Base",
+      requiredQty: 1, 
+      availableQty: 2,
+      shortfall: 0,
+      supplier: "MetalCraft Industries",
+      leadTime: "5 days", 
+      status: "Available",
+      plannedDate: "2024-01-08",
+      relatedOrder: "CO-2024-001"
     },
+    // Steel Office Desk (CO-2024-002) requirements
     {
-      materialCode: "MAT-0004",
+      materialCode: "MAT-SD-001", 
       materialName: "Steel Sheets",
-      requiredQty: 418,
-      availableQty: 10, 
-      shortfall: 752,
-      supplier: "TechSupply Inc",
-      leadTime: "9 days",
-      status: "Received", 
-      plannedDate: "7/9/2025"
+      requiredQty: 4,
+      availableQty: 2,
+      shortfall: 2,
+      supplier: "Steel Supply Co",
+      leadTime: "3 days",
+      status: "Ordered",
+      plannedDate: "2024-01-12",
+      relatedOrder: "CO-2024-002"
     },
     {
-      materialCode: "MAT-0005",
-      materialName: "Glass Panels",
-      requiredQty: 773,
-      availableQty: 150,
-      shortfall: 428,
-      supplier: "TechSupply Inc", 
-      leadTime: "11 days",
+      materialCode: "MAT-SD-002",
+      materialName: "Desk Hardware Kit",
+      requiredQty: 2,
+      availableQty: 5, 
+      shortfall: 0,
+      supplier: "Office Components Ltd",
+      leadTime: "2 days",
+      status: "Available", 
+      plannedDate: "2024-01-10",
+      relatedOrder: "CO-2024-002"
+    },
+    // Aluminum Window Frame (CO-2024-003) requirements
+    {
+      materialCode: "MAT-WF-001",
+      materialName: "Aluminum Extrusions",
+      requiredQty: 50,
+      availableQty: 30,
+      shortfall: 20,
+      supplier: "Aluminum Solutions Inc", 
+      leadTime: "4 days",
       status: "Shortage",
-      plannedDate: "8/9/2025"
+      plannedDate: "2024-01-14",
+      relatedOrder: "CO-2024-003"
+    },
+    // Rubber Gasket Set (CO-2024-004) requirements
+    {
+      materialCode: "MAT-RG-001",
+      materialName: "Rubber Material",
+      requiredQty: 25,
+      availableQty: 40,
+      shortfall: 0,
+      supplier: "Rubber Industries",
+      leadTime: "2 days",
+      status: "Available",
+      plannedDate: "2024-01-16",
+      relatedOrder: "CO-2024-004"
+    },
+    // Motor Assembly (CO-2024-005) requirements
+    {
+      materialCode: "MAT-MA-001",
+      materialName: "Electric Motor Core",
+      requiredQty: 5,
+      availableQty: 1,
+      shortfall: 4,
+      supplier: "Precision Motors Ltd",
+      leadTime: "10 days",
+      status: "Required",
+      plannedDate: "2024-01-18",
+      relatedOrder: "CO-2024-005"
+    },
+    {
+      materialCode: "MAT-MA-002",
+      materialName: "Copper Wiring",
+      requiredQty: 500,
+      availableQty: 200,
+      shortfall: 300,
+      supplier: "Electrical Components Co",
+      leadTime: "6 days",
+      status: "Ordered",
+      plannedDate: "2024-01-20",
+      relatedOrder: "CO-2024-005"
     }
   ];
 
@@ -271,6 +317,7 @@ const MaterialRequirementPlanning = () => {
                 <TableRow>
                   <TableHead>Material Code</TableHead>
                   <TableHead>Material Name</TableHead>
+                  <TableHead>Related Order</TableHead>
                   <TableHead>Required Qty</TableHead>
                   <TableHead>Available Qty</TableHead>
                   <TableHead>Shortfall</TableHead>
@@ -285,6 +332,7 @@ const MaterialRequirementPlanning = () => {
                   <TableRow key={index}>
                     <TableCell className="font-medium">{item.materialCode}</TableCell>
                     <TableCell>{item.materialName}</TableCell>
+                    <TableCell className="font-medium text-status-progress">{item.relatedOrder}</TableCell>
                     <TableCell>{item.requiredQty}</TableCell>
                     <TableCell>{item.availableQty}</TableCell>
                     <TableCell className="text-erp-danger font-medium">{item.shortfall}</TableCell>

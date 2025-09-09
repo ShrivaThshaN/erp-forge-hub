@@ -16,45 +16,57 @@ const Procurement = () => {
   const purchaseOrders = [
     {
       poNumber: "PO-2024-001",
-      vendorName: "Acme Corp",
-      creationDate: "1/1/2024",
+      vendorName: "Premium Glass Solutions",
+      materialName: "Tempered Glass Top",
+      creationDate: "2024-01-05",
       status: "Pending Approval",
-      totalAmount: "₹29,698.49"
+      totalAmount: "₹25,000.00",
+      relatedOrder: "CO-2024-001"
     },
     {
       poNumber: "PO-2024-002", 
-      vendorName: "Stellar Industries",
-      creationDate: "2/1/2024",
-      status: "Fulfilled",
-      totalAmount: "₹39,985.57"
+      vendorName: "Steel Supply Co",
+      materialName: "Steel Sheets",
+      creationDate: "2024-01-08",
+      status: "Sent to Vendor",
+      totalAmount: "₹18,500.00",
+      relatedOrder: "CO-2024-002"
     },
     {
       poNumber: "PO-2024-003",
-      vendorName: "Global Supply Co", 
-      creationDate: "3/1/2024",
-      status: "Sent to Vendor",
-      totalAmount: "₹34,705.62"
+      vendorName: "Aluminum Solutions Inc", 
+      materialName: "Aluminum Extrusions",
+      creationDate: "2024-01-10",
+      status: "Fulfilled",
+      totalAmount: "₹32,400.00",
+      relatedOrder: "CO-2024-003"
     },
     {
       poNumber: "PO-2024-004",
-      vendorName: "Premier Materials",
-      creationDate: "4/1/2024", 
-      status: "Fulfilled",
-      totalAmount: "₹29,918.52"
+      vendorName: "Precision Motors Ltd",
+      materialName: "Electric Motor Core",
+      creationDate: "2024-01-12", 
+      status: "Sent to Vendor",
+      totalAmount: "₹85,000.00",
+      relatedOrder: "CO-2024-005"
     },
     {
       poNumber: "PO-2024-005",
-      vendorName: "Elite Components",
-      creationDate: "5/1/2024",
-      status: "Sent to Vendor", 
-      totalAmount: "₹30,532.26"
+      vendorName: "Electrical Components Co",
+      materialName: "Copper Wiring",
+      creationDate: "2024-01-14",
+      status: "Fulfilled", 
+      totalAmount: "₹15,750.00",
+      relatedOrder: "CO-2024-005"
     },
     {
       poNumber: "PO-2024-006",
-      vendorName: "Quantum Systems",
-      creationDate: "6/1/2024",
+      vendorName: "Office Components Ltd",
+      materialName: "Desk Hardware Kit",
+      creationDate: "2024-01-16",
       status: "Fulfilled",
-      totalAmount: "₹13,267.15"
+      totalAmount: "₹8,200.00",
+      relatedOrder: "CO-2024-002"
     },
     {
       poNumber: "PO-2024-007", 
@@ -191,6 +203,8 @@ const Procurement = () => {
                 <TableRow>
                   <TableHead>PO Number</TableHead>
                   <TableHead>Vendor Name</TableHead>
+                  <TableHead>Material</TableHead>
+                  <TableHead>Related Order</TableHead>
                   <TableHead>Creation Date</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Total Amount</TableHead>
@@ -201,6 +215,8 @@ const Procurement = () => {
                   <TableRow key={index}>
                     <TableCell className="font-medium">{order.poNumber}</TableCell>
                     <TableCell>{order.vendorName}</TableCell>
+                    <TableCell className="font-medium text-primary">{order.materialName}</TableCell>
+                    <TableCell className="font-medium text-status-progress">{order.relatedOrder}</TableCell>
                     <TableCell>{order.creationDate}</TableCell>
                     <TableCell>{getStatusBadge(order.status)}</TableCell>
                     <TableCell className="font-medium">{order.totalAmount}</TableCell>

@@ -15,57 +15,53 @@ const OrderManagement = () => {
   const customerOrders = [
     {
       orderNumber: "CO-2024-001",
-      customerName: "TechCorp Solutions",
+      customerName: "Luxury Home Interiors",
+      productName: "Glass Dining Table",
       orderDate: "2024-01-15",
       deliveryDate: "2024-02-15",
       status: "Processing",
-      totalValue: "₹45,250.00",
-      items: 5
+      totalValue: "₹85,000.00",
+      items: 1
     },
     {
       orderNumber: "CO-2024-002", 
-      customerName: "Industrial Dynamics",
+      customerName: "Corporate Office Solutions",
+      productName: "Steel Office Desk",
       orderDate: "2024-01-18",
       deliveryDate: "2024-02-18",
-      status: "Shipped",
-      totalValue: "₹32,890.50", 
-      items: 3
+      status: "Ready to Ship",
+      totalValue: "₹45,500.00", 
+      items: 2
     },
     {
       orderNumber: "CO-2024-003",
-      customerName: "Manufacturing Plus",
+      customerName: "Metro Construction Ltd",
+      productName: "Aluminum Window Frame",
       orderDate: "2024-01-20",
       deliveryDate: "2024-02-20", 
-      status: "Delivered",
-      totalValue: "₹67,125.75",
-      items: 8
+      status: "Processing",
+      totalValue: "₹32,750.00",
+      items: 10
     },
     {
       orderNumber: "CO-2024-004",
-      customerName: "Global Industries",
+      customerName: "Industrial Equipment Co",
+      productName: "Rubber Gasket Set",
       orderDate: "2024-01-22", 
       deliveryDate: "2024-02-22",
-      status: "Cancelled",
-      totalValue: "₹28,450.25",
-      items: 4
+      status: "Shipped",
+      totalValue: "₹15,200.00",
+      items: 50
     },
     {
       orderNumber: "CO-2024-005",
-      customerName: "Precision Systems",
+      customerName: "Precision Manufacturing",
+      productName: "Motor Assembly Unit",
       orderDate: "2024-01-25",
       deliveryDate: "2024-02-25",
       status: "Processing", 
-      totalValue: "₹54,380.00",
-      items: 6
-    },
-    {
-      orderNumber: "CO-2024-006",
-      customerName: "Advanced Manufacturing",
-      orderDate: "2024-01-28",
-      deliveryDate: "2024-02-28",
-      status: "Ready to Ship",
-      totalValue: "₹41,750.50",
-      items: 7
+      totalValue: "₹125,000.00",
+      items: 5
     }
   ];
 
@@ -199,6 +195,7 @@ const OrderManagement = () => {
                 <TableRow>
                   <TableHead>Order Number</TableHead>
                   <TableHead>Customer</TableHead>
+                  <TableHead>Product</TableHead>
                   <TableHead>Order Date</TableHead>
                   <TableHead>Delivery Date</TableHead>
                   <TableHead>Items</TableHead>
@@ -211,6 +208,7 @@ const OrderManagement = () => {
                   <TableRow key={index}>
                     <TableCell className="font-medium">{order.orderNumber}</TableCell>
                     <TableCell>{order.customerName}</TableCell>
+                    <TableCell className="font-medium text-primary">{order.productName}</TableCell>
                     <TableCell>{order.orderDate}</TableCell>
                     <TableCell>{order.deliveryDate}</TableCell>
                     <TableCell>{order.items}</TableCell>
