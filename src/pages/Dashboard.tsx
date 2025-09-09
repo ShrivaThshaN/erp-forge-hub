@@ -38,7 +38,7 @@ const Dashboard = () => {
     },
     {
       title: "Revenue (Monthly)",
-      value: "$2.4M",
+      value: "₹2.4M",
       change: "+15%",
       changeType: "increase" as const,
       icon: DollarSign,

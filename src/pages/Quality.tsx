@@ -4,10 +4,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Search, Filter, Download, CheckCircle, XCircle, AlertTriangle, Clock } from "lucide-react";
 
 const Quality = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [resultFilter, setResultFilter] = useState("all");
+  const [testTypeFilter, setTestTypeFilter] = useState("all");
+  const [inspectorFilter, setInspectorFilter] = useState("all");
 
   const qualityData = [
     {
@@ -67,12 +72,18 @@ const Quality = () => {
     }
   ];
 
-  const filteredData = qualityData.filter(item => 
-    item.inspectionId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.batchNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.inspector.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredData = qualityData.filter(item => {
+    const matchesSearch = item.inspectionId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.batchNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.inspector.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesResult = resultFilter === "all" || item.result === resultFilter;
+    const matchesTestType = testTypeFilter === "all" || item.testType === testTypeFilter;
+    const matchesInspector = inspectorFilter === "all" || item.inspector === inspectorFilter;
+    
+    return matchesSearch && matchesResult && matchesTestType && matchesInspector;
+  });
 
   const getResultBadge = (result: string) => {
     switch (result) {
@@ -112,10 +123,68 @@ const Quality = () => {
           <p className="text-muted-foreground">Manage quality inspections, testing, and compliance</p>
         </div>
         <div className="flex space-x-2">
-          <Button variant="outline">
-            <Filter className="w-4 h-4 mr-2" />
-            Filter
-          </Button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline">
+                <Filter className="w-4 h-4 mr-2" />
+                Filter
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Filter Inspections</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium">Result</label>
+                  <Select value={resultFilter} onValueChange={setResultFilter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="All Results" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Results</SelectItem>
+                      <SelectItem value="Pass">Pass</SelectItem>
+                      <SelectItem value="Fail">Fail</SelectItem>
+                      <SelectItem value="Warning">Warning</SelectItem>
+                      <SelectItem value="Pending">Pending</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label className="text-sm font-medium">Test Type</label>
+                  <Select value={testTypeFilter} onValueChange={setTestTypeFilter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="All Test Types" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Test Types</SelectItem>
+                      <SelectItem value="Dimensional Check">Dimensional Check</SelectItem>
+                      <SelectItem value="Functional Test">Functional Test</SelectItem>
+                      <SelectItem value="Material Analysis">Material Analysis</SelectItem>
+                      <SelectItem value="Assembly Check">Assembly Check</SelectItem>
+                      <SelectItem value="Stress Test">Stress Test</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label className="text-sm font-medium">Inspector</label>
+                  <Select value={inspectorFilter} onValueChange={setInspectorFilter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="All Inspectors" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Inspectors</SelectItem>
+                      <SelectItem value="John Smith">John Smith</SelectItem>
+                      <SelectItem value="Sarah Johnson">Sarah Johnson</SelectItem>
+                      <SelectItem value="Mike Wilson">Mike Wilson</SelectItem>
+                      <SelectItem value="Emily Davis">Emily Davis</SelectItem>
+                      <SelectItem value="Robert Brown">Robert Brown</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
           <Button variant="outline">
             <Download className="w-4 h-4 mr-2" />
             Export

@@ -4,10 +4,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Search, Filter, Download, Truck, MapPin, Clock, Package } from "lucide-react";
 
 const Logistics = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [carrierFilter, setCarrierFilter] = useState("all");
+  const [priorityFilter, setPriorityFilter] = useState("all");
 
   const shipmentData = [
     {
@@ -72,12 +77,18 @@ const Logistics = () => {
     }
   ];
 
-  const filteredData = shipmentData.filter(shipment => 
-    shipment.shipmentId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    shipment.orderNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    shipment.carrier.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    shipment.destination.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredData = shipmentData.filter(shipment => {
+    const matchesSearch = shipment.shipmentId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      shipment.orderNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      shipment.carrier.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      shipment.destination.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesStatus = statusFilter === "all" || shipment.status === statusFilter;
+    const matchesCarrier = carrierFilter === "all" || shipment.carrier === carrierFilter;
+    const matchesPriority = priorityFilter === "all" || shipment.priority === priorityFilter;
+    
+    return matchesSearch && matchesStatus && matchesCarrier && matchesPriority;
+  });
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -115,10 +126,66 @@ const Logistics = () => {
           <p className="text-muted-foreground">Track shipments, manage deliveries, and coordinate logistics</p>
         </div>
         <div className="flex space-x-2">
-          <Button variant="outline">
-            <Filter className="w-4 h-4 mr-2" />
-            Filter
-          </Button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline">
+                <Filter className="w-4 h-4 mr-2" />
+                Filter
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Filter Shipments</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium">Status</label>
+                  <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="All Statuses" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Statuses</SelectItem>
+                      <SelectItem value="Delivered">Delivered</SelectItem>
+                      <SelectItem value="In Transit">In Transit</SelectItem>
+                      <SelectItem value="Preparing">Preparing</SelectItem>
+                      <SelectItem value="Delayed">Delayed</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label className="text-sm font-medium">Carrier</label>
+                  <Select value={carrierFilter} onValueChange={setCarrierFilter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="All Carriers" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Carriers</SelectItem>
+                      <SelectItem value="FedEx Express">FedEx Express</SelectItem>
+                      <SelectItem value="UPS Ground">UPS Ground</SelectItem>
+                      <SelectItem value="DHL International">DHL International</SelectItem>
+                      <SelectItem value="USPS Priority">USPS Priority</SelectItem>
+                      <SelectItem value="FedEx Ground">FedEx Ground</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label className="text-sm font-medium">Priority</label>
+                  <Select value={priorityFilter} onValueChange={setPriorityFilter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="All Priorities" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Priorities</SelectItem>
+                      <SelectItem value="High">High</SelectItem>
+                      <SelectItem value="Medium">Medium</SelectItem>
+                      <SelectItem value="Low">Low</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
           <Button variant="outline">
             <Download className="w-4 h-4 mr-2" />
             Export

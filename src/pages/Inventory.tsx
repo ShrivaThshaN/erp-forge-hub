@@ -4,10 +4,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Search, Filter, Download, Package, TrendingDown, AlertTriangle, CheckCircle } from "lucide-react";
 
 const Inventory = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [locationFilter, setLocationFilter] = useState("all");
 
   const inventoryData = [
     {
@@ -18,7 +23,7 @@ const Inventory = () => {
       minimumStock: 200,
       maximumStock: 1000,
       location: "Warehouse A-1",
-      unitPrice: "$12.50",
+      unitPrice: "₹12.50",
       status: "In Stock",
       lastUpdated: "2024-01-28"
     },
@@ -30,7 +35,7 @@ const Inventory = () => {
       minimumStock: 100,
       maximumStock: 500,
       location: "Warehouse B-2",
-      unitPrice: "$0.75",
+      unitPrice: "₹0.75",
       status: "Low Stock",
       lastUpdated: "2024-01-27"
     },
@@ -42,7 +47,7 @@ const Inventory = () => {
       minimumStock: 50,
       maximumStock: 300,
       location: "Warehouse C-1",
-      unitPrice: "$3.25",
+      unitPrice: "₹3.25",
       status: "Out of Stock",
       lastUpdated: "2024-01-26"
     },
@@ -54,7 +59,7 @@ const Inventory = () => {
       minimumStock: 10,
       maximumStock: 50,
       location: "Warehouse D-3",
-      unitPrice: "$450.00",
+      unitPrice: "₹450.00",
       status: "In Stock",
       lastUpdated: "2024-01-25"
     },
@@ -66,7 +71,7 @@ const Inventory = () => {
       minimumStock: 25,
       maximumStock: 200,
       location: "Warehouse E-1",
-      unitPrice: "$85.00",
+      unitPrice: "₹85.00",
       status: "In Stock",
       lastUpdated: "2024-01-24"
     },
@@ -78,17 +83,23 @@ const Inventory = () => {
       minimumStock: 15,
       maximumStock: 60,
       location: "Warehouse F-2",
-      unitPrice: "$275.00",
+      unitPrice: "₹275.00",
       status: "Low Stock",
       lastUpdated: "2024-01-23"
     }
   ];
 
-  const filteredData = inventoryData.filter(item => 
-    item.itemName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.itemCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.category.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredData = inventoryData.filter(item => {
+    const matchesSearch = item.itemName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.itemCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.category.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesCategory = categoryFilter === "all" || item.category === categoryFilter;
+    const matchesStatus = statusFilter === "all" || item.status === statusFilter;
+    const matchesLocation = locationFilter === "all" || item.location === locationFilter;
+    
+    return matchesSearch && matchesCategory && matchesStatus && matchesLocation;
+  });
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -118,10 +129,68 @@ const Inventory = () => {
           <p className="text-muted-foreground">Track stock levels, locations, and inventory movements</p>
         </div>
         <div className="flex space-x-2">
-          <Button variant="outline">
-            <Filter className="w-4 h-4 mr-2" />
-            Filter
-          </Button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline">
+                <Filter className="w-4 h-4 mr-2" />
+                Filter
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Filter Inventory</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium">Category</label>
+                  <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="All Categories" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Categories</SelectItem>
+                      <SelectItem value="Raw Materials">Raw Materials</SelectItem>
+                      <SelectItem value="Fasteners">Fasteners</SelectItem>
+                      <SelectItem value="Sealing">Sealing</SelectItem>
+                      <SelectItem value="Components">Components</SelectItem>
+                      <SelectItem value="Electronics">Electronics</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label className="text-sm font-medium">Status</label>
+                  <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="All Statuses" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Statuses</SelectItem>
+                      <SelectItem value="In Stock">In Stock</SelectItem>
+                      <SelectItem value="Low Stock">Low Stock</SelectItem>
+                      <SelectItem value="Out of Stock">Out of Stock</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label className="text-sm font-medium">Location</label>
+                  <Select value={locationFilter} onValueChange={setLocationFilter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="All Locations" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Locations</SelectItem>
+                      <SelectItem value="Warehouse A-1">Warehouse A-1</SelectItem>
+                      <SelectItem value="Warehouse B-2">Warehouse B-2</SelectItem>
+                      <SelectItem value="Warehouse C-1">Warehouse C-1</SelectItem>
+                      <SelectItem value="Warehouse D-3">Warehouse D-3</SelectItem>
+                      <SelectItem value="Warehouse E-1">Warehouse E-1</SelectItem>
+                      <SelectItem value="Warehouse F-2">Warehouse F-2</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
           <Button variant="outline">
             <Download className="w-4 h-4 mr-2" />
             Export

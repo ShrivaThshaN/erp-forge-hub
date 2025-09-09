@@ -4,10 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Search, Filter, Download } from "lucide-react";
 
 const OrderManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
 
   const customerOrders = [
     {
@@ -16,7 +19,7 @@ const OrderManagement = () => {
       orderDate: "2024-01-15",
       deliveryDate: "2024-02-15",
       status: "Processing",
-      totalValue: "$45,250.00",
+      totalValue: "₹45,250.00",
       items: 5
     },
     {
@@ -25,7 +28,7 @@ const OrderManagement = () => {
       orderDate: "2024-01-18",
       deliveryDate: "2024-02-18",
       status: "Shipped",
-      totalValue: "$32,890.50", 
+      totalValue: "₹32,890.50", 
       items: 3
     },
     {
@@ -34,7 +37,7 @@ const OrderManagement = () => {
       orderDate: "2024-01-20",
       deliveryDate: "2024-02-20", 
       status: "Delivered",
-      totalValue: "$67,125.75",
+      totalValue: "₹67,125.75",
       items: 8
     },
     {
@@ -43,7 +46,7 @@ const OrderManagement = () => {
       orderDate: "2024-01-22", 
       deliveryDate: "2024-02-22",
       status: "Cancelled",
-      totalValue: "$28,450.25",
+      totalValue: "₹28,450.25",
       items: 4
     },
     {
@@ -52,7 +55,7 @@ const OrderManagement = () => {
       orderDate: "2024-01-25",
       deliveryDate: "2024-02-25",
       status: "Processing", 
-      totalValue: "$54,380.00",
+      totalValue: "₹54,380.00",
       items: 6
     },
     {
@@ -61,15 +64,19 @@ const OrderManagement = () => {
       orderDate: "2024-01-28",
       deliveryDate: "2024-02-28",
       status: "Ready to Ship",
-      totalValue: "$41,750.50",
+      totalValue: "₹41,750.50",
       items: 7
     }
   ];
 
-  const filteredOrders = customerOrders.filter(order => 
-    order.orderNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    order.customerName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredOrders = customerOrders.filter(order => {
+    const matchesSearch = order.orderNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.customerName.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesStatus = statusFilter === "all" || order.status === statusFilter;
+    
+    return matchesSearch && matchesStatus;
+  });
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -96,10 +103,37 @@ const OrderManagement = () => {
           <p className="text-muted-foreground">Track and manage customer orders and fulfillment</p>
         </div>
         <div className="flex space-x-2">
-          <Button variant="outline">
-            <Filter className="w-4 h-4 mr-2" />
-            Filter
-          </Button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline">
+                <Filter className="w-4 h-4 mr-2" />
+                Filter
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Filter Orders</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium">Status</label>
+                  <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="All Statuses" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Statuses</SelectItem>
+                      <SelectItem value="Processing">Processing</SelectItem>
+                      <SelectItem value="Shipped">Shipped</SelectItem>
+                      <SelectItem value="Delivered">Delivered</SelectItem>
+                      <SelectItem value="Cancelled">Cancelled</SelectItem>
+                      <SelectItem value="Ready to Ship">Ready to Ship</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
           <Button variant="outline">
             <Download className="w-4 h-4 mr-2" />
             Export
@@ -133,7 +167,7 @@ const OrderManagement = () => {
         </Card>
         <Card>
           <CardContent className="p-4">
-            <div className="text-2xl font-bold">$2.4M</div>
+            <div className="text-2xl font-bold">₹2.4M</div>
             <div className="text-sm text-muted-foreground">Total Value</div>
           </CardContent>
         </Card>
