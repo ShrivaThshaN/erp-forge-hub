@@ -8,6 +8,7 @@ import Dashboard from "./pages/Dashboard";
 import MasterProductionSchedule from "./pages/MasterProductionSchedule";
 import MaterialRequirementPlanning from "./pages/MaterialRequirementPlanning";
 import Procurement from "./pages/Procurement";
+import { PurchaseOrders } from "./pages/PurchaseOrders";
 import OrderManagement from "./pages/OrderManagement";
 import Inventory from "./pages/Inventory";
 import Logistics from "./pages/Logistics";
@@ -28,6 +29,7 @@ const App = () => (
             <Route path="/production/master-schedule" element={<MasterProductionSchedule />} />
             <Route path="/production/material-planning" element={<MaterialRequirementPlanning />} />
             <Route path="/procurement" element={<Procurement />} />
+            <Route path="/procurement/purchase-orders" element={<PurchaseOrders />} />
             <Route path="/order-management" element={<OrderManagement />} />
             <Route path="/inventory" element={<Inventory />} />
             <Route path="/logistics" element={<Logistics />} />

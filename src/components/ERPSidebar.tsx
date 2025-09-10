@@ -40,8 +40,17 @@ const sidebarItems = [
   },
   {
     title: "Procurement",
-    href: "/procurement",
     icon: ShoppingCart,
+    children: [
+      {
+        title: "Procurement Dashboard",
+        href: "/procurement"
+      },
+      {
+        title: "Purchase Orders",
+        href: "/procurement/purchase-orders"
+      }
+    ]
   },
   {
     title: "Order Management",
@@ -130,17 +139,17 @@ export function ERPSidebar() {
                       )}
                     </button>
                     {isExpanded && (
-                      <ul className="ml-8 mt-2 space-y-1">
+                      <ul className="ml-6 mt-1 space-y-1 pl-2 border-l border-sidebar-border/30">
                         {item.children.map((child) => (
                           <li key={child.href}>
                             <Link
                               to={child.href}
                               onClick={() => setIsMobileMenuOpen(false)}
                               className={cn(
-                                "block px-3 py-2 rounded-lg text-sm transition-colors",
+                                "block px-3 py-2.5 rounded-md text-sm transition-all duration-200 hover:translate-x-1",
                                 isActive(child.href)
-                                  ? "bg-erp-sidebar-active text-white"
-                                  : "text-sidebar-foreground hover:bg-sidebar-accent"
+                                  ? "bg-erp-sidebar-active text-white font-medium shadow-sm"
+                                  : "text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-foreground"
                               )}
                             >
                               <span className="truncate">{child.title}</span>
