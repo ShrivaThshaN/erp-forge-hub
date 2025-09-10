@@ -1,230 +1,391 @@
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Search, Filter, Download } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Plus, Filter, Download, Search, Eye, Edit, Package } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Checkbox } from "@/components/ui/checkbox";
+
+// Dummy data for purchase orders
+const purchaseOrders = [
+  {
+    id: "PO-001",
+    vendor: "Steel Dynamics Inc.",
+    material: "Steel Sheets",
+    quantity: 500,
+    unit: "kg",
+    unitPrice: 85,
+    totalAmount: 42500,
+    orderDate: "2024-01-15",
+    deliveryDate: "2024-01-25",
+    status: "Pending",
+    relatedOrder: "ORD-002"
+  },
+  {
+    id: "PO-002",
+    vendor: "Glass Masters Ltd.",
+    material: "Tempered Glass",
+    quantity: 20,
+    unit: "pieces",
+    unitPrice: 750,
+    totalAmount: 15000,
+    orderDate: "2024-01-16",
+    deliveryDate: "2024-01-28",
+    status: "Approved",
+    relatedOrder: "ORD-001"
+  },
+  {
+    id: "PO-003",
+    vendor: "Aluminum Corp",
+    material: "Aluminum Profiles",
+    quantity: 100,
+    unit: "meters",
+    unitPrice: 120,
+    totalAmount: 12000,
+    orderDate: "2024-01-17",
+    deliveryDate: "2024-01-30",
+    status: "Delivered",
+    relatedOrder: "ORD-003"
+  },
+  {
+    id: "PO-004",
+    vendor: "Rubber Supplies Co.",
+    material: "Rubber Gaskets",
+    quantity: 200,
+    unit: "pieces",
+    unitPrice: 45,
+    totalAmount: 9000,
+    orderDate: "2024-01-18",
+    deliveryDate: "2024-02-01",
+    status: "In Transit",
+    relatedOrder: "ORD-004"
+  },
+  {
+    id: "PO-005",
+    vendor: "Motor Tech Industries",
+    material: "Electric Motors",
+    quantity: 10,
+    unit: "pieces",
+    unitPrice: 2800,
+    totalAmount: 28000,
+    orderDate: "2024-01-19",
+    deliveryDate: "2024-02-05",
+    status: "Pending",
+    relatedOrder: "ORD-005"
+  }
+];
+
+const getStatusColor = (status: string) => {
+  switch (status.toLowerCase()) {
+    case 'pending': return 'bg-yellow-100 text-yellow-800';
+    case 'approved': return 'bg-blue-100 text-blue-800';
+    case 'in transit': return 'bg-purple-100 text-purple-800';
+    case 'delivered': return 'bg-green-100 text-green-800';
+    case 'cancelled': return 'bg-red-100 text-red-800';
+    default: return 'bg-gray-100 text-gray-800';
+  }
+};
 
 const Procurement = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [vendorFilter, setVendorFilter] = useState("all");
+  const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
+  const [selectedVendors, setSelectedVendors] = useState<string[]>([]);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
-  const purchaseOrders = [
-    {
-      poNumber: "PO-2024-001",
-      vendorName: "Premium Glass Solutions",
-      materialName: "Tempered Glass Top",
-      creationDate: "2024-01-05",
-      status: "Pending Approval",
-      totalAmount: "₹25,000.00",
-      relatedOrder: "CO-2024-001"
-    },
-    {
-      poNumber: "PO-2024-002", 
-      vendorName: "Steel Supply Co",
-      materialName: "Steel Sheets",
-      creationDate: "2024-01-08",
-      status: "Sent to Vendor",
-      totalAmount: "₹18,500.00",
-      relatedOrder: "CO-2024-002"
-    },
-    {
-      poNumber: "PO-2024-003",
-      vendorName: "Aluminum Solutions Inc", 
-      materialName: "Aluminum Extrusions",
-      creationDate: "2024-01-10",
-      status: "Fulfilled",
-      totalAmount: "₹32,400.00",
-      relatedOrder: "CO-2024-003"
-    },
-    {
-      poNumber: "PO-2024-004",
-      vendorName: "Precision Motors Ltd",
-      materialName: "Electric Motor Core",
-      creationDate: "2024-01-12", 
-      status: "Sent to Vendor",
-      totalAmount: "₹85,000.00",
-      relatedOrder: "CO-2024-005"
-    },
-    {
-      poNumber: "PO-2024-005",
-      vendorName: "Electrical Components Co",
-      materialName: "Copper Wiring",
-      creationDate: "2024-01-14",
-      status: "Fulfilled", 
-      totalAmount: "₹15,750.00",
-      relatedOrder: "CO-2024-005"
-    },
-    {
-      poNumber: "PO-2024-006",
-      vendorName: "Office Components Ltd",
-      materialName: "Desk Hardware Kit",
-      creationDate: "2024-01-16",
-      status: "Fulfilled",
-      totalAmount: "₹8,200.00",
-      relatedOrder: "CO-2024-002"
-    },
-    {
-      poNumber: "PO-2024-007", 
-      vendorName: "Precision Parts",
-      creationDate: "7/1/2024",
-      status: "Sent to Vendor",
-      totalAmount: "₹31,671.94"
-    },
-    {
-      poNumber: "PO-2024-008",
-      vendorName: "Advanced Tech",
-      creationDate: "8/1/2024",
-      status: "Fulfilled", 
-      totalAmount: "₹33,366.91"
-    }
-  ];
-
+  // Filter data based on search and filters
   const filteredOrders = purchaseOrders.filter(order => {
-    const matchesSearch = order.poNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.vendorName.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = 
+      order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.vendor.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.material.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.relatedOrder.toLowerCase().includes(searchTerm.toLowerCase());
     
-    const matchesStatus = statusFilter === "all" || order.status === statusFilter;
-    const matchesVendor = vendorFilter === "all" || order.vendorName === vendorFilter;
+    const matchesStatus = selectedStatuses.length === 0 || selectedStatuses.includes(order.status);
+    const matchesVendor = selectedVendors.length === 0 || selectedVendors.includes(order.vendor);
     
     return matchesSearch && matchesStatus && matchesVendor;
   });
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "Fulfilled":
-        return <Badge className="bg-status-completed text-white">Fulfilled</Badge>;
-      case "Pending Approval":
-        return <Badge className="bg-status-progress text-white">Pending Approval</Badge>;
-      case "Sent to Vendor": 
-        return <Badge className="bg-primary text-white">Sent to Vendor</Badge>;
-      default:
-        return <Badge variant="secondary">{status}</Badge>;
+  const totalValue = filteredOrders.reduce((sum, order) => sum + order.totalAmount, 0);
+  const pendingOrders = filteredOrders.filter(order => order.status === "Pending").length;
+  const deliveredOrders = filteredOrders.filter(order => order.status === "Delivered").length;
+
+  const uniqueStatuses = [...new Set(purchaseOrders.map(order => order.status))];
+  const uniqueVendors = [...new Set(purchaseOrders.map(order => order.vendor))];
+
+  const handleStatusFilter = (status: string, checked: boolean) => {
+    if (checked) {
+      setSelectedStatuses([...selectedStatuses, status]);
+    } else {
+      setSelectedStatuses(selectedStatuses.filter(s => s !== status));
+    }
+  };
+
+  const handleVendorFilter = (vendor: string, checked: boolean) => {
+    if (checked) {
+      setSelectedVendors([...selectedVendors, vendor]);
+    } else {
+      setSelectedVendors(selectedVendors.filter(v => v !== vendor));
     }
   };
 
   return (
     <div className="p-6 space-y-6">
-      <div className="flex justify-between items-start">
+      {/* Header */}
+      <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Procurement</h1>
-          <p className="text-muted-foreground">Manage purchase orders and vendor relationships</p>
+          <h1 className="text-3xl font-bold tracking-tight">Procurement</h1>
+          <p className="text-muted-foreground">
+            Manage and track all purchase orders and vendor relationships
+          </p>
         </div>
-        <div className="flex space-x-2">
-          <Dialog>
+        <div className="flex gap-2">
+          <Button variant="outline" className="flex items-center gap-2">
+            <Download className="h-4 w-4" />
+            Export
+          </Button>
+          <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
             <DialogTrigger asChild>
-              <Button variant="outline">
-                <Filter className="w-4 h-4 mr-2" />
-                Filter
+              <Button className="flex items-center gap-2">
+                <Plus className="h-4 w-4" />
+                Create Purchase Order
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
+            <DialogContent className="max-w-md">
               <DialogHeader>
-                <DialogTitle>Filter Purchase Orders</DialogTitle>
+                <DialogTitle>Create New Purchase Order</DialogTitle>
+                <DialogDescription>
+                  Create a new purchase order for materials and components.
+                </DialogDescription>
               </DialogHeader>
-              <div className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium">Status</label>
-                  <Select value={statusFilter} onValueChange={setStatusFilter}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="All Statuses" />
+              <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="vendor" className="text-right">
+                    Vendor
+                  </Label>
+                  <Select>
+                    <SelectTrigger className="col-span-3">
+                      <SelectValue placeholder="Select vendor" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All Statuses</SelectItem>
-                      <SelectItem value="Pending Approval">Pending Approval</SelectItem>
-                      <SelectItem value="Fulfilled">Fulfilled</SelectItem>
-                      <SelectItem value="Sent to Vendor">Sent to Vendor</SelectItem>
+                      <SelectItem value="steel-dynamics">Steel Dynamics Inc.</SelectItem>
+                      <SelectItem value="glass-masters">Glass Masters Ltd.</SelectItem>
+                      <SelectItem value="aluminum-corp">Aluminum Corp</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
-                <div>
-                  <label className="text-sm font-medium">Vendor</label>
-                  <Select value={vendorFilter} onValueChange={setVendorFilter}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="All Vendors" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Vendors</SelectItem>
-                      <SelectItem value="Acme Corp">Acme Corp</SelectItem>
-                      <SelectItem value="Stellar Industries">Stellar Industries</SelectItem>
-                      <SelectItem value="Global Supply Co">Global Supply Co</SelectItem>
-                      <SelectItem value="Premier Materials">Premier Materials</SelectItem>
-                      <SelectItem value="Elite Components">Elite Components</SelectItem>
-                      <SelectItem value="Quantum Systems">Quantum Systems</SelectItem>
-                      <SelectItem value="Precision Parts">Precision Parts</SelectItem>
-                      <SelectItem value="Advanced Tech">Advanced Tech</SelectItem>
-                    </SelectContent>
-                  </Select>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="material" className="text-right">
+                    Material
+                  </Label>
+                  <Input id="material" className="col-span-3" placeholder="Material name" />
                 </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="quantity" className="text-right">
+                    Quantity
+                  </Label>
+                  <Input id="quantity" type="number" className="col-span-3" placeholder="0" />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="price" className="text-right">
+                    Unit Price (₹)
+                  </Label>
+                  <Input id="price" type="number" className="col-span-3" placeholder="0.00" />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="delivery" className="text-right">
+                    Delivery Date
+                  </Label>
+                  <Input id="delivery" type="date" className="col-span-3" />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="notes" className="text-right">
+                    Notes
+                  </Label>
+                  <Textarea id="notes" className="col-span-3" placeholder="Additional notes..." />
+                </div>
+              </div>
+              <div className="flex justify-end gap-2">
+                <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
+                  Cancel
+                </Button>
+                <Button onClick={() => setIsAddDialogOpen(false)}>
+                  Create Order
+                </Button>
               </div>
             </DialogContent>
           </Dialog>
-          <Button variant="outline">
-            <Download className="w-4 h-4 mr-2" />
-            Export
-          </Button>
         </div>
       </div>
 
+      {/* Stats Cards */}
+      <div className="grid gap-4 md:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Orders</CardTitle>
+            <Package className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{filteredOrders.length}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Value</CardTitle>
+            <Package className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">₹{totalValue.toLocaleString()}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Pending Orders</CardTitle>
+            <Package className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{pendingOrders}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Delivered</CardTitle>
+            <Package className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{deliveredOrders}</div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Search and Filter */}
       <Card>
         <CardHeader>
-          <div className="flex justify-between items-center">
-            <div>
-              <CardTitle>Procurement & Purchase Orders</CardTitle>
-              <p className="text-sm text-muted-foreground mt-1">Manage purchase orders and vendor relationships</p>
+          <div className="flex items-center justify-between">
+            <CardTitle>Purchase Orders</CardTitle>
+            <div className="flex items-center gap-2">
+              <div className="relative">
+                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search orders..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-8 w-[300px]"
+                />
+              </div>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" size="sm" className="flex items-center gap-2">
+                    <Filter className="h-4 w-4" />
+                    Filter
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-80" align="end">
+                  <div className="grid gap-4">
+                    <div className="space-y-2">
+                      <h4 className="font-medium leading-none">Status</h4>
+                      <div className="grid gap-2">
+                        {uniqueStatuses.map((status) => (
+                          <div key={status} className="flex items-center space-x-2">
+                            <Checkbox
+                              id={`status-${status}`}
+                              checked={selectedStatuses.includes(status)}
+                              onCheckedChange={(checked) => handleStatusFilter(status, checked as boolean)}
+                            />
+                            <Label htmlFor={`status-${status}`} className="text-sm">
+                              {status}
+                            </Label>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <h4 className="font-medium leading-none">Vendor</h4>
+                      <div className="grid gap-2">
+                        {uniqueVendors.map((vendor) => (
+                          <div key={vendor} className="flex items-center space-x-2">
+                            <Checkbox
+                              id={`vendor-${vendor}`}
+                              checked={selectedVendors.includes(vendor)}
+                              onCheckedChange={(checked) => handleVendorFilter(vendor, checked as boolean)}
+                            />
+                            <Label htmlFor={`vendor-${vendor}`} className="text-sm">
+                              {vendor}
+                            </Label>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <Button 
+                      variant="outline" 
+                      onClick={() => {
+                        setSelectedStatuses([]);
+                        setSelectedVendors([]);
+                      }}
+                      className="w-full"
+                    >
+                      Clear All Filters
+                    </Button>
+                  </div>
+                </PopoverContent>
+              </Popover>
             </div>
-            <Button className="bg-primary hover:bg-primary/90">
-              <Plus className="w-4 h-4 mr-2" />
-              Create New Purchase Order
-            </Button>
           </div>
         </CardHeader>
         <CardContent>
-          {/* Search Bar */}
-          <div className="flex items-center space-x-2 mb-6">
-            <div className="relative flex-1 max-w-sm">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-              <Input
-                placeholder="Search purchase orders..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-          </div>
-
-          <div className="border rounded-lg">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>PO Number</TableHead>
-                  <TableHead>Vendor Name</TableHead>
-                  <TableHead>Material</TableHead>
-                  <TableHead>Related Order</TableHead>
-                  <TableHead>Creation Date</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Total Amount</TableHead>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>PO ID</TableHead>
+                <TableHead>Vendor</TableHead>
+                <TableHead>Material</TableHead>
+                <TableHead>Quantity</TableHead>
+                <TableHead>Unit Price</TableHead>
+                <TableHead>Total Amount</TableHead>
+                <TableHead>Delivery Date</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Related Order</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredOrders.map((order) => (
+                <TableRow key={order.id}>
+                  <TableCell className="font-medium">{order.id}</TableCell>
+                  <TableCell>{order.vendor}</TableCell>
+                  <TableCell>{order.material}</TableCell>
+                  <TableCell>{order.quantity} {order.unit}</TableCell>
+                  <TableCell>₹{order.unitPrice}</TableCell>
+                  <TableCell>₹{order.totalAmount.toLocaleString()}</TableCell>
+                  <TableCell>{order.deliveryDate}</TableCell>
+                  <TableCell>
+                    <Badge className={getStatusColor(order.status)}>
+                      {order.status}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="outline">{order.relatedOrder}</Badge>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <Button variant="ghost" size="sm">
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="sm">
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
                 </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredOrders.map((order, index) => (
-                  <TableRow key={index}>
-                    <TableCell className="font-medium">{order.poNumber}</TableCell>
-                    <TableCell>{order.vendorName}</TableCell>
-                    <TableCell className="font-medium text-primary">{order.materialName}</TableCell>
-                    <TableCell className="font-medium text-status-progress">{order.relatedOrder}</TableCell>
-                    <TableCell>{order.creationDate}</TableCell>
-                    <TableCell>{getStatusBadge(order.status)}</TableCell>
-                    <TableCell className="font-medium">{order.totalAmount}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+              ))}
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
     </div>

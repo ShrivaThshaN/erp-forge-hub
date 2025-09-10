@@ -29,28 +29,19 @@ const sidebarItems = [
     icon: Factory,
     children: [
       {
-        title: "Master Production Schedule", 
-        href: "/production/master-schedule"
+        title: "Material Requirements", 
+        href: "/production/material-planning"
       },
       {
-        title: "Material Requirement Planning",
-        href: "/production/material-planning"
+        title: "Production Schedule",
+        href: "/production/master-schedule"
       }
     ]
   },
   {
     title: "Procurement",
+    href: "/procurement",
     icon: ShoppingCart,
-    children: [
-      {
-        title: "Procurement Dashboard",
-        href: "/procurement"
-      },
-      {
-        title: "Purchase Orders",
-        href: "/procurement/purchase-orders"
-      }
-    ]
   },
   {
     title: "Order Management",
