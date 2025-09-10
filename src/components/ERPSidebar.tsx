@@ -10,9 +10,13 @@ import {
   CheckCircle, 
   Calendar,
   ChevronDown,
-  ChevronRight
+  ChevronRight,
+  Menu,
+  X
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "./ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 
 const sidebarItems = [
   {
@@ -64,6 +68,7 @@ const sidebarItems = [
 export function ERPSidebar() {
   const location = useLocation();
   const [expandedItems, setExpandedItems] = useState<string[]>(["Production"]);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const toggleExpanded = (title: string) => {
     setExpandedItems(prev => 
@@ -81,8 +86,8 @@ export function ERPSidebar() {
     return children.some(child => location.pathname === child.href);
   };
 
-  return (
-    <div className="min-h-screen w-64 bg-erp-sidebar text-sidebar-foreground flex flex-col sticky top-0">
+  const SidebarContent = () => (
+    <>
       {/* Header */}
       <div className="p-6 border-b border-sidebar-border">
         <div className="flex items-center space-x-3">
@@ -94,7 +99,7 @@ export function ERPSidebar() {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-4">
+      <nav className="flex-1 p-4 overflow-y-auto">
         <ul className="space-y-2">
           {sidebarItems.map((item) => {
             const hasChildren = item.children && item.children.length > 0;
@@ -115,13 +120,13 @@ export function ERPSidebar() {
                       )}
                     >
                       <div className="flex items-center space-x-3">
-                        <item.icon className="w-5 h-5" />
-                        <span>{item.title}</span>
+                        <item.icon className="w-5 h-5 flex-shrink-0" />
+                        <span className="truncate">{item.title}</span>
                       </div>
                       {isExpanded ? (
-                        <ChevronDown className="w-4 h-4" />
+                        <ChevronDown className="w-4 h-4 flex-shrink-0" />
                       ) : (
-                        <ChevronRight className="w-4 h-4" />
+                        <ChevronRight className="w-4 h-4 flex-shrink-0" />
                       )}
                     </button>
                     {isExpanded && (
@@ -130,6 +135,7 @@ export function ERPSidebar() {
                           <li key={child.href}>
                             <Link
                               to={child.href}
+                              onClick={() => setIsMobileMenuOpen(false)}
                               className={cn(
                                 "block px-3 py-2 rounded-lg text-sm transition-colors",
                                 isActive(child.href)
@@ -137,7 +143,7 @@ export function ERPSidebar() {
                                   : "text-sidebar-foreground hover:bg-sidebar-accent"
                               )}
                             >
-                              {child.title}
+                              <span className="truncate">{child.title}</span>
                             </Link>
                           </li>
                         ))}
@@ -147,6 +153,7 @@ export function ERPSidebar() {
                 ) : (
                   <Link
                     to={item.href!}
+                    onClick={() => setIsMobileMenuOpen(false)}
                     className={cn(
                       "flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors",
                       isActive(item.href!)
@@ -154,8 +161,8 @@ export function ERPSidebar() {
                         : "text-sidebar-foreground hover:bg-sidebar-accent"
                     )}
                   >
-                    <item.icon className="w-5 h-5" />
-                    <span>{item.title}</span>
+                    <item.icon className="w-5 h-5 flex-shrink-0" />
+                    <span className="truncate">{item.title}</span>
                   </Link>
                 )}
               </li>
@@ -163,6 +170,34 @@ export function ERPSidebar() {
           })}
         </ul>
       </nav>
-    </div>
+    </>
+  );
+
+  return (
+    <>
+      {/* Mobile Menu Button */}
+      <div className="lg:hidden fixed top-4 left-4 z-50">
+        <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+          <SheetTrigger asChild>
+            <Button variant="outline" size="icon" className="bg-background shadow-md">
+              <Menu className="h-4 w-4" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" className="w-64 p-0 bg-erp-sidebar text-sidebar-foreground">
+            <div className="h-full flex flex-col">
+              <SidebarContent />
+            </div>
+          </SheetContent>
+        </Sheet>
+      </div>
+
+      {/* Desktop Sidebar */}
+      <div className="hidden lg:flex h-full w-64 bg-erp-sidebar text-sidebar-foreground flex-col fixed left-0 top-0 z-30">
+        <SidebarContent />
+      </div>
+
+      {/* Spacer for desktop layout */}
+      <div className="hidden lg:block w-64 flex-shrink-0"></div>
+    </>
   );
 }
