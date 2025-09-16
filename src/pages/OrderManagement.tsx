@@ -6,66 +6,43 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Search, Filter, Download } from "lucide-react";
+import { Plus, Search, Filter, Download, Edit, Trash2 } from "lucide-react";
+import { customerOrders as initialOrders, getOrderStats } from "@/data/mockData";
+import { PaginationComponent } from "@/components/Pagination";
+import { EditOrderDialog } from "@/components/EditOrderDialog";
+import { NewOrderDialog } from "@/components/NewOrderDialog";
+import { useUser } from "@/contexts/UserContext";
+import { useToast } from "@/hooks/use-toast";
+
+interface Order {
+  id: number;
+  orderNumber: string;
+  customerName: string;
+  productName: string;
+  orderDate: string;
+  deliveryDate: string;
+  status: string;
+  totalValue: number;
+  items: number;
+}
 
 const OrderManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [orders, setOrders] = useState<Order[]>(initialOrders);
+  const [editOrder, setEditOrder] = useState<Order | null>(null);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isNewOrderOpen, setIsNewOrderOpen] = useState(false);
+  const itemsPerPage = 10;
+  
+  const { user } = useUser();
+  const { toast } = useToast();
+  const isAdmin = user.role === 'admin';
+  
+  const stats = getOrderStats();
 
-  const customerOrders = [
-    {
-      orderNumber: "CO-2024-001",
-      customerName: "Luxury Home Interiors",
-      productName: "Glass Dining Table",
-      orderDate: "2024-01-15",
-      deliveryDate: "2024-02-15",
-      status: "Processing",
-      totalValue: "₹85,000.00",
-      items: 1
-    },
-    {
-      orderNumber: "CO-2024-002", 
-      customerName: "Corporate Office Solutions",
-      productName: "Steel Office Desk",
-      orderDate: "2024-01-18",
-      deliveryDate: "2024-02-18",
-      status: "Ready to Ship",
-      totalValue: "₹45,500.00", 
-      items: 2
-    },
-    {
-      orderNumber: "CO-2024-003",
-      customerName: "Metro Construction Ltd",
-      productName: "Aluminum Window Frame",
-      orderDate: "2024-01-20",
-      deliveryDate: "2024-02-20", 
-      status: "Processing",
-      totalValue: "₹32,750.00",
-      items: 10
-    },
-    {
-      orderNumber: "CO-2024-004",
-      customerName: "Industrial Equipment Co",
-      productName: "Rubber Gasket Set",
-      orderDate: "2024-01-22", 
-      deliveryDate: "2024-02-22",
-      status: "Shipped",
-      totalValue: "₹15,200.00",
-      items: 50
-    },
-    {
-      orderNumber: "CO-2024-005",
-      customerName: "Precision Manufacturing",
-      productName: "Motor Assembly Unit",
-      orderDate: "2024-01-25",
-      deliveryDate: "2024-02-25",
-      status: "Processing", 
-      totalValue: "₹125,000.00",
-      items: 5
-    }
-  ];
-
-  const filteredOrders = customerOrders.filter(order => {
+  const filteredOrders = orders.filter(order => {
     const matchesSearch = order.orderNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
       order.customerName.toLowerCase().includes(searchTerm.toLowerCase());
     
@@ -73,6 +50,50 @@ const OrderManagement = () => {
     
     return matchesSearch && matchesStatus;
   });
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedOrders = filteredOrders.slice(startIndex, startIndex + itemsPerPage);
+
+  const handleEditOrder = (order: Order) => {
+    setEditOrder(order);
+    setIsEditOpen(true);
+  };
+
+  const handleSaveOrder = (updatedOrder: Order) => {
+    setOrders(orders.map(order => 
+      order.id === updatedOrder.id ? updatedOrder : order
+    ));
+    toast({
+      title: "Order Updated",
+      description: `Order ${updatedOrder.orderNumber} has been updated successfully.`,
+    });
+  };
+
+  const handleDeleteOrder = (orderId: number) => {
+    const orderToDelete = orders.find(order => order.id === orderId);
+    if (orderToDelete) {
+      setOrders(orders.filter(order => order.id !== orderId));
+      toast({
+        title: "Order Deleted",
+        description: `Order ${orderToDelete.orderNumber} has been deleted.`,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleNewOrder = (newOrderData: Omit<Order, 'id'>) => {
+    const newOrder: Order = {
+      id: Math.max(...orders.map(o => o.id)) + 1,
+      ...newOrderData
+    };
+    setOrders([newOrder, ...orders]);
+    toast({
+      title: "Order Created",
+      description: `Order ${newOrder.orderNumber} has been created successfully.`,
+    });
+  };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -134,7 +155,10 @@ const OrderManagement = () => {
             <Download className="w-4 h-4 mr-2" />
             Export
           </Button>
-          <Button className="bg-primary hover:bg-primary/90">
+          <Button 
+            className="bg-primary hover:bg-primary/90"
+            onClick={() => setIsNewOrderOpen(true)}
+          >
             <Plus className="w-4 h-4 mr-2" />
             New Order
           </Button>
@@ -145,25 +169,25 @@ const OrderManagement = () => {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardContent className="p-4">
-            <div className="text-2xl font-bold">156</div>
+            <div className="text-2xl font-bold">{stats.totalOrders}</div>
             <div className="text-sm text-muted-foreground">Total Orders</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
-            <div className="text-2xl font-bold text-erp-success">89</div>
+            <div className="text-2xl font-bold text-erp-success">{stats.delivered}</div>
             <div className="text-sm text-muted-foreground">Delivered</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
-            <div className="text-2xl font-bold text-status-progress">42</div>
+            <div className="text-2xl font-bold text-status-progress">{stats.inProgress}</div>
             <div className="text-sm text-muted-foreground">In Progress</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
-            <div className="text-2xl font-bold">₹2.4M</div>
+            <div className="text-2xl font-bold">₹{(stats.totalValue / 100000).toFixed(1)}L</div>
             <div className="text-sm text-muted-foreground">Total Value</div>
           </CardContent>
         </Card>
@@ -201,10 +225,11 @@ const OrderManagement = () => {
                   <TableHead>Items</TableHead>
                   <TableHead>Total Value</TableHead>
                   <TableHead>Status</TableHead>
+                  {isAdmin && <TableHead>Actions</TableHead>}
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredOrders.map((order, index) => (
+                {paginatedOrders.map((order, index) => (
                   <TableRow key={index}>
                     <TableCell className="font-medium">{order.orderNumber}</TableCell>
                     <TableCell>{order.customerName}</TableCell>
@@ -212,15 +237,59 @@ const OrderManagement = () => {
                     <TableCell>{order.orderDate}</TableCell>
                     <TableCell>{order.deliveryDate}</TableCell>
                     <TableCell>{order.items}</TableCell>
-                    <TableCell className="font-medium">{order.totalValue}</TableCell>
+                    <TableCell className="font-medium">₹{order.totalValue.toLocaleString()}</TableCell>
                     <TableCell>{getStatusBadge(order.status)}</TableCell>
+                    {isAdmin && (
+                      <TableCell>
+                        <div className="flex space-x-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleEditOrder(order)}
+                          >
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleDeleteOrder(order.id)}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    )}
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           </div>
+          
+          {/* Pagination */}
+          <div className="mt-4 flex justify-center">
+            <PaginationComponent
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
+          </div>
         </CardContent>
       </Card>
+
+      {/* Edit Order Dialog */}
+      <EditOrderDialog
+        order={editOrder}
+        isOpen={isEditOpen}
+        onClose={() => setIsEditOpen(false)}
+        onSave={handleSaveOrder}
+      />
+
+      {/* New Order Dialog */}
+      <NewOrderDialog
+        isOpen={isNewOrderOpen}
+        onClose={() => setIsNewOrderOpen(false)}
+        onSave={handleNewOrder}
+      />
     </div>
   );
 };

@@ -9,12 +9,15 @@ import {
   Clock,
   DollarSign
 } from "lucide-react";
+import { getDashboardStats, productionOrders } from "@/data/mockData";
 
 const Dashboard = () => {
+  const stats = getDashboardStats();
+  
   const kpiData = [
     {
       title: "Total Production Orders",
-      value: "145",
+      value: stats.totalProductionOrders.toString(),
       change: "+12%",
       changeType: "increase" as const,
       icon: Package,
@@ -22,7 +25,7 @@ const Dashboard = () => {
     },
     {
       title: "Active Purchase Orders",
-      value: "28",
+      value: stats.activePurchaseOrders.toString(),
       change: "+8%", 
       changeType: "increase" as const,
       icon: ShoppingCart,
@@ -30,7 +33,7 @@ const Dashboard = () => {
     },
     {
       title: "Material Shortfall",
-      value: "8,691",
+      value: stats.materialShortfall.toLocaleString(),
       change: "-5%",
       changeType: "decrease" as const,
       icon: AlertTriangle,
@@ -38,7 +41,7 @@ const Dashboard = () => {
     },
     {
       title: "Revenue (Monthly)",
-      value: "₹2.4M",
+      value: `₹${(stats.monthlyRevenue / 100000).toFixed(1)}L`,
       change: "+15%",
       changeType: "increase" as const,
       icon: DollarSign,
@@ -46,13 +49,7 @@ const Dashboard = () => {
     },
   ];
 
-  const recentOrders = [
-    { id: "WO-2024-001", product: "Widget A v3", status: "Completed", progress: 100 },
-    { id: "WO-2024-002", product: "Gadget B v3", status: "In Progress", progress: 75 },
-    { id: "WO-2024-003", product: "Component C v3", status: "Scheduled", progress: 0 },
-    { id: "WO-2024-004", product: "Assembly D v3", status: "Delayed", progress: 45 },
-    { id: "WO-2024-005", product: "Module E v3", status: "In Progress", progress: 85 },
-  ];
+  const recentOrders = productionOrders;
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -144,7 +141,7 @@ const Dashboard = () => {
               <div className="flex items-center justify-between p-3 border rounded-lg">
                 <div>
                   <p className="font-medium">Total Required</p>
-                  <p className="text-2xl font-bold text-foreground">17,772</p>
+                  <p className="text-2xl font-bold text-foreground">{stats.totalRequired.toLocaleString()}</p>
                 </div>
                 <Package className="h-8 w-8 text-muted-foreground" />
               </div>
@@ -152,7 +149,7 @@ const Dashboard = () => {
               <div className="flex items-center justify-between p-3 border rounded-lg">
                 <div>
                   <p className="font-medium">Available Stock</p>
-                  <p className="text-2xl font-bold text-erp-success">6,878</p>
+                  <p className="text-2xl font-bold text-erp-success">{stats.availableStock.toLocaleString()}</p>
                 </div>
                 <CheckCircle className="h-8 w-8 text-erp-success" />
               </div>
@@ -160,7 +157,7 @@ const Dashboard = () => {
               <div className="flex items-center justify-between p-3 border rounded-lg">
                 <div>
                   <p className="font-medium">Shortfall</p>
-                  <p className="text-2xl font-bold text-erp-danger">8,691</p>
+                  <p className="text-2xl font-bold text-erp-danger">{stats.shortfall.toLocaleString()}</p>
                 </div>
                 <AlertTriangle className="h-8 w-8 text-erp-danger" />
               </div>
@@ -168,7 +165,7 @@ const Dashboard = () => {
               <div className="flex items-center justify-between p-3 border rounded-lg">
                 <div>
                   <p className="font-medium">Items in Shortage</p>
-                  <p className="text-2xl font-bold text-erp-warning">8</p>
+                  <p className="text-2xl font-bold text-erp-warning">{stats.itemsInShortage}</p>
                 </div>
                 <AlertTriangle className="h-8 w-8 text-erp-warning" />
               </div>

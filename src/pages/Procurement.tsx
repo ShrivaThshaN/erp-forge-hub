@@ -11,8 +11,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Plus, Filter, Download, Search, Eye, Edit, Package } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
+import { PaginationComponent } from "@/components/Pagination";
 
-// Dummy data for purchase orders
+// Dummy data for purchase orders (extended for pagination)
 const purchaseOrders = [
   {
     id: "PO-001",
@@ -78,6 +79,98 @@ const purchaseOrders = [
     deliveryDate: "2024-02-05",
     status: "Pending",
     relatedOrder: "ORD-005"
+  },
+  // Additional orders for pagination
+  {
+    id: "PO-006",
+    vendor: "Circuit Board Solutions",
+    material: "PCB Boards",
+    quantity: 150,
+    unit: "pieces",
+    unitPrice: 95,
+    totalAmount: 14250,
+    orderDate: "2024-01-20",
+    deliveryDate: "2024-02-08",
+    status: "Approved",
+    relatedOrder: "ORD-006"
+  },
+  {
+    id: "PO-007",
+    vendor: "Hydraulic Systems Ltd.",
+    material: "Hydraulic Cylinders",
+    quantity: 25,
+    unit: "pieces",
+    unitPrice: 450,
+    totalAmount: 11250,
+    orderDate: "2024-01-21",
+    deliveryDate: "2024-02-10",
+    status: "Delivered",
+    relatedOrder: "ORD-007"
+  },
+  {
+    id: "PO-008",
+    vendor: "Copper Wire Co.",
+    material: "Electrical Wires",
+    quantity: 1000,
+    unit: "meters",
+    unitPrice: 12,
+    totalAmount: 12000,
+    orderDate: "2024-01-22",
+    deliveryDate: "2024-02-12",
+    status: "In Transit",
+    relatedOrder: "ORD-008"
+  },
+  {
+    id: "PO-009",
+    vendor: "Plastic Molding Inc.",
+    material: "Injection Molded Parts",
+    quantity: 300,
+    unit: "pieces",
+    unitPrice: 28,
+    totalAmount: 8400,
+    orderDate: "2024-01-23",
+    deliveryDate: "2024-02-15",
+    status: "Pending",
+    relatedOrder: "ORD-009"
+  },
+  {
+    id: "PO-010",
+    vendor: "Stainless Steel Corp",
+    material: "Stainless Steel Pipes",
+    quantity: 50,
+    unit: "pieces",
+    unitPrice: 180,
+    totalAmount: 9000,
+    orderDate: "2024-01-24",
+    deliveryDate: "2024-02-18",
+    status: "Approved",
+    relatedOrder: "ORD-010"
+  },
+  {
+    id: "PO-011",
+    vendor: "LED Technology Ltd.",
+    material: "LED Strips",
+    quantity: 200,
+    unit: "pieces",
+    unitPrice: 45,
+    totalAmount: 9000,
+    orderDate: "2024-01-25",
+    deliveryDate: "2024-02-20",
+    status: "Delivered",
+    relatedOrder: "ORD-011"
+  },
+  {
+    id: "PO-012",
+    vendor: "Valve Systems Inc.",
+    material: "Industrial Valves",
+    quantity: 15,
+    unit: "pieces",
+    unitPrice: 320,
+    totalAmount: 4800,
+    orderDate: "2024-01-26",
+    deliveryDate: "2024-02-22",
+    status: "In Transit",
+    relatedOrder: "ORD-012"
   }
 ];
 
@@ -97,6 +190,8 @@ const Procurement = () => {
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
   const [selectedVendors, setSelectedVendors] = useState<string[]>([]);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   // Filter data based on search and filters
   const filteredOrders = purchaseOrders.filter(order => {
@@ -111,6 +206,11 @@ const Procurement = () => {
     
     return matchesSearch && matchesStatus && matchesVendor;
   });
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedOrders = filteredOrders.slice(startIndex, startIndex + itemsPerPage);
 
   const totalValue = filteredOrders.reduce((sum, order) => sum + order.totalAmount, 0);
   const pendingOrders = filteredOrders.filter(order => order.status === "Pending").length;
@@ -355,7 +455,7 @@ const Procurement = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredOrders.map((order) => (
+              {paginatedOrders.map((order) => (
                 <TableRow key={order.id}>
                   <TableCell className="font-medium">{order.id}</TableCell>
                   <TableCell>{order.vendor}</TableCell>
@@ -386,6 +486,15 @@ const Procurement = () => {
               ))}
             </TableBody>
           </Table>
+          
+          {/* Pagination */}
+          <div className="mt-4 flex justify-center">
+            <PaginationComponent
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
+          </div>
         </CardContent>
       </Card>
     </div>

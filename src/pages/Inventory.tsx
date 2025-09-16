@@ -7,87 +7,18 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Search, Filter, Download, Package, TrendingDown, AlertTriangle, CheckCircle } from "lucide-react";
+import { inventoryData, getInventoryStats } from "@/data/mockData";
+import { PaginationComponent } from "@/components/Pagination";
 
 const Inventory = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [locationFilter, setLocationFilter] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
-  const inventoryData = [
-    {
-      itemCode: "INV-0001",
-      itemName: "Aluminum Rods 6mm",
-      category: "Raw Materials",
-      currentStock: 450,
-      minimumStock: 200,
-      maximumStock: 1000,
-      location: "Warehouse A-1",
-      unitPrice: "₹12.50",
-      status: "In Stock",
-      lastUpdated: "2024-01-28"
-    },
-    {
-      itemCode: "INV-0002", 
-      itemName: "Steel Bolts M8x50",
-      category: "Fasteners",
-      currentStock: 85,
-      minimumStock: 100,
-      maximumStock: 500,
-      location: "Warehouse B-2",
-      unitPrice: "₹0.75",
-      status: "Low Stock",
-      lastUpdated: "2024-01-27"
-    },
-    {
-      itemCode: "INV-0003",
-      itemName: "Rubber Gaskets",
-      category: "Sealing",
-      currentStock: 0,
-      minimumStock: 50,
-      maximumStock: 300,
-      location: "Warehouse C-1",
-      unitPrice: "₹3.25",
-      status: "Out of Stock",
-      lastUpdated: "2024-01-26"
-    },
-    {
-      itemCode: "INV-0004",
-      itemName: "Electric Motors 5HP",
-      category: "Components", 
-      currentStock: 15,
-      minimumStock: 10,
-      maximumStock: 50,
-      location: "Warehouse D-3",
-      unitPrice: "₹450.00",
-      status: "In Stock",
-      lastUpdated: "2024-01-25"
-    },
-    {
-      itemCode: "INV-0005",
-      itemName: "Circuit Boards PCB-A1",
-      category: "Electronics",
-      currentStock: 75,
-      minimumStock: 25,
-      maximumStock: 200,
-      location: "Warehouse E-1",
-      unitPrice: "₹85.00",
-      status: "In Stock",
-      lastUpdated: "2024-01-24"
-    },
-    {
-      itemCode: "INV-0006",
-      itemName: "Hydraulic Cylinders", 
-      category: "Components",
-      currentStock: 8,
-      minimumStock: 15,
-      maximumStock: 60,
-      location: "Warehouse F-2",
-      unitPrice: "₹275.00",
-      status: "Low Stock",
-      lastUpdated: "2024-01-23"
-    }
-  ];
+  const stats = getInventoryStats();
 
   const filteredData = inventoryData.filter(item => {
     const matchesSearch = item.itemName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -100,6 +31,11 @@ const Inventory = () => {
     
     return matchesSearch && matchesCategory && matchesStatus && matchesLocation;
   });
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedData = filteredData.slice(startIndex, startIndex + itemsPerPage);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -208,7 +144,7 @@ const Inventory = () => {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold">1,247</div>
+                <div className="text-2xl font-bold">{stats.totalItems}</div>
                 <div className="text-sm text-muted-foreground">Total Items</div>
               </div>
               <Package className="h-8 w-8 text-muted-foreground" />
@@ -219,7 +155,7 @@ const Inventory = () => {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold text-erp-success">890</div>
+                <div className="text-2xl font-bold text-erp-success">{stats.inStock}</div>
                 <div className="text-sm text-muted-foreground">In Stock</div>
               </div>
               <CheckCircle className="h-8 w-8 text-erp-success" />
@@ -230,7 +166,7 @@ const Inventory = () => {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold text-erp-warning">145</div>
+                <div className="text-2xl font-bold text-erp-warning">{stats.lowStock}</div>
                 <div className="text-sm text-muted-foreground">Low Stock</div>
               </div>
               <TrendingDown className="h-8 w-8 text-erp-warning" />
@@ -241,7 +177,7 @@ const Inventory = () => {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold text-erp-danger">32</div>
+                <div className="text-2xl font-bold text-erp-danger">{stats.outOfStock}</div>
                 <div className="text-sm text-muted-foreground">Out of Stock</div>
               </div>
               <AlertTriangle className="h-8 w-8 text-erp-danger" />
@@ -286,7 +222,7 @@ const Inventory = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredData.map((item, index) => (
+                {paginatedData.map((item, index) => (
                   <TableRow key={index}>
                     <TableCell className="font-medium">{item.itemCode}</TableCell>
                     <TableCell>{item.itemName}</TableCell>
@@ -305,6 +241,15 @@ const Inventory = () => {
                 ))}
               </TableBody>
             </Table>
+          </div>
+          
+          {/* Pagination */}
+          <div className="mt-4 flex justify-center">
+            <PaginationComponent
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
           </div>
         </CardContent>
       </Card>
