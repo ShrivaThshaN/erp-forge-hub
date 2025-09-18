@@ -6,73 +6,21 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Search, Filter, Download, CheckCircle, XCircle, AlertTriangle, Clock } from "lucide-react";
+import { Plus, Search, Filter, Download, CheckCircle, XCircle, AlertTriangle, Clock, Edit, Trash2 } from "lucide-react";
+import { PaginationComponent } from "@/components/Pagination";
+import { qualityControlData } from "@/data/mockData";
+import { useUser } from "@/contexts/UserContext";
 
 const Quality = () => {
+  const { user } = useUser();
   const [searchTerm, setSearchTerm] = useState("");
   const [resultFilter, setResultFilter] = useState("all");
   const [testTypeFilter, setTestTypeFilter] = useState("all");
   const [inspectorFilter, setInspectorFilter] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
-  const qualityData = [
-    {
-      inspectionId: "QC-2024-001",
-      productName: "Widget A v3",
-      batchNumber: "BA-001",
-      inspectionDate: "2024-01-15",
-      inspector: "John Smith",
-      testType: "Dimensional Check",
-      result: "Pass",
-      defectCount: 0,
-      notes: "All measurements within tolerance"
-    },
-    {
-      inspectionId: "QC-2024-002",
-      productName: "Gadget B v3", 
-      batchNumber: "BB-002",
-      inspectionDate: "2024-01-16",
-      inspector: "Sarah Johnson",
-      testType: "Functional Test",
-      result: "Fail",
-      defectCount: 3,
-      notes: "Motor performance below specification"
-    },
-    {
-      inspectionId: "QC-2024-003",
-      productName: "Component C v3",
-      batchNumber: "BC-003",
-      inspectionDate: "2024-01-17",
-      inspector: "Mike Wilson",
-      testType: "Material Analysis",
-      result: "Pass",
-      defectCount: 0,
-      notes: "Material composition verified"
-    },
-    {
-      inspectionId: "QC-2024-004",
-      productName: "Assembly D v3",
-      batchNumber: "BD-004", 
-      inspectionDate: "2024-01-18",
-      inspector: "Emily Davis",
-      testType: "Assembly Check",
-      result: "Pending",
-      defectCount: 0,
-      notes: "Inspection in progress"
-    },
-    {
-      inspectionId: "QC-2024-005",
-      productName: "Module E v3",
-      batchNumber: "BE-005",
-      inspectionDate: "2024-01-19",
-      inspector: "Robert Brown",
-      testType: "Stress Test",
-      result: "Warning", 
-      defectCount: 1,
-      notes: "Minor surface defect detected"
-    }
-  ];
-
-  const filteredData = qualityData.filter(item => {
+  const filteredData = qualityControlData.filter(item => {
     const matchesSearch = item.inspectionId.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.batchNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -84,6 +32,17 @@ const Quality = () => {
     
     return matchesSearch && matchesResult && matchesTestType && matchesInspector;
   });
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedData = filteredData.slice(startIndex, startIndex + itemsPerPage);
+  
+  // Calculate stats from actual data
+  const totalInspections = qualityControlData.length;
+  const passed = qualityControlData.filter(item => item.result === "Pass").length;
+  const failed = qualityControlData.filter(item => item.result === "Fail").length;
+  const passRate = totalInspections > 0 ? ((passed / totalInspections) * 100).toFixed(1) : "0";
 
   const getResultBadge = (result: string) => {
     switch (result) {
@@ -197,12 +156,12 @@ const Quality = () => {
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold">245</div>
+                <div className="text-2xl font-bold">{totalInspections}</div>
                 <div className="text-sm text-muted-foreground">Total Inspections</div>
               </div>
               <CheckCircle className="h-8 w-8 text-muted-foreground" />
@@ -213,7 +172,7 @@ const Quality = () => {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold text-erp-success">210</div>
+                <div className="text-2xl font-bold text-erp-success">{passed}</div>
                 <div className="text-sm text-muted-foreground">Passed</div>
               </div>
               <CheckCircle className="h-8 w-8 text-erp-success" />
@@ -224,7 +183,7 @@ const Quality = () => {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold text-erp-danger">18</div>
+                <div className="text-2xl font-bold text-erp-danger">{failed}</div>
                 <div className="text-sm text-muted-foreground">Failed</div>
               </div>
               <XCircle className="h-8 w-8 text-erp-danger" />
@@ -235,7 +194,7 @@ const Quality = () => {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold">96.2%</div>
+                <div className="text-2xl font-bold">{passRate}%</div>
                 <div className="text-sm text-muted-foreground">Pass Rate</div>
               </div>
               <AlertTriangle className="h-8 w-8 text-erp-success" />
@@ -277,10 +236,11 @@ const Quality = () => {
                   <TableHead>Defects</TableHead>
                   <TableHead>Result</TableHead>
                   <TableHead>Notes</TableHead>
+                  {user.role === 'admin' && <TableHead>Actions</TableHead>}
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredData.map((item, index) => (
+                {paginatedData.map((item, index) => (
                   <TableRow key={index}>
                     <TableCell className="font-medium">{item.inspectionId}</TableCell>
                     <TableCell>{item.productName}</TableCell>
@@ -300,10 +260,31 @@ const Quality = () => {
                     <TableCell className="max-w-xs truncate" title={item.notes}>
                       {item.notes}
                     </TableCell>
+                    {user.role === 'admin' && (
+                      <TableCell>
+                        <div className="flex space-x-2">
+                          <Button variant="outline" size="sm">
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button variant="outline" size="sm">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    )}
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
+          </div>
+
+          {/* Pagination */}
+          <div className="flex justify-center mt-6">
+            <PaginationComponent
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
           </div>
         </CardContent>
       </Card>

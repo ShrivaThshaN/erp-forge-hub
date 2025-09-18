@@ -384,23 +384,590 @@ export const getOrderStats = () => {
   return { totalOrders, delivered, inProgress, totalValue };
 };
 
+// Extended data for Material Requirement Planning
+export const materialRequirementData = [
+  // Glass Dining Table (CO-2024-001) requirements
+  {
+    materialCode: "MAT-GT-001",
+    materialName: "Tempered Glass Top", 
+    requiredQty: 1,
+    availableQty: 0,
+    shortfall: 1,
+    supplier: "Premium Glass Solutions",
+    leadTime: "7 days",
+    status: "Required",
+    plannedDate: "2024-01-10",
+    relatedOrder: "CO-2024-001"
+  },
+  {
+    materialCode: "MAT-GT-002",
+    materialName: "Steel Table Base",
+    requiredQty: 1, 
+    availableQty: 2,
+    shortfall: 0,
+    supplier: "MetalCraft Industries",
+    leadTime: "5 days", 
+    status: "Available",
+    plannedDate: "2024-01-08",
+    relatedOrder: "CO-2024-001"
+  },
+  // Steel Office Desk (CO-2024-002) requirements
+  {
+    materialCode: "MAT-SD-001", 
+    materialName: "Steel Sheets",
+    requiredQty: 4,
+    availableQty: 2,
+    shortfall: 2,
+    supplier: "Steel Supply Co",
+    leadTime: "3 days",
+    status: "Ordered",
+    plannedDate: "2024-01-12",
+    relatedOrder: "CO-2024-002"
+  },
+  {
+    materialCode: "MAT-SD-002",
+    materialName: "Desk Hardware Kit",
+    requiredQty: 2,
+    availableQty: 5, 
+    shortfall: 0,
+    supplier: "Office Components Ltd",
+    leadTime: "2 days",
+    status: "Available", 
+    plannedDate: "2024-01-10",
+    relatedOrder: "CO-2024-002"
+  },
+  // Additional data for pagination
+  {
+    materialCode: "MAT-AL-001",
+    materialName: "Aluminum Extrusions",
+    requiredQty: 50,
+    availableQty: 30,
+    shortfall: 20,
+    supplier: "Aluminum Solutions Inc", 
+    leadTime: "4 days",
+    status: "Shortage",
+    plannedDate: "2024-01-14",
+    relatedOrder: "CO-2024-003"
+  },
+  {
+    materialCode: "MAT-RG-001",
+    materialName: "Rubber Material",
+    requiredQty: 25,
+    availableQty: 40,
+    shortfall: 0,
+    supplier: "Rubber Industries",
+    leadTime: "2 days",
+    status: "Available",
+    plannedDate: "2024-01-16",
+    relatedOrder: "CO-2024-004"
+  },
+  {
+    materialCode: "MAT-MA-001",
+    materialName: "Electric Motor Core",
+    requiredQty: 5,
+    availableQty: 1,
+    shortfall: 4,
+    supplier: "Precision Motors Ltd",
+    leadTime: "10 days",
+    status: "Required",
+    plannedDate: "2024-01-18",
+    relatedOrder: "CO-2024-005"
+  },
+  {
+    materialCode: "MAT-MA-002",
+    materialName: "Copper Wiring",
+    requiredQty: 500,
+    availableQty: 200,
+    shortfall: 300,
+    supplier: "Electrical Components Co",
+    leadTime: "6 days",
+    status: "Ordered",
+    plannedDate: "2024-01-20",
+    relatedOrder: "CO-2024-005"
+  },
+  // More entries for pagination
+  {
+    materialCode: "MAT-PC-001",
+    materialName: "Plastic Components",
+    requiredQty: 100,
+    availableQty: 75,
+    shortfall: 25,
+    supplier: "Plastic Tech Ltd",
+    leadTime: "3 days",
+    status: "Shortage",
+    plannedDate: "2024-01-22",
+    relatedOrder: "CO-2024-006"
+  },
+  {
+    materialCode: "MAT-SS-001",
+    materialName: "Stainless Steel Pipes",
+    requiredQty: 20,
+    availableQty: 0,
+    shortfall: 20,
+    supplier: "Stainless Corp",
+    leadTime: "8 days",
+    status: "Required",
+    plannedDate: "2024-01-24",
+    relatedOrder: "CO-2024-007"
+  },
+  {
+    materialCode: "MAT-LED-001",
+    materialName: "LED Components",
+    requiredQty: 200,
+    availableQty: 180,
+    shortfall: 20,
+    supplier: "LED Systems Inc",
+    leadTime: "4 days",
+    status: "Shortage",
+    plannedDate: "2024-01-26",
+    relatedOrder: "CO-2024-008"
+  },
+  {
+    materialCode: "MAT-VL-001",
+    materialName: "Industrial Valves",
+    requiredQty: 15,
+    availableQty: 12,
+    shortfall: 3,
+    supplier: "Valve Technologies",
+    leadTime: "5 days",
+    status: "Shortage",
+    plannedDate: "2024-01-28",
+    relatedOrder: "CO-2024-009"
+  }
+];
+
+// Extended data for Production Schedule
+export const productionScheduleData = [
+  {
+    scheduleId: "PS-2024-001",
+    productName: "Glass Dining Table",
+    orderNumber: "CO-2024-001",
+    plannedStartDate: "2024-02-01",
+    plannedEndDate: "2024-02-15",
+    actualStartDate: "2024-02-01",
+    actualEndDate: "",
+    status: "In Progress",
+    priority: "High",
+    workstation: "Assembly Line A",
+    supervisor: "John Smith",
+    progress: 65
+  },
+  {
+    scheduleId: "PS-2024-002",
+    productName: "Steel Office Desk",
+    orderNumber: "CO-2024-002",
+    plannedStartDate: "2024-02-03",
+    plannedEndDate: "2024-02-18",
+    actualStartDate: "2024-02-03",
+    actualEndDate: "2024-02-17",
+    status: "Completed",
+    priority: "Medium",
+    workstation: "Fabrication Bay B",
+    supervisor: "Sarah Johnson",
+    progress: 100
+  },
+  {
+    scheduleId: "PS-2024-003",
+    productName: "Aluminum Window Frame",
+    orderNumber: "CO-2024-003",
+    plannedStartDate: "2024-02-05",
+    plannedEndDate: "2024-02-20",
+    actualStartDate: "",
+    actualEndDate: "",
+    status: "Scheduled",
+    priority: "Low",
+    workstation: "Extrusion Line C",
+    supervisor: "Mike Wilson",
+    progress: 0
+  },
+  {
+    scheduleId: "PS-2024-004",
+    productName: "Rubber Gasket Set",
+    orderNumber: "CO-2024-004",
+    plannedStartDate: "2024-02-07",
+    plannedEndDate: "2024-02-22",
+    actualStartDate: "2024-02-08",
+    actualEndDate: "",
+    status: "Delayed",
+    priority: "Medium",
+    workstation: "Molding Station D",
+    supervisor: "Emily Davis",
+    progress: 30
+  },
+  {
+    scheduleId: "PS-2024-005",
+    productName: "Motor Assembly Unit",
+    orderNumber: "CO-2024-005",
+    plannedStartDate: "2024-02-10",
+    plannedEndDate: "2024-02-25",
+    actualStartDate: "2024-02-10",
+    actualEndDate: "",
+    status: "In Progress",
+    priority: "High",
+    workstation: "Motor Assembly E",
+    supervisor: "Robert Brown",
+    progress: 45
+  },
+  // Additional entries for pagination
+  {
+    scheduleId: "PS-2024-006",
+    productName: "Circuit Board Assembly",
+    orderNumber: "CO-2024-006",
+    plannedStartDate: "2024-02-12",
+    plannedEndDate: "2024-02-26",
+    actualStartDate: "",
+    actualEndDate: "",
+    status: "Scheduled",
+    priority: "High",
+    workstation: "Electronics Lab F",
+    supervisor: "Lisa Chen",
+    progress: 0
+  },
+  {
+    scheduleId: "PS-2024-007",
+    productName: "Hydraulic System",
+    orderNumber: "CO-2024-007",
+    plannedStartDate: "2024-02-14",
+    plannedEndDate: "2024-02-27",
+    actualStartDate: "2024-02-14",
+    actualEndDate: "",
+    status: "In Progress",
+    priority: "Medium",
+    workstation: "Hydraulics Bay G",
+    supervisor: "Tom Anderson",
+    progress: 20
+  },
+  {
+    scheduleId: "PS-2024-008",
+    productName: "Stainless Steel Propeller",
+    orderNumber: "CO-2024-008",
+    plannedStartDate: "2024-02-16",
+    plannedEndDate: "2024-02-28",
+    actualStartDate: "",
+    actualEndDate: "",
+    status: "On Hold",
+    priority: "Low",
+    workstation: "Precision Machining H",
+    supervisor: "Alex Rodriguez",
+    progress: 0
+  },
+  {
+    scheduleId: "PS-2024-009",
+    productName: "Solar Panel Frame",
+    orderNumber: "CO-2024-009",
+    plannedStartDate: "2024-02-18",
+    plannedEndDate: "2024-03-01",
+    actualStartDate: "2024-02-18",
+    actualEndDate: "",
+    status: "In Progress",
+    priority: "Medium",
+    workstation: "Frame Assembly I",
+    supervisor: "Maria Garcia",
+    progress: 75
+  },
+  {
+    scheduleId: "PS-2024-010",
+    productName: "Titanium Wing Parts",
+    orderNumber: "CO-2024-010",
+    plannedStartDate: "2024-02-20",
+    plannedEndDate: "2024-03-02",
+    actualStartDate: "2024-02-20",
+    actualEndDate: "2024-03-01",
+    status: "Completed",
+    priority: "High",
+    workstation: "Aerospace Unit J",
+    supervisor: "David Kim",
+    progress: 100
+  },
+  {
+    scheduleId: "PS-2024-011",
+    productName: "Medical Instruments",
+    orderNumber: "CO-2024-011",
+    plannedStartDate: "2024-02-22",
+    plannedEndDate: "2024-03-03",
+    actualStartDate: "",
+    actualEndDate: "",
+    status: "Scheduled",
+    priority: "High",
+    workstation: "Clean Room K",
+    supervisor: "Dr. Jennifer Lee",
+    progress: 0
+  },
+  {
+    scheduleId: "PS-2024-012",
+    productName: "Conveyor Belt System",
+    orderNumber: "CO-2024-012",
+    plannedStartDate: "2024-02-24",
+    plannedEndDate: "2024-03-04",
+    actualStartDate: "2024-02-25",
+    actualEndDate: "",
+    status: "Delayed",
+    priority: "Medium",
+    workstation: "Heavy Assembly L",
+    supervisor: "Mark Thompson",
+    progress: 15
+  }
+];
+
+// Extended Quality Control Data
+export const qualityControlData = [
+  {
+    inspectionId: "QC-2024-001",
+    productName: "Widget A v3",
+    batchNumber: "BA-001",
+    inspectionDate: "2024-01-15",
+    inspector: "John Smith",
+    testType: "Dimensional Check",
+    result: "Pass",
+    defectCount: 0,
+    notes: "All measurements within tolerance"
+  },
+  {
+    inspectionId: "QC-2024-002",
+    productName: "Gadget B v3", 
+    batchNumber: "BB-002",
+    inspectionDate: "2024-01-16",
+    inspector: "Sarah Johnson",
+    testType: "Functional Test",
+    result: "Fail",
+    defectCount: 3,
+    notes: "Motor performance below specification"
+  },
+  {
+    inspectionId: "QC-2024-003",
+    productName: "Component C v3",
+    batchNumber: "BC-003",
+    inspectionDate: "2024-01-17",
+    inspector: "Mike Wilson",
+    testType: "Material Analysis",
+    result: "Pass",
+    defectCount: 0,
+    notes: "Material composition verified"
+  },
+  // Additional entries...
+  {
+    inspectionId: "QC-2024-004",
+    productName: "Assembly D v3",
+    batchNumber: "BD-004", 
+    inspectionDate: "2024-01-18",
+    inspector: "Emily Davis",
+    testType: "Assembly Check",
+    result: "Pending",
+    defectCount: 0,
+    notes: "Inspection in progress"
+  },
+  {
+    inspectionId: "QC-2024-005",
+    productName: "Module E v3",
+    batchNumber: "BE-005",
+    inspectionDate: "2024-01-19",
+    inspector: "Robert Brown",
+    testType: "Stress Test",
+    result: "Warning", 
+    defectCount: 1,
+    notes: "Minor surface defect detected"
+  },
+  // More data for pagination...
+  {
+    inspectionId: "QC-2024-006",
+    productName: "Circuit Board PCB-A1",
+    batchNumber: "CB-006",
+    inspectionDate: "2024-01-20",
+    inspector: "Lisa Chen",
+    testType: "Electrical Test",
+    result: "Pass",
+    defectCount: 0,
+    notes: "All circuits functioning correctly"
+  },
+  {
+    inspectionId: "QC-2024-007",
+    productName: "Hydraulic Cylinder HC-7",
+    batchNumber: "HC-007",
+    inspectionDate: "2024-01-21",
+    inspector: "Tom Anderson",
+    testType: "Pressure Test",
+    result: "Fail",
+    defectCount: 2,
+    notes: "Pressure leak detected at seal"
+  },
+  {
+    inspectionId: "QC-2024-008",
+    productName: "Steel Propeller SP-8",
+    batchNumber: "SP-008",
+    inspectionDate: "2024-01-22",
+    inspector: "Alex Rodriguez",
+    testType: "Balance Test",
+    result: "Pass",
+    defectCount: 0,
+    notes: "Perfect balance achieved"
+  },
+  {
+    inspectionId: "QC-2024-009",
+    productName: "Solar Frame SF-9",
+    batchNumber: "SF-009",
+    inspectionDate: "2024-01-23",
+    inspector: "Maria Garcia",
+    testType: "Weather Resistance",
+    result: "Warning",
+    defectCount: 1,
+    notes: "Minor corrosion on corner joint"
+  },
+  {
+    inspectionId: "QC-2024-010",
+    productName: "Titanium Part TP-10",
+    batchNumber: "TP-010",
+    inspectionDate: "2024-01-24",
+    inspector: "David Kim",
+    testType: "Strength Test",
+    result: "Pass",
+    defectCount: 0,
+    notes: "Exceeds strength requirements"
+  }
+];
+
+// Extended Logistics Data
+export const logisticsData = [
+  {
+    shipmentId: "SH-2024-001",
+    orderNumber: "CO-2024-001",
+    carrier: "FedEx Express",
+    trackingNumber: "1234567890",
+    origin: "Warehouse A",
+    destination: "New York, NY",
+    departureDate: "2024-01-15",
+    estimatedArrival: "2024-01-17",
+    status: "In Transit",
+    priority: "High"
+  },
+  {
+    shipmentId: "SH-2024-002",
+    orderNumber: "CO-2024-002", 
+    carrier: "UPS Ground",
+    trackingNumber: "1Z9876543210",
+    origin: "Warehouse B",
+    destination: "Los Angeles, CA",
+    departureDate: "2024-01-16",
+    estimatedArrival: "2024-01-19", 
+    status: "Delivered",
+    priority: "Medium"
+  },
+  {
+    shipmentId: "SH-2024-003",
+    orderNumber: "CO-2024-003",
+    carrier: "DHL International",
+    trackingNumber: "DHL123456789",
+    origin: "Warehouse C",
+    destination: "Chicago, IL", 
+    departureDate: "2024-01-18",
+    estimatedArrival: "2024-01-20",
+    status: "Preparing",
+    priority: "Low"
+  },
+  {
+    shipmentId: "SH-2024-004",
+    orderNumber: "CO-2024-004",
+    carrier: "USPS Priority",
+    trackingNumber: "USPS987654321",
+    origin: "Warehouse A",
+    destination: "Houston, TX",
+    departureDate: "2024-01-20",
+    estimatedArrival: "2024-01-22",
+    status: "Delayed",
+    priority: "High"
+  },
+  {
+    shipmentId: "SH-2024-005",
+    orderNumber: "CO-2024-005",
+    carrier: "FedEx Ground", 
+    trackingNumber: "FDX555444333",
+    origin: "Warehouse D",
+    destination: "Miami, FL",
+    departureDate: "2024-01-22",
+    estimatedArrival: "2024-01-24",
+    status: "In Transit",
+    priority: "Medium"
+  },
+  // Additional entries for pagination...
+  {
+    shipmentId: "SH-2024-006",
+    orderNumber: "CO-2024-006",
+    carrier: "DHL Express",
+    trackingNumber: "DHL987654321",
+    origin: "Warehouse E",
+    destination: "Seattle, WA",
+    departureDate: "2024-01-24",
+    estimatedArrival: "2024-01-26",
+    status: "In Transit",
+    priority: "High"
+  },
+  {
+    shipmentId: "SH-2024-007",
+    orderNumber: "CO-2024-007",
+    carrier: "UPS Express",
+    trackingNumber: "1Z1234567890",
+    origin: "Warehouse F",
+    destination: "Boston, MA",
+    departureDate: "2024-01-25",
+    estimatedArrival: "2024-01-27",
+    status: "Delivered",
+    priority: "Medium"
+  },
+  {
+    shipmentId: "SH-2024-008",
+    orderNumber: "CO-2024-008",
+    carrier: "FedEx International",
+    trackingNumber: "FDX111222333",
+    origin: "Warehouse G",
+    destination: "Denver, CO",
+    departureDate: "2024-01-26",
+    estimatedArrival: "2024-01-28",
+    status: "In Transit",
+    priority: "Low"
+  },
+  {
+    shipmentId: "SH-2024-009",
+    orderNumber: "CO-2024-009",
+    carrier: "USPS Express",
+    trackingNumber: "USPS555666777",
+    origin: "Warehouse H",
+    destination: "Phoenix, AZ",
+    departureDate: "2024-01-27",
+    estimatedArrival: "2024-01-29",
+    status: "Preparing",
+    priority: "Medium"
+  },
+  {
+    shipmentId: "SH-2024-010",
+    orderNumber: "CO-2024-010",
+    carrier: "DHL Ground",
+    trackingNumber: "DHL444555666",
+    origin: "Warehouse I",
+    destination: "Atlanta, GA",
+    departureDate: "2024-01-28",
+    estimatedArrival: "2024-01-30",
+    status: "Delayed",
+    priority: "High"
+  }
+];
+
 export const getDashboardStats = () => {
   const orderStats = getOrderStats();
   const inventoryStats = getInventoryStats();
   
-  // Calculate material requirements
-  const totalRequired = 17772;
-  const availableStock = 6878;
-  const shortfall = totalRequired - availableStock;
+  // Calculate material requirements based on actual data
+  const totalRequired = materialRequirementData.reduce((sum, item) => sum + item.requiredQty, 0);
+  const availableStock = materialRequirementData.reduce((sum, item) => sum + item.availableQty, 0);
+  const shortfall = materialRequirementData.reduce((sum, item) => sum + item.shortfall, 0);
+  const itemsInShortage = materialRequirementData.filter(item => item.shortfall > 0).length;
 
   return {
-    totalProductionOrders: 145,
+    totalProductionOrders: productionScheduleData.length,
     activePurchaseOrders: 28,
     materialShortfall: shortfall,
     monthlyRevenue: orderStats.totalValue,
     totalRequired,
     availableStock,
     shortfall,
-    itemsInShortage: inventoryStats.outOfStock
+    itemsInShortage
   };
 };

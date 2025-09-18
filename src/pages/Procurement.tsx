@@ -12,6 +12,7 @@ import { Plus, Filter, Download, Search, Eye, Edit, Package } from "lucide-react
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
 import { PaginationComponent } from "@/components/Pagination";
+import { useUser } from "@/contexts/UserContext";
 
 // Dummy data for purchase orders (extended for pagination)
 const purchaseOrders = [
@@ -186,6 +187,7 @@ const getStatusColor = (status: string) => {
 };
 
 const Procurement = () => {
+  const { user } = useUser();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
   const [selectedVendors, setSelectedVendors] = useState<string[]>([]);

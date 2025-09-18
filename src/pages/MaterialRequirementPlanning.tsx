@@ -6,120 +6,22 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Filter, Download, Search } from "lucide-react";
+import { Filter, Download, Search, Edit, Trash2 } from "lucide-react";
+import { PaginationComponent } from "@/components/Pagination";
+import { materialRequirementData } from "@/data/mockData";
+import { useUser } from "@/contexts/UserContext";
 
 const MaterialRequirementPlanning = () => {
+  const { user } = useUser();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [supplierFilter, setSupplierFilter] = useState("all");
   const [materialFilter, setMaterialFilter] = useState("all");
   const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
-  const materialData = [
-    // Glass Dining Table (CO-2024-001) requirements
-    {
-      materialCode: "MAT-GT-001",
-      materialName: "Tempered Glass Top", 
-      requiredQty: 1,
-      availableQty: 0,
-      shortfall: 1,
-      supplier: "Premium Glass Solutions",
-      leadTime: "7 days",
-      status: "Required",
-      plannedDate: "2024-01-10",
-      relatedOrder: "CO-2024-001"
-    },
-    {
-      materialCode: "MAT-GT-002",
-      materialName: "Steel Table Base",
-      requiredQty: 1, 
-      availableQty: 2,
-      shortfall: 0,
-      supplier: "MetalCraft Industries",
-      leadTime: "5 days", 
-      status: "Available",
-      plannedDate: "2024-01-08",
-      relatedOrder: "CO-2024-001"
-    },
-    // Steel Office Desk (CO-2024-002) requirements
-    {
-      materialCode: "MAT-SD-001", 
-      materialName: "Steel Sheets",
-      requiredQty: 4,
-      availableQty: 2,
-      shortfall: 2,
-      supplier: "Steel Supply Co",
-      leadTime: "3 days",
-      status: "Ordered",
-      plannedDate: "2024-01-12",
-      relatedOrder: "CO-2024-002"
-    },
-    {
-      materialCode: "MAT-SD-002",
-      materialName: "Desk Hardware Kit",
-      requiredQty: 2,
-      availableQty: 5, 
-      shortfall: 0,
-      supplier: "Office Components Ltd",
-      leadTime: "2 days",
-      status: "Available", 
-      plannedDate: "2024-01-10",
-      relatedOrder: "CO-2024-002"
-    },
-    // Aluminum Window Frame (CO-2024-003) requirements
-    {
-      materialCode: "MAT-WF-001",
-      materialName: "Aluminum Extrusions",
-      requiredQty: 50,
-      availableQty: 30,
-      shortfall: 20,
-      supplier: "Aluminum Solutions Inc", 
-      leadTime: "4 days",
-      status: "Shortage",
-      plannedDate: "2024-01-14",
-      relatedOrder: "CO-2024-003"
-    },
-    // Rubber Gasket Set (CO-2024-004) requirements
-    {
-      materialCode: "MAT-RG-001",
-      materialName: "Rubber Material",
-      requiredQty: 25,
-      availableQty: 40,
-      shortfall: 0,
-      supplier: "Rubber Industries",
-      leadTime: "2 days",
-      status: "Available",
-      plannedDate: "2024-01-16",
-      relatedOrder: "CO-2024-004"
-    },
-    // Motor Assembly (CO-2024-005) requirements
-    {
-      materialCode: "MAT-MA-001",
-      materialName: "Electric Motor Core",
-      requiredQty: 5,
-      availableQty: 1,
-      shortfall: 4,
-      supplier: "Precision Motors Ltd",
-      leadTime: "10 days",
-      status: "Required",
-      plannedDate: "2024-01-18",
-      relatedOrder: "CO-2024-005"
-    },
-    {
-      materialCode: "MAT-MA-002",
-      materialName: "Copper Wiring",
-      requiredQty: 500,
-      availableQty: 200,
-      shortfall: 300,
-      supplier: "Electrical Components Co",
-      leadTime: "6 days",
-      status: "Ordered",
-      plannedDate: "2024-01-20",
-      relatedOrder: "CO-2024-005"
-    }
-  ];
-
-  const filteredData = materialData.filter(item => {
+  const filteredData = materialRequirementData.filter(item => {
     const matchesSearch = item.materialName.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          item.materialCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          item.supplier.toLowerCase().includes(searchTerm.toLowerCase());
@@ -130,6 +32,17 @@ const MaterialRequirementPlanning = () => {
     
     return matchesSearch && matchesStatus && matchesSupplier && matchesMaterial;
   });
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedData = filteredData.slice(startIndex, startIndex + itemsPerPage);
+  
+  // Calculate stats from actual data
+  const totalRequired = materialRequirementData.reduce((sum, item) => sum + item.requiredQty, 0);
+  const availableStock = materialRequirementData.reduce((sum, item) => sum + item.availableQty, 0);
+  const totalShortfall = materialRequirementData.reduce((sum, item) => sum + item.shortfall, 0);
+  const itemsInShortage = materialRequirementData.filter(item => item.shortfall > 0).length;
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -271,25 +184,25 @@ const MaterialRequirementPlanning = () => {
           <div className="grid grid-cols-4 gap-4 mb-6">
             <Card>
               <CardContent className="p-4 text-center">
-                <div className="text-2xl font-bold">17,772</div>
+                <div className="text-2xl font-bold">{totalRequired.toLocaleString()}</div>
                 <div className="text-sm text-muted-foreground">Total Required</div>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="p-4 text-center">
-                <div className="text-2xl font-bold text-erp-success">6,878</div>
+                <div className="text-2xl font-bold text-erp-success">{availableStock.toLocaleString()}</div>
                 <div className="text-sm text-muted-foreground">Available Stock</div>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="p-4 text-center">
-                <div className="text-2xl font-bold text-erp-danger">8,691</div>
+                <div className="text-2xl font-bold text-erp-danger">{totalShortfall.toLocaleString()}</div>
                 <div className="text-sm text-muted-foreground">Total Shortfall</div>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="p-4 text-center">
-                <div className="text-2xl font-bold text-erp-warning">8</div>
+                <div className="text-2xl font-bold text-erp-warning">{itemsInShortage}</div>
                 <div className="text-sm text-muted-foreground">Items in Shortage</div>
               </CardContent>
             </Card>
@@ -325,10 +238,11 @@ const MaterialRequirementPlanning = () => {
                   <TableHead>Lead Time</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Planned Date</TableHead>
+                  {user.role === 'admin' && <TableHead>Actions</TableHead>}
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredData.map((item, index) => (
+                {paginatedData.map((item, index) => (
                   <TableRow key={index}>
                     <TableCell className="font-medium">{item.materialCode}</TableCell>
                     <TableCell>{item.materialName}</TableCell>
@@ -340,10 +254,31 @@ const MaterialRequirementPlanning = () => {
                     <TableCell>{item.leadTime}</TableCell>
                     <TableCell>{getStatusBadge(item.status)}</TableCell>
                     <TableCell>{item.plannedDate}</TableCell>
+                    {user.role === 'admin' && (
+                      <TableCell>
+                        <div className="flex space-x-2">
+                          <Button variant="outline" size="sm">
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button variant="outline" size="sm">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    )}
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
+          </div>
+
+          {/* Pagination */}
+          <div className="flex justify-center mt-6">
+            <PaginationComponent
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
           </div>
         </CardContent>
       </Card>

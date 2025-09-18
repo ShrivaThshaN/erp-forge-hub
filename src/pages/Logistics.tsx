@@ -6,78 +6,21 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Search, Filter, Download, Truck, MapPin, Clock, Package } from "lucide-react";
+import { Plus, Search, Filter, Download, Truck, MapPin, Clock, Package, Edit, Trash2 } from "lucide-react";
+import { PaginationComponent } from "@/components/Pagination";
+import { logisticsData } from "@/data/mockData";
+import { useUser } from "@/contexts/UserContext";
 
 const Logistics = () => {
+  const { user } = useUser();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [carrierFilter, setCarrierFilter] = useState("all");
   const [priorityFilter, setPriorityFilter] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
-  const shipmentData = [
-    {
-      shipmentId: "SH-2024-001",
-      orderNumber: "CO-2024-001",
-      carrier: "FedEx Express",
-      trackingNumber: "1234567890",
-      origin: "Warehouse A",
-      destination: "New York, NY",
-      departureDate: "2024-01-15",
-      estimatedArrival: "2024-01-17",
-      status: "In Transit",
-      priority: "High"
-    },
-    {
-      shipmentId: "SH-2024-002",
-      orderNumber: "CO-2024-002", 
-      carrier: "UPS Ground",
-      trackingNumber: "1Z9876543210",
-      origin: "Warehouse B",
-      destination: "Los Angeles, CA",
-      departureDate: "2024-01-16",
-      estimatedArrival: "2024-01-19", 
-      status: "Delivered",
-      priority: "Medium"
-    },
-    {
-      shipmentId: "SH-2024-003",
-      orderNumber: "CO-2024-003",
-      carrier: "DHL International",
-      trackingNumber: "DHL123456789",
-      origin: "Warehouse C",
-      destination: "Chicago, IL", 
-      departureDate: "2024-01-18",
-      estimatedArrival: "2024-01-20",
-      status: "Preparing",
-      priority: "Low"
-    },
-    {
-      shipmentId: "SH-2024-004",
-      orderNumber: "CO-2024-004",
-      carrier: "USPS Priority",
-      trackingNumber: "USPS987654321",
-      origin: "Warehouse A",
-      destination: "Houston, TX",
-      departureDate: "2024-01-20",
-      estimatedArrival: "2024-01-22",
-      status: "Delayed",
-      priority: "High"
-    },
-    {
-      shipmentId: "SH-2024-005",
-      orderNumber: "CO-2024-005",
-      carrier: "FedEx Ground", 
-      trackingNumber: "FDX555444333",
-      origin: "Warehouse D",
-      destination: "Miami, FL",
-      departureDate: "2024-01-22",
-      estimatedArrival: "2024-01-24",
-      status: "In Transit",
-      priority: "Medium"
-    }
-  ];
-
-  const filteredData = shipmentData.filter(shipment => {
+  const filteredData = logisticsData.filter(shipment => {
     const matchesSearch = shipment.shipmentId.toLowerCase().includes(searchTerm.toLowerCase()) ||
       shipment.orderNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
       shipment.carrier.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -89,6 +32,17 @@ const Logistics = () => {
     
     return matchesSearch && matchesStatus && matchesCarrier && matchesPriority;
   });
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedData = filteredData.slice(startIndex, startIndex + itemsPerPage);
+  
+  // Calculate stats from actual data
+  const totalShipments = logisticsData.length;
+  const inTransit = logisticsData.filter(item => item.status === "In Transit").length;
+  const delivered = logisticsData.filter(item => item.status === "Delivered").length;
+  const delayed = logisticsData.filter(item => item.status === "Delayed").length;
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -198,12 +152,12 @@ const Logistics = () => {
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold">156</div>
+                <div className="text-2xl font-bold">{totalShipments}</div>
                 <div className="text-sm text-muted-foreground">Total Shipments</div>
               </div>
               <Package className="h-8 w-8 text-muted-foreground" />
@@ -214,7 +168,7 @@ const Logistics = () => {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold text-primary">45</div>
+                <div className="text-2xl font-bold text-primary">{inTransit}</div>
                 <div className="text-sm text-muted-foreground">In Transit</div>
               </div>
               <Truck className="h-8 w-8 text-primary" />
@@ -225,7 +179,7 @@ const Logistics = () => {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold text-erp-success">89</div>
+                <div className="text-2xl font-bold text-erp-success">{delivered}</div>
                 <div className="text-sm text-muted-foreground">Delivered</div>
               </div>
               <MapPin className="h-8 w-8 text-erp-success" />
@@ -236,7 +190,7 @@ const Logistics = () => {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold text-erp-danger">8</div>
+                <div className="text-2xl font-bold text-erp-danger">{delayed}</div>
                 <div className="text-sm text-muted-foreground">Delayed</div>
               </div>
               <Clock className="h-8 w-8 text-erp-danger" />
@@ -279,10 +233,11 @@ const Logistics = () => {
                   <TableHead>ETA</TableHead>
                   <TableHead>Priority</TableHead>
                   <TableHead>Status</TableHead>
+                  {user.role === 'admin' && <TableHead>Actions</TableHead>}
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredData.map((shipment, index) => (
+                {paginatedData.map((shipment, index) => (
                   <TableRow key={index}>
                     <TableCell className="font-medium">{shipment.shipmentId}</TableCell>
                     <TableCell>{shipment.orderNumber}</TableCell>
@@ -294,10 +249,31 @@ const Logistics = () => {
                     <TableCell>{shipment.estimatedArrival}</TableCell>
                     <TableCell>{getPriorityBadge(shipment.priority)}</TableCell>
                     <TableCell>{getStatusBadge(shipment.status)}</TableCell>
+                    {user.role === 'admin' && (
+                      <TableCell>
+                        <div className="flex space-x-2">
+                          <Button variant="outline" size="sm">
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button variant="outline" size="sm">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    )}
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
+          </div>
+
+          {/* Pagination */}
+          <div className="flex justify-center mt-6">
+            <PaginationComponent
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
           </div>
         </CardContent>
       </Card>

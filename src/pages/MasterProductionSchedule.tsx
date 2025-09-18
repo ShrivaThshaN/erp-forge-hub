@@ -4,79 +4,53 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Search } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Plus, Filter, Download, Search, Calendar, TrendingUp, Clock, CheckCircle, Edit, Trash2 } from "lucide-react";
+import { PaginationComponent } from "@/components/Pagination";
+import { productionScheduleData } from "@/data/mockData";
+import { useUser } from "@/contexts/UserContext";
 
 const MasterProductionSchedule = () => {
+  const { user } = useUser();
   const [searchTerm, setSearchTerm] = useState("");
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [newSchedule, setNewSchedule] = useState({
-    productName: "",
-    quantity: "",
-    dueDate: "",
-    status: "Scheduled"
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  const filteredData = productionScheduleData.filter(item => {
+    const matchesSearch = item.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         item.scheduleId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         item.orderNumber.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    return matchesSearch;
   });
 
-  const scheduleData = [
-    {
-      productName: "Glass Dining Table",
-      workOrderId: "WO-2024-001", 
-      customerOrder: "CO-2024-001",
-      quantity: 1,
-      dueDate: "2024-02-10T18:30:00.000Z",
-      status: "Scheduled"
-    },
-    {
-      productName: "Steel Office Desk",
-      workOrderId: "WO-2024-002",
-      customerOrder: "CO-2024-002",
-      quantity: 2, 
-      dueDate: "2024-02-15T18:30:00.000Z",
-      status: "In Progress"
-    },
-    {
-      productName: "Aluminum Window Frame", 
-      workOrderId: "WO-2024-003",
-      customerOrder: "CO-2024-003",
-      quantity: 10,
-      dueDate: "2024-02-18T18:30:00.000Z", 
-      status: "Scheduled"
-    },
-    {
-      productName: "Rubber Gasket Set",
-      workOrderId: "WO-2024-004",
-      customerOrder: "CO-2024-004",
-      quantity: 50,
-      dueDate: "2024-02-20T18:30:00.000Z",
-      status: "Completed"
-    },
-    {
-      productName: "Motor Assembly Unit",
-      workOrderId: "WO-2024-005",
-      customerOrder: "CO-2024-005",
-      quantity: 5,
-      dueDate: "2024-02-22T18:30:00.000Z",
-      status: "Scheduled" 
-    }
-  ];
-
-  const filteredData = scheduleData.filter(item => 
-    item.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.workOrderId.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Pagination logic
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedData = filteredData.slice(startIndex, startIndex + itemsPerPage);
+  
+  // Calculate stats from actual data
+  const totalSchedules = productionScheduleData.length;
+  const inProgress = productionScheduleData.filter(item => item.status === "In Progress").length;
+  const completed = productionScheduleData.filter(item => item.status === "Completed").length;
+  const delayed = productionScheduleData.filter(item => item.status === "Delayed").length;
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "Completed":
         return <Badge className="bg-status-completed text-white">Completed</Badge>;
-      case "In Progress":  
+      case "In Progress":
         return <Badge className="bg-status-progress text-white">In Progress</Badge>;
       case "Scheduled":
-        return <Badge className="bg-status-scheduled text-white">Scheduled</Badge>;
+        return <Badge className="bg-status-pending text-white">Scheduled</Badge>;
       case "Delayed":
         return <Badge className="bg-status-delayed text-white">Delayed</Badge>;
+      case "On Hold":
+        return <Badge variant="secondary">On Hold</Badge>;
       default:
         return <Badge variant="secondary">{status}</Badge>;
     }
@@ -87,17 +61,8 @@ const MasterProductionSchedule = () => {
   };
 
   const handleAddSchedule = () => {
-    if (newSchedule.productName && newSchedule.quantity && newSchedule.dueDate) {
-      // Add logic to save schedule
-      console.log("Adding new schedule:", newSchedule);
-      setIsAddDialogOpen(false);
-      setNewSchedule({
-        productName: "",
-        quantity: "",
-        dueDate: "",
-        status: "Scheduled"
-      });
-    }
+    console.log("Adding new schedule");
+    setIsAddDialogOpen(false);
   };
 
   return (
@@ -105,98 +70,131 @@ const MasterProductionSchedule = () => {
       <div className="flex justify-between items-start">
         <div>
           <h1 className="text-3xl font-bold text-foreground">Master Production Schedule</h1>
-          <p className="text-muted-foreground">Plan and manage production schedules and work orders</p>
+          <p className="text-muted-foreground">Plan and track production schedules for all orders</p>
+        </div>
+        <div className="flex space-x-2">
+          <Button variant="outline">
+            <Download className="w-4 h-4 mr-2" />
+            Export
+          </Button>
+          <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+            <DialogTrigger asChild>
+              <Button className="bg-primary hover:bg-primary/90">
+                <Plus className="w-4 h-4 mr-2" />
+                New Schedule
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Create Production Schedule</DialogTitle>
+                <DialogDescription>
+                  Add a new item to the production schedule
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="product" className="text-right">
+                    Product
+                  </Label>
+                  <Select>
+                    <SelectTrigger className="col-span-3">
+                      <SelectValue placeholder="Select product" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="table">Glass Dining Table</SelectItem>
+                      <SelectItem value="desk">Steel Office Desk</SelectItem>
+                      <SelectItem value="frame">Aluminum Window Frame</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="quantity" className="text-right">
+                    Quantity
+                  </Label>
+                  <Input id="quantity" type="number" className="col-span-3" />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="dueDate" className="text-right">
+                    Due Date
+                  </Label>
+                  <Input id="dueDate" type="date" className="col-span-3" />
+                </div>
+              </div>
+              <div className="flex justify-end gap-2">
+                <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
+                  Cancel
+                </Button>
+                <Button onClick={handleAddSchedule}>
+                  Create Schedule
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
 
       <Card>
         <CardHeader>
-          <div className="flex justify-between items-center">
-            <CardTitle>Master Production Schedule (MPS)</CardTitle>
-            <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-              <DialogTrigger asChild>
-                <Button className="bg-primary hover:bg-primary/90">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add New Schedule
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                  <DialogTitle>Add New Production Schedule</DialogTitle>
-                </DialogHeader>
-                <div className="grid gap-4 py-4">
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="productName" className="text-right">
-                      Product Name
-                    </Label>
-                    <Input
-                      id="productName"
-                      value={newSchedule.productName}
-                      onChange={(e) => setNewSchedule({ ...newSchedule, productName: e.target.value })}
-                      className="col-span-3"
-                    />
-                  </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="quantity" className="text-right">
-                      Quantity
-                    </Label>
-                    <Input
-                      id="quantity"
-                      type="number"
-                      value={newSchedule.quantity}
-                      onChange={(e) => setNewSchedule({ ...newSchedule, quantity: e.target.value })}
-                      className="col-span-3"
-                    />
-                  </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="dueDate" className="text-right">
-                      Due Date
-                    </Label>
-                    <Input
-                      id="dueDate"
-                      type="date"
-                      value={newSchedule.dueDate}
-                      onChange={(e) => setNewSchedule({ ...newSchedule, dueDate: e.target.value })}
-                      className="col-span-3"
-                    />
-                  </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="status" className="text-right">
-                      Status
-                    </Label>
-                    <Select value={newSchedule.status} onValueChange={(value) => setNewSchedule({ ...newSchedule, status: value })}>
-                      <SelectTrigger className="col-span-3">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Scheduled">Scheduled</SelectItem>
-                        <SelectItem value="In Progress">In Progress</SelectItem>
-                        <SelectItem value="Completed">Completed</SelectItem>
-                        <SelectItem value="Delayed">Delayed</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                <div className="flex justify-end gap-2">
-                  <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
-                    Cancel
-                  </Button>
-                  <Button onClick={handleAddSchedule} className="bg-primary hover:bg-primary/90">
-                    Add Schedule
-                  </Button>
-                </div>
-              </DialogContent>
-            </Dialog>
-          </div>
-          <p className="text-sm text-muted-foreground">Plan and manage production schedules and work orders</p>
+          <CardTitle>Production Schedule Overview</CardTitle>
+          <p className="text-sm text-muted-foreground">Monitor and manage production timelines</p>
         </CardHeader>
         <CardContent>
+          {/* Summary Cards */}
+          <div className="grid grid-cols-4 gap-4 mb-6">
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="text-2xl font-bold">{totalSchedules}</div>
+                    <div className="text-sm text-muted-foreground">Total Schedules</div>
+                  </div>
+                  <Calendar className="h-8 w-8 text-muted-foreground" />
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="text-2xl font-bold text-primary">{inProgress}</div>
+                    <div className="text-sm text-muted-foreground">In Progress</div>
+                  </div>
+                  <TrendingUp className="h-8 w-8 text-primary" />
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="text-2xl font-bold text-erp-success">{completed}</div>
+                    <div className="text-sm text-muted-foreground">Completed</div>
+                  </div>
+                  <CheckCircle className="h-8 w-8 text-erp-success" />
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="text-2xl font-bold text-erp-danger">{delayed}</div>
+                    <div className="text-sm text-muted-foreground">Delayed</div>
+                  </div>
+                  <Clock className="h-8 w-8 text-erp-danger" />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <h3 className="text-lg font-semibold mb-4">Production Schedule</h3>
+
           {/* Search Bar */}
-          <div className="flex items-center space-x-2 mb-6">
-            <div className="relative flex-1 max-w-sm">
+          <div className="flex items-center space-x-4 mb-6">
+            <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <Input
-                placeholder="Search by product or work order..."
+                placeholder="Search schedules..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"
@@ -209,23 +207,56 @@ const MasterProductionSchedule = () => {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead>Schedule ID</TableHead>
                   <TableHead>Product Name</TableHead>
-                  <TableHead>Work Order ID</TableHead>
-                  <TableHead>Customer Order</TableHead>
-                  <TableHead>Quantity</TableHead>
-                  <TableHead>Due Date</TableHead>
-                  <TableHead>Status</TableHead>
+                  <TableHead>Order Number</TableHead>
+                  <TableHead>Planned Start</TableHead>
+                  <TableHead>Planned End</TableHead>
+                  <TableHead>Priority</TableHead>
+                  <TableHead>Workstation</TableHead>
+                  <TableHead>Supervisor</TableHead>
+                  <TableHead>Progress</TableHead>
+                  {user.role === 'admin' && <TableHead>Actions</TableHead>}
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredData.map((item, index) => (
+                {paginatedData.map((item, index) => (
                   <TableRow key={index}>
-                    <TableCell className="font-medium">{item.productName}</TableCell>
-                    <TableCell>{item.workOrderId}</TableCell>
-                    <TableCell className="font-medium text-primary">{item.customerOrder}</TableCell>
-                    <TableCell>{item.quantity}</TableCell>
-                    <TableCell>{formatDate(item.dueDate)}</TableCell>
-                    <TableCell>{getStatusBadge(item.status)}</TableCell>
+                    <TableCell className="font-medium">{item.scheduleId}</TableCell>
+                    <TableCell>{item.productName}</TableCell>
+                    <TableCell className="font-medium text-status-progress">{item.orderNumber}</TableCell>
+                    <TableCell>{formatDate(item.plannedStartDate)}</TableCell>
+                    <TableCell>{formatDate(item.plannedEndDate)}</TableCell>
+                    <TableCell>
+                      <Badge variant={item.priority === "High" ? "destructive" : item.priority === "Medium" ? "default" : "secondary"}>
+                        {item.priority}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>{item.workstation}</TableCell>
+                    <TableCell>{item.supervisor}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-16 bg-gray-200 rounded-full h-2">
+                          <div 
+                            className="bg-primary h-2 rounded-full" 
+                            style={{ width: `${item.progress}%` }}
+                          ></div>
+                        </div>
+                        <span className="text-sm">{item.progress}%</span>
+                      </div>
+                    </TableCell>
+                    {user.role === 'admin' && (
+                      <TableCell>
+                        <div className="flex space-x-2">
+                          <Button variant="outline" size="sm">
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button variant="outline" size="sm">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    )}
                   </TableRow>
                 ))}
               </TableBody>
@@ -233,21 +264,12 @@ const MasterProductionSchedule = () => {
           </div>
 
           {/* Pagination */}
-          <div className="flex items-center justify-between mt-4">
-            <p className="text-sm text-muted-foreground">
-              Showing 1-5 of 35 entries
-            </p>
-            <div className="flex items-center space-x-2">
-              <Button variant="outline" size="sm">Previous</Button>
-              <Button variant="outline" size="sm" className="bg-primary text-white">1</Button>
-              <Button variant="outline" size="sm">2</Button>
-              <Button variant="outline" size="sm">3</Button>
-              <Button variant="outline" size="sm">4</Button>
-              <Button variant="outline" size="sm">5</Button>
-              <Button variant="outline" size="sm">6</Button>
-              <Button variant="outline" size="sm">7</Button>
-              <Button variant="outline" size="sm">Next</Button>
-            </div>
+          <div className="flex justify-center mt-6">
+            <PaginationComponent
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
           </div>
         </CardContent>
       </Card>
