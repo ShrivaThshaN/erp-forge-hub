@@ -8,9 +8,9 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Filter, Download, Search, Calendar, TrendingUp, Clock, CheckCircle, Edit, Trash2 } from "lucide-react";
+import { Plus, Filter, Download, Search, Calendar, TrendingUp, Clock, CheckCircle, Edit, Trash2, AlertTriangle } from "lucide-react";
 import { PaginationComponent } from "@/components/Pagination";
-import { productionScheduleData } from "@/data/mockData";
+import { productionScheduleData, getProductionStats } from "@/data/mockData";
 import { useUser } from "@/contexts/UserContext";
 
 const MasterProductionSchedule = () => {
@@ -19,6 +19,8 @@ const MasterProductionSchedule = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+
+  const stats = getProductionStats();
 
   const filteredData = productionScheduleData.filter(item => {
     const matchesSearch = item.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -145,7 +147,7 @@ const MasterProductionSchedule = () => {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <div className="text-2xl font-bold">{totalSchedules}</div>
+                    <div className="text-2xl font-bold">{stats.totalSchedules}</div>
                     <div className="text-sm text-muted-foreground">Total Schedules</div>
                   </div>
                   <Calendar className="h-8 w-8 text-muted-foreground" />
@@ -156,18 +158,7 @@ const MasterProductionSchedule = () => {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <div className="text-2xl font-bold text-primary">{inProgress}</div>
-                    <div className="text-sm text-muted-foreground">In Progress</div>
-                  </div>
-                  <TrendingUp className="h-8 w-8 text-primary" />
-                </div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="text-2xl font-bold text-erp-success">{completed}</div>
+                    <div className="text-2xl font-bold text-erp-success">{stats.completed}</div>
                     <div className="text-sm text-muted-foreground">Completed</div>
                   </div>
                   <CheckCircle className="h-8 w-8 text-erp-success" />
@@ -178,10 +169,21 @@ const MasterProductionSchedule = () => {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <div className="text-2xl font-bold text-erp-danger">{delayed}</div>
+                    <div className="text-2xl font-bold text-status-progress">{stats.inProgress}</div>
+                    <div className="text-sm text-muted-foreground">In Progress</div>
+                  </div>
+                  <Clock className="h-8 w-8 text-status-progress" />
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="text-2xl font-bold text-erp-danger">{stats.delayed}</div>
                     <div className="text-sm text-muted-foreground">Delayed</div>
                   </div>
-                  <Clock className="h-8 w-8 text-erp-danger" />
+                  <AlertTriangle className="h-8 w-8 text-erp-danger" />
                 </div>
               </CardContent>
             </Card>

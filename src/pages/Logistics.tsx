@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Search, Filter, Download, Truck, MapPin, Clock, Package, Edit, Trash2 } from "lucide-react";
 import { PaginationComponent } from "@/components/Pagination";
-import { logisticsData } from "@/data/mockData";
+import { logisticsData, getLogisticsStats } from "@/data/mockData";
 import { useUser } from "@/contexts/UserContext";
 
 const Logistics = () => {
@@ -38,11 +38,7 @@ const Logistics = () => {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedData = filteredData.slice(startIndex, startIndex + itemsPerPage);
   
-  // Calculate stats from actual data
-  const totalShipments = logisticsData.length;
-  const inTransit = logisticsData.filter(item => item.status === "In Transit").length;
-  const delivered = logisticsData.filter(item => item.status === "Delivered").length;
-  const delayed = logisticsData.filter(item => item.status === "Delayed").length;
+  const stats = getLogisticsStats();
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -157,7 +153,7 @@ const Logistics = () => {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold">{totalShipments}</div>
+                <div className="text-2xl font-bold">{stats.totalShipments}</div>
                 <div className="text-sm text-muted-foreground">Total Shipments</div>
               </div>
               <Package className="h-8 w-8 text-muted-foreground" />
@@ -168,7 +164,7 @@ const Logistics = () => {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold text-primary">{inTransit}</div>
+                <div className="text-2xl font-bold text-primary">{stats.inTransit}</div>
                 <div className="text-sm text-muted-foreground">In Transit</div>
               </div>
               <Truck className="h-8 w-8 text-primary" />
@@ -179,7 +175,7 @@ const Logistics = () => {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold text-erp-success">{delivered}</div>
+                <div className="text-2xl font-bold text-erp-success">{stats.delivered}</div>
                 <div className="text-sm text-muted-foreground">Delivered</div>
               </div>
               <MapPin className="h-8 w-8 text-erp-success" />
@@ -190,7 +186,7 @@ const Logistics = () => {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold text-erp-danger">{delayed}</div>
+                <div className="text-2xl font-bold text-erp-danger">{stats.delayed}</div>
                 <div className="text-sm text-muted-foreground">Delayed</div>
               </div>
               <Clock className="h-8 w-8 text-erp-danger" />

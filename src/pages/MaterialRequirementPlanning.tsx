@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Filter, Download, Search, Edit, Trash2 } from "lucide-react";
 import { PaginationComponent } from "@/components/Pagination";
-import { materialRequirementData } from "@/data/mockData";
+import { materialRequirementData, getMRPStats } from "@/data/mockData";
 import { useUser } from "@/contexts/UserContext";
 
 const MaterialRequirementPlanning = () => {
@@ -20,6 +20,8 @@ const MaterialRequirementPlanning = () => {
   const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+
+  const stats = getMRPStats();
 
   const filteredData = materialRequirementData.filter(item => {
     const matchesSearch = item.materialName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -184,26 +186,26 @@ const MaterialRequirementPlanning = () => {
           <div className="grid grid-cols-4 gap-4 mb-6">
             <Card>
               <CardContent className="p-4 text-center">
-                <div className="text-2xl font-bold">{totalRequired.toLocaleString()}</div>
-                <div className="text-sm text-muted-foreground">Total Required</div>
+                <div className="text-2xl font-bold">{stats.totalItems}</div>
+                <div className="text-sm text-muted-foreground">Total Materials</div>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="p-4 text-center">
-                <div className="text-2xl font-bold text-erp-success">{availableStock.toLocaleString()}</div>
-                <div className="text-sm text-muted-foreground">Available Stock</div>
+                <div className="text-2xl font-bold text-erp-success">{stats.available}</div>
+                <div className="text-sm text-muted-foreground">Available</div>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="p-4 text-center">
-                <div className="text-2xl font-bold text-erp-danger">{totalShortfall.toLocaleString()}</div>
-                <div className="text-sm text-muted-foreground">Total Shortfall</div>
+                <div className="text-2xl font-bold text-erp-warning">{stats.shortage}</div>
+                <div className="text-sm text-muted-foreground">Shortage</div>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="p-4 text-center">
-                <div className="text-2xl font-bold text-erp-warning">{itemsInShortage}</div>
-                <div className="text-sm text-muted-foreground">Items in Shortage</div>
+                <div className="text-2xl font-bold text-erp-danger">{stats.required}</div>
+                <div className="text-sm text-muted-foreground">Required</div>
               </CardContent>
             </Card>
           </div>

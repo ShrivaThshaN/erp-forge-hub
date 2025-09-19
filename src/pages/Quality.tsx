@@ -6,9 +6,9 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Search, Filter, Download, CheckCircle, XCircle, AlertTriangle, Clock, Edit, Trash2 } from "lucide-react";
+import { Plus, Search, Filter, Download, CheckCircle, XCircle, AlertTriangle, Clock, Edit, Trash2, ClipboardCheck } from "lucide-react";
 import { PaginationComponent } from "@/components/Pagination";
-import { qualityControlData } from "@/data/mockData";
+import { qualityControlData, getQualityStats } from "@/data/mockData";
 import { useUser } from "@/contexts/UserContext";
 
 const Quality = () => {
@@ -19,6 +19,8 @@ const Quality = () => {
   const [inspectorFilter, setInspectorFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+
+  const stats = getQualityStats();
 
   const filteredData = qualityControlData.filter(item => {
     const matchesSearch = item.inspectionId.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -37,12 +39,6 @@ const Quality = () => {
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedData = filteredData.slice(startIndex, startIndex + itemsPerPage);
-  
-  // Calculate stats from actual data
-  const totalInspections = qualityControlData.length;
-  const passed = qualityControlData.filter(item => item.result === "Pass").length;
-  const failed = qualityControlData.filter(item => item.result === "Fail").length;
-  const passRate = totalInspections > 0 ? ((passed / totalInspections) * 100).toFixed(1) : "0";
 
   const getResultBadge = (result: string) => {
     switch (result) {
@@ -156,15 +152,15 @@ const Quality = () => {
       </div>
 
       {/* Summary Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold">{totalInspections}</div>
+                <div className="text-2xl font-bold">{stats.totalInspections}</div>
                 <div className="text-sm text-muted-foreground">Total Inspections</div>
               </div>
-              <CheckCircle className="h-8 w-8 text-muted-foreground" />
+              <ClipboardCheck className="h-8 w-8 text-muted-foreground" />
             </div>
           </CardContent>
         </Card>
@@ -172,7 +168,7 @@ const Quality = () => {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold text-erp-success">{passed}</div>
+                <div className="text-2xl font-bold text-erp-success">{stats.passed}</div>
                 <div className="text-sm text-muted-foreground">Passed</div>
               </div>
               <CheckCircle className="h-8 w-8 text-erp-success" />
@@ -183,7 +179,7 @@ const Quality = () => {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold text-erp-danger">{failed}</div>
+                <div className="text-2xl font-bold text-erp-danger">{stats.failed}</div>
                 <div className="text-sm text-muted-foreground">Failed</div>
               </div>
               <XCircle className="h-8 w-8 text-erp-danger" />
@@ -194,10 +190,10 @@ const Quality = () => {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-2xl font-bold">{passRate}%</div>
-                <div className="text-sm text-muted-foreground">Pass Rate</div>
+                <div className="text-2xl font-bold text-erp-warning">{stats.pending}</div>
+                <div className="text-sm text-muted-foreground">Pending</div>
               </div>
-              <AlertTriangle className="h-8 w-8 text-erp-success" />
+              <Clock className="h-8 w-8 text-erp-warning" />
             </div>
           </CardContent>
         </Card>

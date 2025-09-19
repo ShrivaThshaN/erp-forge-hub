@@ -453,7 +453,7 @@ const Procurement = () => {
                 <TableHead>Delivery Date</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Related Order</TableHead>
-                <TableHead>Actions</TableHead>
+                {user.role === 'admin' && <TableHead>Actions</TableHead>}
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -474,16 +474,18 @@ const Procurement = () => {
                   <TableCell>
                     <Badge variant="outline">{order.relatedOrder}</Badge>
                   </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Button variant="ghost" size="sm">
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="sm">
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
+                  {user.role === 'admin' && (
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Button variant="ghost" size="sm">
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="sm">
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  )}
                 </TableRow>
               ))}
             </TableBody>

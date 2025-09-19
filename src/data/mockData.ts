@@ -950,6 +950,48 @@ export const logisticsData = [
   }
 ];
 
+// Calculate stats for various pages
+export const getMRPStats = () => {
+  const totalItems = materialRequirementData.length;
+  const available = materialRequirementData.filter(item => item.status === "Available").length;
+  const shortage = materialRequirementData.filter(item => item.status === "Shortage").length;
+  const required = materialRequirementData.filter(item => item.status === "Required").length;
+  const ordered = materialRequirementData.filter(item => item.status === "Ordered").length;
+  
+  return { totalItems, available, shortage, required, ordered };
+};
+
+export const getProductionStats = () => {
+  const totalSchedules = productionScheduleData.length;
+  const completed = productionScheduleData.filter(item => item.status === "Completed").length;
+  const inProgress = productionScheduleData.filter(item => item.status === "In Progress").length;
+  const scheduled = productionScheduleData.filter(item => item.status === "Scheduled").length;
+  const delayed = productionScheduleData.filter(item => item.status === "Delayed").length;
+  const onHold = productionScheduleData.filter(item => item.status === "On Hold").length;
+  
+  return { totalSchedules, completed, inProgress, scheduled, delayed, onHold };
+};
+
+export const getQualityStats = () => {
+  const totalInspections = qualityControlData.length;
+  const passed = qualityControlData.filter(item => item.result === "Pass").length;
+  const failed = qualityControlData.filter(item => item.result === "Fail").length;
+  const pending = qualityControlData.filter(item => item.result === "Pending").length;
+  const warning = qualityControlData.filter(item => item.result === "Warning").length;
+  
+  return { totalInspections, passed, failed, pending, warning };
+};
+
+export const getLogisticsStats = () => {
+  const totalShipments = logisticsData.length;
+  const delivered = logisticsData.filter(item => item.status === "Delivered").length;
+  const inTransit = logisticsData.filter(item => item.status === "In Transit").length;
+  const preparing = logisticsData.filter(item => item.status === "Preparing").length;
+  const delayed = logisticsData.filter(item => item.status === "Delayed").length;
+  
+  return { totalShipments, delivered, inTransit, preparing, delayed };
+};
+
 export const getDashboardStats = () => {
   const orderStats = getOrderStats();
   const inventoryStats = getInventoryStats();
