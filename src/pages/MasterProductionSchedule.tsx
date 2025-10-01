@@ -4,19 +4,32 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { Plus, Filter, Download, Search, Calendar, TrendingUp, Clock, CheckCircle, Edit, Trash2, AlertTriangle } from "lucide-react";
+import { Plus, Download, Search, Calendar, Clock, CheckCircle, Edit, Trash2, AlertTriangle } from "lucide-react";
 import { PaginationComponent } from "@/components/Pagination";
 import { productionScheduleData, getProductionStats } from "@/data/mockData";
 import { useUser } from "@/contexts/UserContext";
+import { NewScheduleDialog } from "@/components/NewScheduleDialog";
+import { EditScheduleDialog } from "@/components/EditScheduleDialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { toast } from "@/hooks/use-toast";
 
 const MasterProductionSchedule = () => {
   const { user } = useUser();
   const [searchTerm, setSearchTerm] = useState("");
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [selectedSchedule, setSelectedSchedule] = useState<any>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [scheduleToDelete, setScheduleToDelete] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
@@ -62,9 +75,25 @@ const MasterProductionSchedule = () => {
     return new Date(dateString).toLocaleDateString();
   };
 
-  const handleAddSchedule = () => {
-    console.log("Adding new schedule");
-    setIsAddDialogOpen(false);
+  const handleEdit = (schedule: any) => {
+    setSelectedSchedule(schedule);
+    setIsEditDialogOpen(true);
+  };
+
+  const handleDelete = (scheduleId: string) => {
+    setScheduleToDelete(scheduleId);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (scheduleToDelete) {
+      toast({
+        title: "Success",
+        description: "Production schedule deleted successfully",
+      });
+      setIsDeleteDialogOpen(false);
+      setScheduleToDelete(null);
+    }
   };
 
   return (
@@ -79,59 +108,10 @@ const MasterProductionSchedule = () => {
             <Download className="w-4 h-4 mr-2" />
             Export
           </Button>
-          <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-            <DialogTrigger asChild>
-              <Button className="bg-primary hover:bg-primary/90">
-                <Plus className="w-4 h-4 mr-2" />
-                New Schedule
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle>Create Production Schedule</DialogTitle>
-                <DialogDescription>
-                  Add a new item to the production schedule
-                </DialogDescription>
-              </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="product" className="text-right">
-                    Product
-                  </Label>
-                  <Select>
-                    <SelectTrigger className="col-span-3">
-                      <SelectValue placeholder="Select product" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="table">Glass Dining Table</SelectItem>
-                      <SelectItem value="desk">Steel Office Desk</SelectItem>
-                      <SelectItem value="frame">Aluminum Window Frame</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="quantity" className="text-right">
-                    Quantity
-                  </Label>
-                  <Input id="quantity" type="number" className="col-span-3" />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="dueDate" className="text-right">
-                    Due Date
-                  </Label>
-                  <Input id="dueDate" type="date" className="col-span-3" />
-                </div>
-              </div>
-              <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
-                  Cancel
-                </Button>
-                <Button onClick={handleAddSchedule}>
-                  Create Schedule
-                </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
+          <Button className="bg-primary hover:bg-primary/90" onClick={() => setIsAddDialogOpen(true)}>
+            <Plus className="w-4 h-4 mr-2" />
+            New Schedule
+          </Button>
         </div>
       </div>
 
@@ -217,7 +197,7 @@ const MasterProductionSchedule = () => {
                   <TableHead>Priority</TableHead>
                   <TableHead>Workstation</TableHead>
                   <TableHead>Supervisor</TableHead>
-                  <TableHead>Progress</TableHead>
+                  <TableHead>Status</TableHead>
                   {user.role === 'admin' && <TableHead>Actions</TableHead>}
                 </TableRow>
               </TableHeader>
@@ -236,24 +216,14 @@ const MasterProductionSchedule = () => {
                     </TableCell>
                     <TableCell>{item.workstation}</TableCell>
                     <TableCell>{item.supervisor}</TableCell>
-                    <TableCell>
-                      <div className="flex items-center space-x-2">
-                        <div className="w-16 bg-gray-200 rounded-full h-2">
-                          <div 
-                            className="bg-primary h-2 rounded-full" 
-                            style={{ width: `${item.progress}%` }}
-                          ></div>
-                        </div>
-                        <span className="text-sm">{item.progress}%</span>
-                      </div>
-                    </TableCell>
+                    <TableCell>{getStatusBadge(item.status)}</TableCell>
                     {user.role === 'admin' && (
                       <TableCell>
                         <div className="flex space-x-2">
-                          <Button variant="outline" size="sm">
+                          <Button variant="outline" size="sm" onClick={() => handleEdit(item)}>
                             <Edit className="h-4 w-4" />
                           </Button>
-                          <Button variant="outline" size="sm">
+                          <Button variant="outline" size="sm" onClick={() => handleDelete(item.scheduleId)}>
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
@@ -275,6 +245,34 @@ const MasterProductionSchedule = () => {
           </div>
         </CardContent>
       </Card>
+
+      <NewScheduleDialog
+        open={isAddDialogOpen}
+        onOpenChange={setIsAddDialogOpen}
+        onScheduleAdded={() => {}}
+      />
+
+      <EditScheduleDialog
+        open={isEditDialogOpen}
+        onOpenChange={setIsEditDialogOpen}
+        schedule={selectedSchedule}
+        onScheduleUpdated={() => {}}
+      />
+
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the production schedule.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete}>Delete</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
