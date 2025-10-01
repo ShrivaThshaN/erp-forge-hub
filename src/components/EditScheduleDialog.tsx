@@ -112,12 +112,15 @@ export const EditScheduleDialog = ({ open, onOpenChange, schedule, onScheduleUpd
             <Label htmlFor="order" className="text-right">
               Order Number
             </Label>
-            <Input
-              id="order"
-              value={orderNumber}
-              onChange={(e) => setOrderNumber(e.target.value)}
-              className="col-span-3"
-            />
+            <div className="col-span-3">
+              <Input
+                id="order"
+                value={orderNumber}
+                disabled
+                className="bg-muted"
+              />
+              <p className="text-xs text-muted-foreground mt-1">Cannot be changed</p>
+            </div>
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="startDate" className="text-right">

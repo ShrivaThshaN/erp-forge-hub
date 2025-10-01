@@ -18,8 +18,14 @@ interface NewScheduleDialogProps {
 }
 
 export const NewScheduleDialog = ({ open, onOpenChange, onScheduleAdded }: NewScheduleDialogProps) => {
+  const generateOrderNumber = () => {
+    const timestamp = Date.now().toString().slice(-6);
+    const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+    return `CO-2025-${timestamp}${random}`;
+  };
+
   const [productName, setProductName] = useState("");
-  const [orderNumber, setOrderNumber] = useState("");
+  const [orderNumber, setOrderNumber] = useState(generateOrderNumber());
   const [plannedStartDate, setPlannedStartDate] = useState<Date>();
   const [plannedEndDate, setPlannedEndDate] = useState<Date>();
   const [priority, setPriority] = useState("");
@@ -56,7 +62,7 @@ export const NewScheduleDialog = ({ open, onOpenChange, onScheduleAdded }: NewSc
 
     // Reset form
     setProductName("");
-    setOrderNumber("");
+    setOrderNumber(generateOrderNumber());
     setPlannedStartDate(undefined);
     setPlannedEndDate(undefined);
     setPriority("");
@@ -93,13 +99,15 @@ export const NewScheduleDialog = ({ open, onOpenChange, onScheduleAdded }: NewSc
             <Label htmlFor="order" className="text-right">
               Order Number
             </Label>
-            <Input
-              id="order"
-              value={orderNumber}
-              onChange={(e) => setOrderNumber(e.target.value)}
-              placeholder="Enter order number"
-              className="col-span-3"
-            />
+            <div className="col-span-3">
+              <Input
+                id="order"
+                value={orderNumber}
+                disabled
+                className="bg-muted"
+              />
+              <p className="text-xs text-muted-foreground mt-1">Auto-generated</p>
+            </div>
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="startDate" className="text-right">

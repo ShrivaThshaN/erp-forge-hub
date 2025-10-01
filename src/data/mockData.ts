@@ -11,7 +11,7 @@ export const inventoryData = [
     location: "Warehouse A-1",
     unitPrice: "₹12.50",
     status: "In Stock",
-    lastUpdated: "2024-01-28"
+    lastUpdated: "2025-01-28"
   },
   {
     itemCode: "INV-0002", 
@@ -23,7 +23,7 @@ export const inventoryData = [
     location: "Warehouse B-2",
     unitPrice: "₹0.75",
     status: "Low Stock",
-    lastUpdated: "2024-01-27"
+    lastUpdated: "2025-01-27"
   },
   {
     itemCode: "INV-0003",
@@ -35,7 +35,7 @@ export const inventoryData = [
     location: "Warehouse C-1",
     unitPrice: "₹3.25",
     status: "Out of Stock",
-    lastUpdated: "2024-01-26"
+    lastUpdated: "2025-01-26"
   },
   {
     itemCode: "INV-0004",
@@ -47,7 +47,7 @@ export const inventoryData = [
     location: "Warehouse D-3",
     unitPrice: "₹450.00",
     status: "In Stock",
-    lastUpdated: "2024-01-25"
+    lastUpdated: "2025-01-25"
   },
   {
     itemCode: "INV-0005",
@@ -59,117 +59,7 @@ export const inventoryData = [
     location: "Warehouse E-1",
     unitPrice: "₹85.00",
     status: "In Stock",
-    lastUpdated: "2024-01-24"
-  },
-  {
-    itemCode: "INV-0006",
-    itemName: "Hydraulic Cylinders", 
-    category: "Components",
-    currentStock: 8,
-    minimumStock: 15,
-    maximumStock: 60,
-    location: "Warehouse F-2",
-    unitPrice: "₹275.00",
-    status: "Low Stock",
-    lastUpdated: "2024-01-23"
-  },
-  // Additional items for pagination
-  {
-    itemCode: "INV-0007",
-    itemName: "Copper Wires 12AWG",
-    category: "Electrical",
-    currentStock: 250,
-    minimumStock: 100,
-    maximumStock: 500,
-    location: "Warehouse A-2",
-    unitPrice: "₹8.50",
-    status: "In Stock",
-    lastUpdated: "2024-01-22"
-  },
-  {
-    itemCode: "INV-0008",
-    itemName: "Plastic Connectors",
-    category: "Fasteners",
-    currentStock: 0,
-    minimumStock: 200,
-    maximumStock: 800,
-    location: "Warehouse B-1",
-    unitPrice: "₹1.25",
-    status: "Out of Stock",
-    lastUpdated: "2024-01-21"
-  },
-  {
-    itemCode: "INV-0009",
-    itemName: "Stainless Steel Sheets",
-    category: "Raw Materials",
-    currentStock: 120,
-    minimumStock: 50,
-    maximumStock: 300,
-    location: "Warehouse C-2",
-    unitPrice: "₹125.00",
-    status: "In Stock",
-    lastUpdated: "2024-01-20"
-  },
-  {
-    itemCode: "INV-0010",
-    itemName: "LED Strip Lights",
-    category: "Electronics",
-    currentStock: 45,
-    minimumStock: 60,
-    maximumStock: 200,
-    location: "Warehouse E-2",
-    unitPrice: "₹35.00",
-    status: "Low Stock",
-    lastUpdated: "2024-01-19"
-  },
-  // More items...
-  {
-    itemCode: "INV-0011",
-    itemName: "Industrial Valves",
-    category: "Components",
-    currentStock: 0,
-    minimumStock: 25,
-    maximumStock: 100,
-    location: "Warehouse F-1",
-    unitPrice: "₹180.00",
-    status: "Out of Stock",
-    lastUpdated: "2024-01-18"
-  },
-  {
-    itemCode: "INV-0012",
-    itemName: "Carbon Fiber Sheets",
-    category: "Raw Materials",
-    currentStock: 90,
-    minimumStock: 30,
-    maximumStock: 150,
-    location: "Warehouse A-3",
-    unitPrice: "₹350.00",
-    status: "In Stock",
-    lastUpdated: "2024-01-17"
-  },
-  {
-    itemCode: "INV-0013",
-    itemName: "Pneumatic Actuators",
-    category: "Components",
-    currentStock: 22,
-    minimumStock: 30,
-    maximumStock: 80,
-    location: "Warehouse D-1",
-    unitPrice: "₹425.00",
-    status: "Low Stock",
-    lastUpdated: "2024-01-16"
-  },
-  {
-    itemCode: "INV-0014",
-    itemName: "Thermal Sensors",
-    category: "Electronics",
-    currentStock: 180,
-    minimumStock: 50,
-    maximumStock: 300,
-    location: "Warehouse E-3",
-    unitPrice: "₹65.00",
-    status: "In Stock",
-    lastUpdated: "2024-01-15"
+    lastUpdated: "2025-01-24"
   },
   {
     itemCode: "INV-0015",
@@ -181,14 +71,14 @@ export const inventoryData = [
     location: "Warehouse B-3",
     unitPrice: "₹2.50",
     status: "Out of Stock",
-    lastUpdated: "2024-01-14"
+    lastUpdated: "2025-01-14"
   }
 ];
 
 export const customerOrders = [
   {
     id: 1,
-    orderNumber: "CO-2024-001",
+    orderNumber: "CO-2025-001",
     customerName: "Luxury Home Interiors",
     productName: "Glass Dining Table",
     orderDate: "2024-01-15",
@@ -355,11 +245,11 @@ export const customerOrders = [
 ];
 
 export const productionOrders = [
-  { id: "WO-2024-001", product: "Widget A v3", status: "Completed", progress: 100 },
-  { id: "WO-2024-002", product: "Gadget B v3", status: "In Progress", progress: 75 },
-  { id: "WO-2024-003", product: "Component C v3", status: "Scheduled", progress: 0 },
-  { id: "WO-2024-004", product: "Assembly D v3", status: "Delayed", progress: 45 },
-  { id: "WO-2024-005", product: "Module E v3", status: "In Progress", progress: 85 },
+  { id: "WO-2025-001", product: "Widget A v3", status: "Completed", progress: 100 },
+  { id: "WO-2025-002", product: "Gadget B v3", status: "In Progress", progress: 75 },
+  { id: "WO-2025-003", product: "Component C v3", status: "Scheduled", progress: 0 },
+  { id: "WO-2025-004", product: "Assembly D v3", status: "Delayed", progress: 45 },
+  { id: "WO-2025-005", product: "Module E v3", status: "In Progress", progress: 85 },
 ];
 
 // Calculate totals based on actual data
@@ -539,12 +429,12 @@ export const materialRequirementData = [
 // Extended data for Production Schedule
 export const productionScheduleData = [
   {
-    scheduleId: "PS-2024-001",
+    scheduleId: "PS-2025-001",
     productName: "Glass Dining Table",
-    orderNumber: "CO-2024-001",
-    plannedStartDate: "2024-02-01",
-    plannedEndDate: "2024-02-15",
-    actualStartDate: "2024-02-01",
+    orderNumber: "CO-2025-001",
+    plannedStartDate: "2025-02-01",
+    plannedEndDate: "2025-02-15",
+    actualStartDate: "2025-02-01",
     actualEndDate: "",
     status: "In Progress",
     priority: "High",
@@ -553,13 +443,13 @@ export const productionScheduleData = [
     progress: 65
   },
   {
-    scheduleId: "PS-2024-002",
+    scheduleId: "PS-2025-002",
     productName: "Steel Office Desk",
-    orderNumber: "CO-2024-002",
-    plannedStartDate: "2024-02-03",
-    plannedEndDate: "2024-02-18",
-    actualStartDate: "2024-02-03",
-    actualEndDate: "2024-02-17",
+    orderNumber: "CO-2025-002",
+    plannedStartDate: "2025-02-03",
+    plannedEndDate: "2025-02-18",
+    actualStartDate: "2025-02-03",
+    actualEndDate: "2025-02-17",
     status: "Completed",
     priority: "Medium",
     workstation: "Fabrication Bay B",
@@ -567,11 +457,11 @@ export const productionScheduleData = [
     progress: 100
   },
   {
-    scheduleId: "PS-2024-003",
+    scheduleId: "PS-2025-003",
     productName: "Aluminum Window Frame",
-    orderNumber: "CO-2024-003",
-    plannedStartDate: "2024-02-05",
-    plannedEndDate: "2024-02-20",
+    orderNumber: "CO-2025-003",
+    plannedStartDate: "2025-02-05",
+    plannedEndDate: "2025-02-20",
     actualStartDate: "",
     actualEndDate: "",
     status: "Scheduled",
@@ -581,12 +471,12 @@ export const productionScheduleData = [
     progress: 0
   },
   {
-    scheduleId: "PS-2024-004",
+    scheduleId: "PS-2025-004",
     productName: "Rubber Gasket Set",
-    orderNumber: "CO-2024-004",
-    plannedStartDate: "2024-02-07",
-    plannedEndDate: "2024-02-22",
-    actualStartDate: "2024-02-08",
+    orderNumber: "CO-2025-004",
+    plannedStartDate: "2025-02-07",
+    plannedEndDate: "2025-02-22",
+    actualStartDate: "2025-02-08",
     actualEndDate: "",
     status: "Delayed",
     priority: "Medium",
@@ -595,12 +485,12 @@ export const productionScheduleData = [
     progress: 30
   },
   {
-    scheduleId: "PS-2024-005",
+    scheduleId: "PS-2025-005",
     productName: "Motor Assembly Unit",
-    orderNumber: "CO-2024-005",
-    plannedStartDate: "2024-02-10",
-    plannedEndDate: "2024-02-25",
-    actualStartDate: "2024-02-10",
+    orderNumber: "CO-2025-005",
+    plannedStartDate: "2025-02-10",
+    plannedEndDate: "2025-02-25",
+    actualStartDate: "2025-02-10",
     actualEndDate: "",
     status: "In Progress",
     priority: "High",
@@ -608,13 +498,12 @@ export const productionScheduleData = [
     supervisor: "Robert Brown",
     progress: 45
   },
-  // Additional entries for pagination
   {
-    scheduleId: "PS-2024-006",
+    scheduleId: "PS-2025-006",
     productName: "Circuit Board Assembly",
-    orderNumber: "CO-2024-006",
-    plannedStartDate: "2024-02-12",
-    plannedEndDate: "2024-02-26",
+    orderNumber: "CO-2025-006",
+    plannedStartDate: "2025-02-12",
+    plannedEndDate: "2025-02-26",
     actualStartDate: "",
     actualEndDate: "",
     status: "Scheduled",
@@ -624,12 +513,12 @@ export const productionScheduleData = [
     progress: 0
   },
   {
-    scheduleId: "PS-2024-007",
+    scheduleId: "PS-2025-007",
     productName: "Hydraulic System",
-    orderNumber: "CO-2024-007",
-    plannedStartDate: "2024-02-14",
-    plannedEndDate: "2024-02-27",
-    actualStartDate: "2024-02-14",
+    orderNumber: "CO-2025-007",
+    plannedStartDate: "2025-02-14",
+    plannedEndDate: "2025-02-27",
+    actualStartDate: "2025-02-14",
     actualEndDate: "",
     status: "In Progress",
     priority: "Medium",
@@ -638,11 +527,11 @@ export const productionScheduleData = [
     progress: 20
   },
   {
-    scheduleId: "PS-2024-008",
+    scheduleId: "PS-2025-008",
     productName: "Stainless Steel Propeller",
-    orderNumber: "CO-2024-008",
-    plannedStartDate: "2024-02-16",
-    plannedEndDate: "2024-02-28",
+    orderNumber: "CO-2025-008",
+    plannedStartDate: "2025-02-16",
+    plannedEndDate: "2025-02-28",
     actualStartDate: "",
     actualEndDate: "",
     status: "On Hold",
@@ -652,12 +541,12 @@ export const productionScheduleData = [
     progress: 0
   },
   {
-    scheduleId: "PS-2024-009",
+    scheduleId: "PS-2025-009",
     productName: "Solar Panel Frame",
-    orderNumber: "CO-2024-009",
-    plannedStartDate: "2024-02-18",
-    plannedEndDate: "2024-03-01",
-    actualStartDate: "2024-02-18",
+    orderNumber: "CO-2025-009",
+    plannedStartDate: "2025-02-18",
+    plannedEndDate: "2025-03-01",
+    actualStartDate: "2025-02-18",
     actualEndDate: "",
     status: "In Progress",
     priority: "Medium",
@@ -666,13 +555,13 @@ export const productionScheduleData = [
     progress: 75
   },
   {
-    scheduleId: "PS-2024-010",
+    scheduleId: "PS-2025-010",
     productName: "Titanium Wing Parts",
-    orderNumber: "CO-2024-010",
-    plannedStartDate: "2024-02-20",
-    plannedEndDate: "2024-03-02",
-    actualStartDate: "2024-02-20",
-    actualEndDate: "2024-03-01",
+    orderNumber: "CO-2025-010",
+    plannedStartDate: "2025-02-20",
+    plannedEndDate: "2025-03-02",
+    actualStartDate: "2025-02-20",
+    actualEndDate: "2025-03-01",
     status: "Completed",
     priority: "High",
     workstation: "Aerospace Unit J",
@@ -680,11 +569,11 @@ export const productionScheduleData = [
     progress: 100
   },
   {
-    scheduleId: "PS-2024-011",
+    scheduleId: "PS-2025-011",
     productName: "Medical Instruments",
-    orderNumber: "CO-2024-011",
-    plannedStartDate: "2024-02-22",
-    plannedEndDate: "2024-03-03",
+    orderNumber: "CO-2025-011",
+    plannedStartDate: "2025-02-22",
+    plannedEndDate: "2025-03-03",
     actualStartDate: "",
     actualEndDate: "",
     status: "Scheduled",
@@ -694,12 +583,12 @@ export const productionScheduleData = [
     progress: 0
   },
   {
-    scheduleId: "PS-2024-012",
+    scheduleId: "PS-2025-012",
     productName: "Conveyor Belt System",
-    orderNumber: "CO-2024-012",
-    plannedStartDate: "2024-02-24",
-    plannedEndDate: "2024-03-04",
-    actualStartDate: "2024-02-25",
+    orderNumber: "CO-2025-012",
+    plannedStartDate: "2025-02-24",
+    plannedEndDate: "2025-03-04",
+    actualStartDate: "2025-02-25",
     actualEndDate: "",
     status: "Delayed",
     priority: "Medium",
@@ -712,10 +601,10 @@ export const productionScheduleData = [
 // Extended Quality Control Data
 export const qualityControlData = [
   {
-    inspectionId: "QC-2024-001",
+    inspectionId: "QC-2025-001",
     productName: "Widget A v3",
     batchNumber: "BA-001",
-    inspectionDate: "2024-01-15",
+    inspectionDate: "2025-01-15",
     inspector: "John Smith",
     testType: "Dimensional Check",
     result: "Pass",
@@ -723,10 +612,10 @@ export const qualityControlData = [
     notes: "All measurements within tolerance"
   },
   {
-    inspectionId: "QC-2024-002",
+    inspectionId: "QC-2025-002",
     productName: "Gadget B v3", 
     batchNumber: "BB-002",
-    inspectionDate: "2024-01-16",
+    inspectionDate: "2025-01-16",
     inspector: "Sarah Johnson",
     testType: "Functional Test",
     result: "Fail",
@@ -734,22 +623,21 @@ export const qualityControlData = [
     notes: "Motor performance below specification"
   },
   {
-    inspectionId: "QC-2024-003",
+    inspectionId: "QC-2025-003",
     productName: "Component C v3",
     batchNumber: "BC-003",
-    inspectionDate: "2024-01-17",
+    inspectionDate: "2025-01-17",
     inspector: "Mike Wilson",
     testType: "Material Analysis",
     result: "Pass",
     defectCount: 0,
     notes: "Material composition verified"
   },
-  // Additional entries...
   {
-    inspectionId: "QC-2024-004",
+    inspectionId: "QC-2025-004",
     productName: "Assembly D v3",
     batchNumber: "BD-004", 
-    inspectionDate: "2024-01-18",
+    inspectionDate: "2025-01-18",
     inspector: "Emily Davis",
     testType: "Assembly Check",
     result: "Pending",
@@ -757,22 +645,21 @@ export const qualityControlData = [
     notes: "Inspection in progress"
   },
   {
-    inspectionId: "QC-2024-005",
+    inspectionId: "QC-2025-005",
     productName: "Module E v3",
     batchNumber: "BE-005",
-    inspectionDate: "2024-01-19",
+    inspectionDate: "2025-01-19",
     inspector: "Robert Brown",
     testType: "Stress Test",
     result: "Warning", 
     defectCount: 1,
     notes: "Minor surface defect detected"
   },
-  // More data for pagination...
   {
-    inspectionId: "QC-2024-006",
+    inspectionId: "QC-2025-006",
     productName: "Circuit Board PCB-A1",
     batchNumber: "CB-006",
-    inspectionDate: "2024-01-20",
+    inspectionDate: "2025-01-20",
     inspector: "Lisa Chen",
     testType: "Electrical Test",
     result: "Pass",
@@ -780,10 +667,10 @@ export const qualityControlData = [
     notes: "All circuits functioning correctly"
   },
   {
-    inspectionId: "QC-2024-007",
+    inspectionId: "QC-2025-007",
     productName: "Hydraulic Cylinder HC-7",
     batchNumber: "HC-007",
-    inspectionDate: "2024-01-21",
+    inspectionDate: "2025-01-21",
     inspector: "Tom Anderson",
     testType: "Pressure Test",
     result: "Fail",
@@ -791,10 +678,10 @@ export const qualityControlData = [
     notes: "Pressure leak detected at seal"
   },
   {
-    inspectionId: "QC-2024-008",
+    inspectionId: "QC-2025-008",
     productName: "Steel Propeller SP-8",
     batchNumber: "SP-008",
-    inspectionDate: "2024-01-22",
+    inspectionDate: "2025-01-22",
     inspector: "Alex Rodriguez",
     testType: "Balance Test",
     result: "Pass",
@@ -802,10 +689,10 @@ export const qualityControlData = [
     notes: "Perfect balance achieved"
   },
   {
-    inspectionId: "QC-2024-009",
+    inspectionId: "QC-2025-009",
     productName: "Solar Frame SF-9",
     batchNumber: "SF-009",
-    inspectionDate: "2024-01-23",
+    inspectionDate: "2025-01-23",
     inspector: "Maria Garcia",
     testType: "Weather Resistance",
     result: "Warning",
@@ -813,10 +700,10 @@ export const qualityControlData = [
     notes: "Minor corrosion on corner joint"
   },
   {
-    inspectionId: "QC-2024-010",
+    inspectionId: "QC-2025-010",
     productName: "Titanium Part TP-10",
     batchNumber: "TP-010",
-    inspectionDate: "2024-01-24",
+    inspectionDate: "2025-01-24",
     inspector: "David Kim",
     testType: "Strength Test",
     result: "Pass",
@@ -828,123 +715,122 @@ export const qualityControlData = [
 // Extended Logistics Data
 export const logisticsData = [
   {
-    shipmentId: "SH-2024-001",
-    orderNumber: "CO-2024-001",
+    shipmentId: "SH-2025-001",
+    orderNumber: "CO-2025-001",
     carrier: "FedEx Express",
     trackingNumber: "1234567890",
     origin: "Warehouse A",
     destination: "New York, NY",
-    departureDate: "2024-01-15",
-    estimatedArrival: "2024-01-17",
+    departureDate: "2025-01-15",
+    estimatedArrival: "2025-01-17",
     status: "In Transit",
     priority: "High"
   },
   {
-    shipmentId: "SH-2024-002",
-    orderNumber: "CO-2024-002", 
+    shipmentId: "SH-2025-002",
+    orderNumber: "CO-2025-002", 
     carrier: "UPS Ground",
     trackingNumber: "1Z9876543210",
     origin: "Warehouse B",
     destination: "Los Angeles, CA",
-    departureDate: "2024-01-16",
-    estimatedArrival: "2024-01-19", 
+    departureDate: "2025-01-16",
+    estimatedArrival: "2025-01-19", 
     status: "Delivered",
     priority: "Medium"
   },
   {
-    shipmentId: "SH-2024-003",
-    orderNumber: "CO-2024-003",
+    shipmentId: "SH-2025-003",
+    orderNumber: "CO-2025-003",
     carrier: "DHL International",
     trackingNumber: "DHL123456789",
     origin: "Warehouse C",
     destination: "Chicago, IL", 
-    departureDate: "2024-01-18",
-    estimatedArrival: "2024-01-20",
+    departureDate: "2025-01-18",
+    estimatedArrival: "2025-01-20",
     status: "Preparing",
     priority: "Low"
   },
   {
-    shipmentId: "SH-2024-004",
-    orderNumber: "CO-2024-004",
+    shipmentId: "SH-2025-004",
+    orderNumber: "CO-2025-004",
     carrier: "USPS Priority",
     trackingNumber: "USPS987654321",
     origin: "Warehouse A",
     destination: "Houston, TX",
-    departureDate: "2024-01-20",
-    estimatedArrival: "2024-01-22",
+    departureDate: "2025-01-20",
+    estimatedArrival: "2025-01-22",
     status: "Delayed",
     priority: "High"
   },
   {
-    shipmentId: "SH-2024-005",
-    orderNumber: "CO-2024-005",
+    shipmentId: "SH-2025-005",
+    orderNumber: "CO-2025-005",
     carrier: "FedEx Ground", 
     trackingNumber: "FDX555444333",
     origin: "Warehouse D",
     destination: "Miami, FL",
-    departureDate: "2024-01-22",
-    estimatedArrival: "2024-01-24",
+    departureDate: "2025-01-22",
+    estimatedArrival: "2025-01-24",
     status: "In Transit",
     priority: "Medium"
   },
-  // Additional entries for pagination...
   {
-    shipmentId: "SH-2024-006",
-    orderNumber: "CO-2024-006",
+    shipmentId: "SH-2025-006",
+    orderNumber: "CO-2025-006",
     carrier: "DHL Express",
     trackingNumber: "DHL987654321",
     origin: "Warehouse E",
     destination: "Seattle, WA",
-    departureDate: "2024-01-24",
-    estimatedArrival: "2024-01-26",
+    departureDate: "2025-01-24",
+    estimatedArrival: "2025-01-26",
     status: "In Transit",
     priority: "High"
   },
   {
-    shipmentId: "SH-2024-007",
-    orderNumber: "CO-2024-007",
+    shipmentId: "SH-2025-007",
+    orderNumber: "CO-2025-007",
     carrier: "UPS Express",
     trackingNumber: "1Z1234567890",
     origin: "Warehouse F",
     destination: "Boston, MA",
-    departureDate: "2024-01-25",
-    estimatedArrival: "2024-01-27",
+    departureDate: "2025-01-25",
+    estimatedArrival: "2025-01-27",
     status: "Delivered",
     priority: "Medium"
   },
   {
-    shipmentId: "SH-2024-008",
-    orderNumber: "CO-2024-008",
+    shipmentId: "SH-2025-008",
+    orderNumber: "CO-2025-008",
     carrier: "FedEx International",
     trackingNumber: "FDX111222333",
     origin: "Warehouse G",
     destination: "Denver, CO",
-    departureDate: "2024-01-26",
-    estimatedArrival: "2024-01-28",
+    departureDate: "2025-01-26",
+    estimatedArrival: "2025-01-28",
     status: "In Transit",
     priority: "Low"
   },
   {
-    shipmentId: "SH-2024-009",
-    orderNumber: "CO-2024-009",
+    shipmentId: "SH-2025-009",
+    orderNumber: "CO-2025-009",
     carrier: "USPS Express",
     trackingNumber: "USPS555666777",
     origin: "Warehouse H",
     destination: "Phoenix, AZ",
-    departureDate: "2024-01-27",
-    estimatedArrival: "2024-01-29",
+    departureDate: "2025-01-27",
+    estimatedArrival: "2025-01-29",
     status: "Preparing",
     priority: "Medium"
   },
   {
-    shipmentId: "SH-2024-010",
-    orderNumber: "CO-2024-010",
+    shipmentId: "SH-2025-010",
+    orderNumber: "CO-2025-010",
     carrier: "DHL Ground",
     trackingNumber: "DHL444555666",
     origin: "Warehouse I",
     destination: "Atlanta, GA",
-    departureDate: "2024-01-28",
-    estimatedArrival: "2024-01-30",
+    departureDate: "2025-01-28",
+    estimatedArrival: "2025-01-30",
     status: "Delayed",
     priority: "High"
   }
