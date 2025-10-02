@@ -10,6 +10,7 @@ import { Plus, Search, Filter, Download, CheckCircle, XCircle, AlertTriangle, Cl
 import { PaginationComponent } from "@/components/Pagination";
 import { qualityControlData, getQualityStats } from "@/data/mockData";
 import { useUser } from "@/contexts/UserContext";
+import { toast } from "@/hooks/use-toast";
 
 const Quality = () => {
   const { user } = useUser();
@@ -259,10 +260,29 @@ const Quality = () => {
                     {user.role === 'admin' && (
                       <TableCell>
                         <div className="flex space-x-2">
-                          <Button variant="outline" size="sm">
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => {
+                              toast({
+                                title: "Edit Inspection",
+                                description: `Editing inspection ${item.inspectionId}`,
+                              });
+                            }}
+                          >
                             <Edit className="h-4 w-4" />
                           </Button>
-                          <Button variant="outline" size="sm">
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => {
+                              toast({
+                                title: "Inspection Deleted",
+                                description: `Inspection ${item.inspectionId} has been removed`,
+                                variant: "destructive",
+                              });
+                            }}
+                          >
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>

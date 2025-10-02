@@ -6,11 +6,14 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Search, Filter, Download, Package, TrendingDown, AlertTriangle, CheckCircle } from "lucide-react";
+import { Plus, Search, Filter, Download, Package, TrendingDown, AlertTriangle, CheckCircle, Edit, Trash2 } from "lucide-react";
 import { inventoryData, getInventoryStats } from "@/data/mockData";
 import { PaginationComponent } from "@/components/Pagination";
+import { useUser } from "@/contexts/UserContext";
+import { toast } from "@/hooks/use-toast";
 
 const Inventory = () => {
+  const { user } = useUser();
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -219,6 +222,7 @@ const Inventory = () => {
                   <TableHead>Unit Price</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Last Updated</TableHead>
+                  {user.role === 'admin' && <TableHead>Actions</TableHead>}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -237,6 +241,37 @@ const Inventory = () => {
                     <TableCell className="font-medium">{item.unitPrice}</TableCell>
                     <TableCell>{getStatusBadge(item.status)}</TableCell>
                     <TableCell>{item.lastUpdated}</TableCell>
+                    {user.role === 'admin' && (
+                      <TableCell>
+                        <div className="flex space-x-2">
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => {
+                              toast({
+                                title: "Edit Item",
+                                description: `Editing ${item.itemName}`,
+                              });
+                            }}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => {
+                              toast({
+                                title: "Item Deleted",
+                                description: `${item.itemName} has been removed from inventory`,
+                                variant: "destructive",
+                              });
+                            }}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    )}
                   </TableRow>
                 ))}
               </TableBody>

@@ -10,6 +10,7 @@ import { Plus, Search, Filter, Download, Truck, MapPin, Clock, Package, Edit, Tr
 import { PaginationComponent } from "@/components/Pagination";
 import { logisticsData, getLogisticsStats } from "@/data/mockData";
 import { useUser } from "@/contexts/UserContext";
+import { toast } from "@/hooks/use-toast";
 
 const Logistics = () => {
   const { user } = useUser();
@@ -248,10 +249,29 @@ const Logistics = () => {
                     {user.role === 'admin' && (
                       <TableCell>
                         <div className="flex space-x-2">
-                          <Button variant="outline" size="sm">
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => {
+                              toast({
+                                title: "Edit Shipment",
+                                description: `Editing shipment ${shipment.shipmentId}`,
+                              });
+                            }}
+                          >
                             <Edit className="h-4 w-4" />
                           </Button>
-                          <Button variant="outline" size="sm">
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => {
+                              toast({
+                                title: "Shipment Deleted",
+                                description: `Shipment ${shipment.shipmentId} has been cancelled`,
+                                variant: "destructive",
+                              });
+                            }}
+                          >
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>

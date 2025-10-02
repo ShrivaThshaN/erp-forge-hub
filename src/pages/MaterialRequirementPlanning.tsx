@@ -10,6 +10,7 @@ import { Filter, Download, Search, Edit, Trash2 } from "lucide-react";
 import { PaginationComponent } from "@/components/Pagination";
 import { materialRequirementData, getMRPStats } from "@/data/mockData";
 import { useUser } from "@/contexts/UserContext";
+import { toast } from "@/hooks/use-toast";
 
 const MaterialRequirementPlanning = () => {
   const { user } = useUser();
@@ -259,10 +260,29 @@ const MaterialRequirementPlanning = () => {
                     {user.role === 'admin' && (
                       <TableCell>
                         <div className="flex space-x-2">
-                          <Button variant="outline" size="sm">
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => {
+                              toast({
+                                title: "Edit Material",
+                                description: `Editing ${item.materialName}`,
+                              });
+                            }}
+                          >
                             <Edit className="h-4 w-4" />
                           </Button>
-                          <Button variant="outline" size="sm">
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => {
+                              toast({
+                                title: "Material Deleted",
+                                description: `${item.materialName} has been removed`,
+                                variant: "destructive",
+                              });
+                            }}
+                          >
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>

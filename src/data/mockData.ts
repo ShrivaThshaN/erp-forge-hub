@@ -878,9 +878,68 @@ export const getLogisticsStats = () => {
   return { totalShipments, delivered, inTransit, preparing, delayed };
 };
 
+// Procurement/Purchase Orders Data
+export const procurementData = [
+  {
+    poNumber: "PO-2025-001",
+    supplier: "MetalCraft Industries",
+    materialName: "Steel Sheets",
+    quantity: 100,
+    unitPrice: "₹250.00",
+    totalAmount: "₹25,000.00",
+    orderDate: "2025-01-15",
+    expectedDelivery: "2025-01-22",
+    status: "Pending"
+  },
+  {
+    poNumber: "PO-2025-002",
+    supplier: "Premium Glass Solutions",
+    materialName: "Tempered Glass",
+    quantity: 50,
+    unitPrice: "₹1,200.00",
+    totalAmount: "₹60,000.00",
+    orderDate: "2025-01-18",
+    expectedDelivery: "2025-01-25",
+    status: "Approved"
+  },
+  {
+    poNumber: "PO-2025-003",
+    supplier: "Aluminum Solutions Inc",
+    materialName: "Aluminum Extrusions",
+    quantity: 200,
+    unitPrice: "₹180.00",
+    totalAmount: "₹36,000.00",
+    orderDate: "2025-01-20",
+    expectedDelivery: "2025-01-27",
+    status: "Delivered"
+  },
+  {
+    poNumber: "PO-2025-004",
+    supplier: "Rubber Industries",
+    materialName: "Rubber Gaskets",
+    quantity: 500,
+    unitPrice: "₹15.00",
+    totalAmount: "₹7,500.00",
+    orderDate: "2025-01-22",
+    expectedDelivery: "2025-01-29",
+    status: "In Transit"
+  }
+];
+
+export const getProcurementStats = () => {
+  const totalPOs = procurementData.length;
+  const pending = procurementData.filter(item => item.status === "Pending").length;
+  const approved = procurementData.filter(item => item.status === "Approved").length;
+  const inTransit = procurementData.filter(item => item.status === "In Transit").length;
+  const delivered = procurementData.filter(item => item.status === "Delivered").length;
+  
+  return { totalPOs, pending, approved, inTransit, delivered };
+};
+
 export const getDashboardStats = () => {
   const orderStats = getOrderStats();
   const inventoryStats = getInventoryStats();
+  const procurementStats = getProcurementStats();
   
   // Calculate material requirements based on actual data
   const totalRequired = materialRequirementData.reduce((sum, item) => sum + item.requiredQty, 0);
@@ -890,7 +949,7 @@ export const getDashboardStats = () => {
 
   return {
     totalProductionOrders: productionScheduleData.length,
-    activePurchaseOrders: 28,
+    activePurchaseOrders: procurementStats.totalPOs,
     materialShortfall: shortfall,
     monthlyRevenue: orderStats.totalValue,
     totalRequired,
