@@ -8,18 +8,69 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Search, Filter, Download, Truck, MapPin, Clock, Package, Edit, Trash2 } from "lucide-react";
 import { PaginationComponent } from "@/components/Pagination";
-import { logisticsData, getLogisticsStats } from "@/data/mockData";
+import { logisticsData as initialLogisticsData, getLogisticsStats } from "@/data/mockData";
 import { useUser } from "@/contexts/UserContext";
 import { toast } from "@/hooks/use-toast";
+import { EditLogisticsDialog } from "@/components/EditLogisticsDialog";
+import { NewLogisticsDialog } from "@/components/NewLogisticsDialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const Logistics = () => {
   const { user } = useUser();
+  const [logisticsData, setLogisticsData] = useState(initialLogisticsData);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [carrierFilter, setCarrierFilter] = useState("all");
   const [priorityFilter, setPriorityFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+  const [editingShipment, setEditingShipment] = useState<any>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isNewDialogOpen, setIsNewDialogOpen] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [shipmentToDelete, setShipmentToDelete] = useState<any>(null);
+
+  const handleEditShipment = (shipment: any) => {
+    setEditingShipment(shipment);
+    setIsEditDialogOpen(true);
+  };
+
+  const handleSaveShipment = (updatedShipment: any) => {
+    setLogisticsData(prev => prev.map(item => 
+      item.shipmentId === updatedShipment.shipmentId ? updatedShipment : item
+    ));
+  };
+
+  const handleAddShipment = (newShipment: any) => {
+    setLogisticsData(prev => [newShipment, ...prev]);
+  };
+
+  const handleDeleteClick = (shipment: any) => {
+    setShipmentToDelete(shipment);
+    setDeleteConfirmOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (shipmentToDelete) {
+      setLogisticsData(prev => prev.filter(item => item.shipmentId !== shipmentToDelete.shipmentId));
+      toast({
+        title: "Shipment Deleted",
+        description: `Shipment ${shipmentToDelete.shipmentId} has been cancelled`,
+        variant: "destructive",
+      });
+      setShipmentToDelete(null);
+    }
+    setDeleteConfirmOpen(false);
+  };
 
   const filteredData = logisticsData.filter(shipment => {
     const matchesSearch = shipment.shipmentId.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -141,10 +192,12 @@ const Logistics = () => {
             <Download className="w-4 h-4 mr-2" />
             Export
           </Button>
-          <Button className="bg-primary hover:bg-primary/90">
-            <Plus className="w-4 h-4 mr-2" />
-            New Shipment
-          </Button>
+          {user.role === 'admin' && (
+            <Button className="bg-primary hover:bg-primary/90" onClick={() => setIsNewDialogOpen(true)}>
+              <Plus className="w-4 h-4 mr-2" />
+              New Shipment
+            </Button>
+          )}
         </div>
       </div>
 
@@ -252,25 +305,14 @@ const Logistics = () => {
                           <Button 
                             variant="outline" 
                             size="sm"
-                            onClick={() => {
-                              toast({
-                                title: "Edit Shipment",
-                                description: `Editing shipment ${shipment.shipmentId}`,
-                              });
-                            }}
+                            onClick={() => handleEditShipment(shipment)}
                           >
                             <Edit className="h-4 w-4" />
                           </Button>
                           <Button 
                             variant="outline" 
                             size="sm"
-                            onClick={() => {
-                              toast({
-                                title: "Shipment Deleted",
-                                description: `Shipment ${shipment.shipmentId} has been cancelled`,
-                                variant: "destructive",
-                              });
-                            }}
+                            onClick={() => handleDeleteClick(shipment)}
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -293,6 +335,38 @@ const Logistics = () => {
           </div>
         </CardContent>
       </Card>
+
+      {editingShipment && (
+        <EditLogisticsDialog
+          open={isEditDialogOpen}
+          onOpenChange={setIsEditDialogOpen}
+          shipment={editingShipment}
+          onSave={handleSaveShipment}
+        />
+      )}
+
+      <NewLogisticsDialog
+        open={isNewDialogOpen}
+        onOpenChange={setIsNewDialogOpen}
+        onAdd={handleAddShipment}
+      />
+
+      <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently cancel shipment {shipmentToDelete?.shipmentId}. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

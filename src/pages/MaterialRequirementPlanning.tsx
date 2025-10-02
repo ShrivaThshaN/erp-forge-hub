@@ -6,14 +6,27 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Filter, Download, Search, Edit, Trash2 } from "lucide-react";
+import { Filter, Download, Search, Edit, Trash2, Plus } from "lucide-react";
 import { PaginationComponent } from "@/components/Pagination";
-import { materialRequirementData, getMRPStats } from "@/data/mockData";
+import { materialRequirementData as initialMaterialData, getMRPStats } from "@/data/mockData";
 import { useUser } from "@/contexts/UserContext";
 import { toast } from "@/hooks/use-toast";
+import { EditMaterialDialog } from "@/components/EditMaterialDialog";
+import { NewMaterialDialog } from "@/components/NewMaterialDialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const MaterialRequirementPlanning = () => {
   const { user } = useUser();
+  const [materialData, setMaterialData] = useState(initialMaterialData);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [supplierFilter, setSupplierFilter] = useState("all");
@@ -21,10 +34,15 @@ const MaterialRequirementPlanning = () => {
   const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+  const [editingMaterial, setEditingMaterial] = useState<any>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isNewDialogOpen, setIsNewDialogOpen] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [materialToDelete, setMaterialToDelete] = useState<any>(null);
 
   const stats = getMRPStats();
 
-  const filteredData = materialRequirementData.filter(item => {
+  const filteredData = materialData.filter(item => {
     const matchesSearch = item.materialName.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          item.materialCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          item.supplier.toLowerCase().includes(searchTerm.toLowerCase());
@@ -36,16 +54,43 @@ const MaterialRequirementPlanning = () => {
     return matchesSearch && matchesStatus && matchesSupplier && matchesMaterial;
   });
 
+  const handleEditMaterial = (material: any) => {
+    setEditingMaterial(material);
+    setIsEditDialogOpen(true);
+  };
+
+  const handleSaveMaterial = (updatedMaterial: any) => {
+    setMaterialData(prev => prev.map(item => 
+      item.materialCode === updatedMaterial.materialCode ? updatedMaterial : item
+    ));
+  };
+
+  const handleAddMaterial = (newMaterial: any) => {
+    setMaterialData(prev => [newMaterial, ...prev]);
+  };
+
+  const handleDeleteClick = (material: any) => {
+    setMaterialToDelete(material);
+    setDeleteConfirmOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (materialToDelete) {
+      setMaterialData(prev => prev.filter(item => item.materialCode !== materialToDelete.materialCode));
+      toast({
+        title: "Material Deleted",
+        description: `${materialToDelete.materialName} has been removed`,
+        variant: "destructive",
+      });
+      setMaterialToDelete(null);
+    }
+    setDeleteConfirmOpen(false);
+  };
+
   // Pagination logic
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedData = filteredData.slice(startIndex, startIndex + itemsPerPage);
-  
-  // Calculate stats from actual data
-  const totalRequired = materialRequirementData.reduce((sum, item) => sum + item.requiredQty, 0);
-  const availableStock = materialRequirementData.reduce((sum, item) => sum + item.availableQty, 0);
-  const totalShortfall = materialRequirementData.reduce((sum, item) => sum + item.shortfall, 0);
-  const itemsInShortage = materialRequirementData.filter(item => item.shortfall > 0).length;
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -174,6 +219,12 @@ const MaterialRequirementPlanning = () => {
             <Download className="w-4 h-4 mr-2" />
             Export
           </Button>
+          {user.role === 'admin' && (
+            <Button className="bg-primary hover:bg-primary/90" onClick={() => setIsNewDialogOpen(true)}>
+              <Plus className="w-4 h-4 mr-2" />
+              Add Material
+            </Button>
+          )}
         </div>
       </div>
 
@@ -263,25 +314,14 @@ const MaterialRequirementPlanning = () => {
                           <Button 
                             variant="outline" 
                             size="sm"
-                            onClick={() => {
-                              toast({
-                                title: "Edit Material",
-                                description: `Editing ${item.materialName}`,
-                              });
-                            }}
+                            onClick={() => handleEditMaterial(item)}
                           >
                             <Edit className="h-4 w-4" />
                           </Button>
                           <Button 
                             variant="outline" 
                             size="sm"
-                            onClick={() => {
-                              toast({
-                                title: "Material Deleted",
-                                description: `${item.materialName} has been removed`,
-                                variant: "destructive",
-                              });
-                            }}
+                            onClick={() => handleDeleteClick(item)}
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -304,6 +344,38 @@ const MaterialRequirementPlanning = () => {
           </div>
         </CardContent>
       </Card>
+
+      {editingMaterial && (
+        <EditMaterialDialog
+          open={isEditDialogOpen}
+          onOpenChange={setIsEditDialogOpen}
+          material={editingMaterial}
+          onSave={handleSaveMaterial}
+        />
+      )}
+
+      <NewMaterialDialog
+        open={isNewDialogOpen}
+        onOpenChange={setIsNewDialogOpen}
+        onAdd={handleAddMaterial}
+      />
+
+      <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete {materialToDelete?.materialName}. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

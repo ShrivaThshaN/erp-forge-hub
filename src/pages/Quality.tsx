@@ -8,22 +8,73 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Search, Filter, Download, CheckCircle, XCircle, AlertTriangle, Clock, Edit, Trash2, ClipboardCheck } from "lucide-react";
 import { PaginationComponent } from "@/components/Pagination";
-import { qualityControlData, getQualityStats } from "@/data/mockData";
+import { qualityControlData as initialQualityData, getQualityStats } from "@/data/mockData";
 import { useUser } from "@/contexts/UserContext";
 import { toast } from "@/hooks/use-toast";
+import { EditQualityDialog } from "@/components/EditQualityDialog";
+import { NewQualityDialog } from "@/components/NewQualityDialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const Quality = () => {
   const { user } = useUser();
+  const [qualityData, setQualityData] = useState(initialQualityData);
   const [searchTerm, setSearchTerm] = useState("");
   const [resultFilter, setResultFilter] = useState("all");
   const [testTypeFilter, setTestTypeFilter] = useState("all");
   const [inspectorFilter, setInspectorFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+  const [editingInspection, setEditingInspection] = useState<any>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isNewDialogOpen, setIsNewDialogOpen] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [inspectionToDelete, setInspectionToDelete] = useState<any>(null);
 
   const stats = getQualityStats();
 
-  const filteredData = qualityControlData.filter(item => {
+  const handleEditInspection = (inspection: any) => {
+    setEditingInspection(inspection);
+    setIsEditDialogOpen(true);
+  };
+
+  const handleSaveInspection = (updatedInspection: any) => {
+    setQualityData(prev => prev.map(item => 
+      item.inspectionId === updatedInspection.inspectionId ? updatedInspection : item
+    ));
+  };
+
+  const handleAddInspection = (newInspection: any) => {
+    setQualityData(prev => [newInspection, ...prev]);
+  };
+
+  const handleDeleteClick = (inspection: any) => {
+    setInspectionToDelete(inspection);
+    setDeleteConfirmOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (inspectionToDelete) {
+      setQualityData(prev => prev.filter(item => item.inspectionId !== inspectionToDelete.inspectionId));
+      toast({
+        title: "Inspection Deleted",
+        description: `Inspection ${inspectionToDelete.inspectionId} has been removed`,
+        variant: "destructive",
+      });
+      setInspectionToDelete(null);
+    }
+    setDeleteConfirmOpen(false);
+  };
+
+  const filteredData = qualityData.filter(item => {
     const matchesSearch = item.inspectionId.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.batchNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -145,10 +196,12 @@ const Quality = () => {
             <Download className="w-4 h-4 mr-2" />
             Export
           </Button>
-          <Button className="bg-primary hover:bg-primary/90">
-            <Plus className="w-4 h-4 mr-2" />
-            New Inspection
-          </Button>
+          {user.role === 'admin' && (
+            <Button className="bg-primary hover:bg-primary/90" onClick={() => setIsNewDialogOpen(true)}>
+              <Plus className="w-4 h-4 mr-2" />
+              New Inspection
+            </Button>
+          )}
         </div>
       </div>
 
@@ -263,25 +316,14 @@ const Quality = () => {
                           <Button 
                             variant="outline" 
                             size="sm"
-                            onClick={() => {
-                              toast({
-                                title: "Edit Inspection",
-                                description: `Editing inspection ${item.inspectionId}`,
-                              });
-                            }}
+                            onClick={() => handleEditInspection(item)}
                           >
                             <Edit className="h-4 w-4" />
                           </Button>
                           <Button 
                             variant="outline" 
                             size="sm"
-                            onClick={() => {
-                              toast({
-                                title: "Inspection Deleted",
-                                description: `Inspection ${item.inspectionId} has been removed`,
-                                variant: "destructive",
-                              });
-                            }}
+                            onClick={() => handleDeleteClick(item)}
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -304,6 +346,38 @@ const Quality = () => {
           </div>
         </CardContent>
       </Card>
+
+      {editingInspection && (
+        <EditQualityDialog
+          open={isEditDialogOpen}
+          onOpenChange={setIsEditDialogOpen}
+          inspection={editingInspection}
+          onSave={handleSaveInspection}
+        />
+      )}
+
+      <NewQualityDialog
+        open={isNewDialogOpen}
+        onOpenChange={setIsNewDialogOpen}
+        onAdd={handleAddInspection}
+      />
+
+      <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete inspection {inspectionToDelete?.inspectionId}. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

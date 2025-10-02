@@ -7,21 +7,72 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Search, Filter, Download, Package, TrendingDown, AlertTriangle, CheckCircle, Edit, Trash2 } from "lucide-react";
-import { inventoryData, getInventoryStats } from "@/data/mockData";
+import { inventoryData as initialInventoryData, getInventoryStats } from "@/data/mockData";
 import { PaginationComponent } from "@/components/Pagination";
 import { useUser } from "@/contexts/UserContext";
 import { toast } from "@/hooks/use-toast";
+import { EditInventoryDialog } from "@/components/EditInventoryDialog";
+import { NewInventoryDialog } from "@/components/NewInventoryDialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const Inventory = () => {
   const { user } = useUser();
+  const [inventoryData, setInventoryData] = useState(initialInventoryData);
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [locationFilter, setLocationFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+  const [editingItem, setEditingItem] = useState<any>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isNewDialogOpen, setIsNewDialogOpen] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<any>(null);
 
   const stats = getInventoryStats();
+
+  const handleEditItem = (item: any) => {
+    setEditingItem(item);
+    setIsEditDialogOpen(true);
+  };
+
+  const handleSaveItem = (updatedItem: any) => {
+    setInventoryData(prev => prev.map(item => 
+      item.itemCode === updatedItem.itemCode ? updatedItem : item
+    ));
+  };
+
+  const handleAddItem = (newItem: any) => {
+    setInventoryData(prev => [newItem, ...prev]);
+  };
+
+  const handleDeleteClick = (item: any) => {
+    setItemToDelete(item);
+    setDeleteConfirmOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (itemToDelete) {
+      setInventoryData(prev => prev.filter(item => item.itemCode !== itemToDelete.itemCode));
+      toast({
+        title: "Item Deleted",
+        description: `${itemToDelete.itemName} has been removed from inventory`,
+        variant: "destructive",
+      });
+      setItemToDelete(null);
+    }
+    setDeleteConfirmOpen(false);
+  };
 
   const filteredData = inventoryData.filter(item => {
     const matchesSearch = item.itemName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -134,10 +185,12 @@ const Inventory = () => {
             <Download className="w-4 h-4 mr-2" />
             Export
           </Button>
-          <Button className="bg-primary hover:bg-primary/90">
-            <Plus className="w-4 h-4 mr-2" />
-            Add Item
-          </Button>
+          {user.role === 'admin' && (
+            <Button className="bg-primary hover:bg-primary/90" onClick={() => setIsNewDialogOpen(true)}>
+              <Plus className="w-4 h-4 mr-2" />
+              Add Item
+            </Button>
+          )}
         </div>
       </div>
 
@@ -247,25 +300,14 @@ const Inventory = () => {
                           <Button 
                             variant="outline" 
                             size="sm"
-                            onClick={() => {
-                              toast({
-                                title: "Edit Item",
-                                description: `Editing ${item.itemName}`,
-                              });
-                            }}
+                            onClick={() => handleEditItem(item)}
                           >
                             <Edit className="h-4 w-4" />
                           </Button>
                           <Button 
                             variant="outline" 
                             size="sm"
-                            onClick={() => {
-                              toast({
-                                title: "Item Deleted",
-                                description: `${item.itemName} has been removed from inventory`,
-                                variant: "destructive",
-                              });
-                            }}
+                            onClick={() => handleDeleteClick(item)}
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -288,6 +330,38 @@ const Inventory = () => {
           </div>
         </CardContent>
       </Card>
+
+      {editingItem && (
+        <EditInventoryDialog
+          open={isEditDialogOpen}
+          onOpenChange={setIsEditDialogOpen}
+          item={editingItem}
+          onSave={handleSaveItem}
+        />
+      )}
+
+      <NewInventoryDialog
+        open={isNewDialogOpen}
+        onOpenChange={setIsNewDialogOpen}
+        onAdd={handleAddItem}
+      />
+
+      <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete {itemToDelete?.itemName}. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
