@@ -160,7 +160,11 @@ export const NewScheduleDialog = ({ open, onOpenChange, onScheduleAdded }: NewSc
                   mode="single"
                   selected={plannedEndDate}
                   onSelect={setPlannedEndDate}
-                  disabled={(date) => date < today}
+                  disabled={(date) => {
+                    if (date < today) return true;
+                    if (plannedStartDate && date < plannedStartDate) return true;
+                    return false;
+                  }}
                   initialFocus
                   className="pointer-events-auto"
                 />

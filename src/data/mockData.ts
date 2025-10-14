@@ -936,6 +936,29 @@ export const getProcurementStats = () => {
   return { totalPOs, pending, approved, inTransit, delivered };
 };
 
+// Product-Material Mapping: Links products to their required materials and quantities
+export const productMaterialMapping: Record<string, Array<{ itemCode: string; itemName: string; quantity: number }>> = {
+  "Glass Dining Table": [
+    { itemCode: "INV-0001", itemName: "Aluminum Rods 6mm", quantity: 10 },
+    { itemCode: "INV-0002", itemName: "Steel Bolts M8x50", quantity: 20 }
+  ],
+  "Steel Office Desk": [
+    { itemCode: "INV-0001", itemName: "Aluminum Rods 6mm", quantity: 15 },
+    { itemCode: "INV-0002", itemName: "Steel Bolts M8x50", quantity: 30 }
+  ],
+  "Aluminum Window Frame": [
+    { itemCode: "INV-0001", itemName: "Aluminum Rods 6mm", quantity: 25 },
+    { itemCode: "INV-0003", itemName: "Rubber Gaskets", quantity: 10 }
+  ],
+  "Motor Assembly Unit": [
+    { itemCode: "INV-0004", itemName: "Electric Motors 5HP", quantity: 1 },
+    { itemCode: "INV-0005", itemName: "Circuit Boards PCB-A1", quantity: 2 }
+  ],
+  "Circuit Board Assembly": [
+    { itemCode: "INV-0005", itemName: "Circuit Boards PCB-A1", quantity: 5 }
+  ]
+};
+
 export const getDashboardStats = () => {
   const orderStats = getOrderStats();
   const inventoryStats = getInventoryStats();

@@ -67,7 +67,7 @@ export const NewOrderDialog: React.FC<NewOrderDialogProps> = ({
   // Generate order number
   React.useEffect(() => {
     if (isOpen && !formData.orderNumber) {
-      const orderNumber = `CO-2024-${String(Date.now()).slice(-3)}`;
+      const orderNumber = `CO-2025-${String(Date.now()).slice(-6)}${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`;
       setFormData(prev => ({ ...prev, orderNumber }));
     }
   }, [isOpen]);
@@ -148,6 +148,7 @@ export const NewOrderDialog: React.FC<NewOrderDialogProps> = ({
                 type="date"
                 value={formData.deliveryDate}
                 onChange={(e) => handleInputChange('deliveryDate', e.target.value)}
+                min={formData.orderDate}
               />
             </div>
           </div>

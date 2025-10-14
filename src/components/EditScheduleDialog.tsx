@@ -10,6 +10,7 @@ import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
+import { processProductionCompletion } from "@/lib/materialInventorySync";
 
 interface Schedule {
   scheduleId: string;
@@ -36,6 +37,7 @@ export const EditScheduleDialog = ({ open, onOpenChange, schedule, onScheduleUpd
   const [plannedEndDate, setPlannedEndDate] = useState<Date>();
   const [priority, setPriority] = useState("");
   const [status, setStatus] = useState("");
+  const [previousStatus, setPreviousStatus] = useState("");
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -47,6 +49,7 @@ export const EditScheduleDialog = ({ open, onOpenChange, schedule, onScheduleUpd
       setPlannedEndDate(new Date(schedule.plannedEndDate));
       setPriority(schedule.priority);
       setStatus(schedule.status);
+      setPreviousStatus(schedule.status);
     }
   }, [schedule]);
 
@@ -69,10 +72,32 @@ export const EditScheduleDialog = ({ open, onOpenChange, schedule, onScheduleUpd
       return;
     }
 
-    toast({
-      title: "Success",
-      description: "Production schedule updated successfully",
-    });
+    // Check if status changed to "Completed"
+    if (status === "Completed" && previousStatus !== "Completed") {
+      const productName = schedule?.productName || "";
+      const orderNum = schedule?.orderNumber || "";
+      
+      const result = processProductionCompletion(productName, orderNum);
+      
+      if (result.success) {
+        const materialsUsed = result.updates.map(u => `${u.itemName} (${u.quantityUsed} units)`).join(", ");
+        toast({
+          title: "Production Completed",
+          description: `Schedule updated. Materials used: ${materialsUsed}. Inventory has been updated.`,
+        });
+      } else {
+        toast({
+          title: "Warning",
+          description: `Schedule updated but material processing had issues: ${result.errors.join(", ")}`,
+          variant: "destructive",
+        });
+      }
+    } else {
+      toast({
+        title: "Success",
+        description: "Production schedule updated successfully",
+      });
+    }
 
     onScheduleUpdated();
     onOpenChange(false);
@@ -173,7 +198,10 @@ export const EditScheduleDialog = ({ open, onOpenChange, schedule, onScheduleUpd
                   mode="single"
                   selected={plannedEndDate}
                   onSelect={setPlannedEndDate}
-                  disabled={(date) => date < today}
+                  disabled={(date) => {
+                    if (plannedStartDate && date < plannedStartDate) return true;
+                    return false;
+                  }}
                   initialFocus
                   className="pointer-events-auto"
                 />

@@ -120,6 +120,7 @@ export const EditOrderDialog: React.FC<EditOrderDialogProps> = ({
                 type="date"
                 value={formData.deliveryDate}
                 onChange={(e) => handleInputChange('deliveryDate', e.target.value)}
+                min={formData.orderDate}
               />
             </div>
           </div>
