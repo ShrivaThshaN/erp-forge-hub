@@ -10,6 +10,7 @@ import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
+import { processProcurementReceipt } from "@/lib/procurementInventorySync";
 
 interface PurchaseOrder {
   id: string;
@@ -33,6 +34,7 @@ export const EditPurchaseOrderDialog = ({ open, onOpenChange, order, onOrderUpda
   const [unitPrice, setUnitPrice] = useState("");
   const [deliveryDate, setDeliveryDate] = useState<Date>();
   const [status, setStatus] = useState("");
+  const [previousStatus, setPreviousStatus] = useState("");
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -43,6 +45,7 @@ export const EditPurchaseOrderDialog = ({ open, onOpenChange, order, onOrderUpda
       setUnitPrice(order.unitPrice.toString());
       setDeliveryDate(new Date(order.deliveryDate));
       setStatus(order.status);
+      setPreviousStatus(order.status);
     }
   }, [order]);
 
@@ -56,10 +59,28 @@ export const EditPurchaseOrderDialog = ({ open, onOpenChange, order, onOrderUpda
       return;
     }
 
-    toast({
-      title: "Success",
-      description: "Purchase order updated successfully",
-    });
+    // Check if status changed to "Received"
+    if (status === "Received" && previousStatus !== "Received" && order) {
+      const result = processProcurementReceipt(order.id, previousStatus, status);
+      
+      if (result.success && result.update) {
+        toast({
+          title: "Materials Received",
+          description: `${result.update.quantityReceived} units of ${result.update.itemName} added to inventory. Stock updated successfully.`,
+        });
+      } else if (result.error) {
+        toast({
+          title: "Warning",
+          description: `Purchase order updated but inventory sync had issues: ${result.error}`,
+          variant: "destructive",
+        });
+      }
+    } else {
+      toast({
+        title: "Success",
+        description: "Purchase order updated successfully",
+      });
+    }
 
     onOrderUpdated();
     onOpenChange(false);

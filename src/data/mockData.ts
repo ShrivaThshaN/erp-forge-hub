@@ -75,172 +75,84 @@ export const inventoryData = [
   }
 ];
 
+// Streamlined to 7 orders that flow through the ERP system
 export const customerOrders = [
   {
     id: 1,
     orderNumber: "CO-2025-001",
     customerName: "Luxury Home Interiors",
     productName: "Glass Dining Table",
-    orderDate: "2024-01-15",
-    deliveryDate: "2024-02-15",
+    orderDate: "2025-01-15",
+    deliveryDate: "2025-02-15",
     status: "Processing",
     totalValue: 85000,
     items: 1
   },
   {
     id: 2,
-    orderNumber: "CO-2024-002", 
+    orderNumber: "CO-2025-002", 
     customerName: "Corporate Office Solutions",
     productName: "Steel Office Desk",
-    orderDate: "2024-01-18",
-    deliveryDate: "2024-02-18",
-    status: "Ready to Ship",
+    orderDate: "2025-01-18",
+    deliveryDate: "2025-02-18",
+    status: "Processing",
     totalValue: 45500, 
     items: 2
   },
   {
     id: 3,
-    orderNumber: "CO-2024-003",
+    orderNumber: "CO-2025-003",
     customerName: "Metro Construction Ltd",
     productName: "Aluminum Window Frame",
-    orderDate: "2024-01-20",
-    deliveryDate: "2024-02-20", 
+    orderDate: "2025-01-20",
+    deliveryDate: "2025-02-20", 
     status: "Processing",
     totalValue: 32750,
     items: 10
   },
   {
     id: 4,
-    orderNumber: "CO-2024-004",
-    customerName: "Industrial Equipment Co",
-    productName: "Rubber Gasket Set",
-    orderDate: "2024-01-22", 
-    deliveryDate: "2024-02-22",
-    status: "Delivered",
-    totalValue: 15200,
-    items: 50
-  },
-  {
-    id: 5,
-    orderNumber: "CO-2024-005",
+    orderNumber: "CO-2025-004",
     customerName: "Precision Manufacturing",
     productName: "Motor Assembly Unit",
-    orderDate: "2024-01-25",
-    deliveryDate: "2024-02-25",
-    status: "Processing", 
+    orderDate: "2025-01-22", 
+    deliveryDate: "2025-02-22",
+    status: "Processing",
     totalValue: 125000,
     items: 5
   },
-  // Additional orders for pagination
   {
-    id: 6,
-    orderNumber: "CO-2024-006",
+    id: 5,
+    orderNumber: "CO-2025-005",
     customerName: "Tech Solutions Inc",
     productName: "Circuit Board Assembly",
-    orderDate: "2024-01-26",
-    deliveryDate: "2024-02-26",
-    status: "Shipped",
+    orderDate: "2025-01-25",
+    deliveryDate: "2025-02-25",
+    status: "Processing", 
     totalValue: 78500,
     items: 8
   },
   {
-    id: 7,
-    orderNumber: "CO-2024-007",
+    id: 6,
+    orderNumber: "CO-2025-006",
     customerName: "Automotive Parts Ltd",
     productName: "Hydraulic System",
-    orderDate: "2024-01-27",
-    deliveryDate: "2024-02-27",
+    orderDate: "2025-01-27",
+    deliveryDate: "2025-02-27",
     status: "Processing",
     totalValue: 95000,
     items: 3
   },
   {
-    id: 8,
-    orderNumber: "CO-2024-008",
-    customerName: "Marine Equipment Co",
-    productName: "Stainless Steel Propeller",
-    orderDate: "2024-01-28",
-    deliveryDate: "2024-02-28",
-    status: "Ready to Ship",
-    totalValue: 165000,
-    items: 1
-  },
-  {
-    id: 9,
-    orderNumber: "CO-2024-009",
+    id: 7,
+    orderNumber: "CO-2025-007",
     customerName: "Energy Systems Corp",
     productName: "Solar Panel Frame",
-    orderDate: "2024-01-29",
-    deliveryDate: "2024-03-01",
+    orderDate: "2025-01-29",
+    deliveryDate: "2025-03-01",
     status: "Processing",
     totalValue: 52000,
     items: 20
-  },
-  {
-    id: 10,
-    orderNumber: "CO-2024-010",
-    customerName: "Aerospace Components",
-    productName: "Titanium Wing Parts",
-    orderDate: "2024-01-30",
-    deliveryDate: "2024-03-02",
-    status: "Delivered",
-    totalValue: 325000,
-    items: 4
-  },
-  {
-    id: 11,
-    orderNumber: "CO-2024-011",
-    customerName: "Medical Device Co",
-    productName: "Surgical Steel Instruments",
-    orderDate: "2024-01-31",
-    deliveryDate: "2024-03-03",
-    status: "Shipped",
-    totalValue: 89000,
-    items: 25
-  },
-  {
-    id: 12,
-    orderNumber: "CO-2024-012",
-    customerName: "Food Processing Ltd",
-    productName: "Conveyor Belt System",
-    orderDate: "2024-02-01",
-    deliveryDate: "2024-03-04",
-    status: "Processing",
-    totalValue: 145000,
-    items: 1
-  },
-  {
-    id: 13,
-    orderNumber: "CO-2024-013",
-    customerName: "Textile Manufacturing",
-    productName: "Industrial Looms",
-    orderDate: "2024-02-02",
-    deliveryDate: "2024-03-05",
-    status: "Ready to Ship",
-    totalValue: 275000,
-    items: 2
-  },
-  {
-    id: 14,
-    orderNumber: "CO-2024-014",
-    customerName: "Chemical Processing",
-    productName: "Reactor Vessel",
-    orderDate: "2024-02-03",
-    deliveryDate: "2024-03-06",
-    status: "Processing",
-    totalValue: 450000,
-    items: 1
-  },
-  {
-    id: 15,
-    orderNumber: "CO-2024-015",
-    customerName: "Mining Operations",
-    productName: "Crusher Assembly",
-    orderDate: "2024-02-04",
-    deliveryDate: "2024-03-07",
-    status: "Delivered",
-    totalValue: 380000,
-    items: 1
   }
 ];
 
@@ -274,159 +186,180 @@ export const getOrderStats = () => {
   return { totalOrders, delivered, inProgress, totalValue };
 };
 
-// Extended data for Material Requirement Planning
+// Material Requirements for all 7 orders
 export const materialRequirementData = [
-  // Glass Dining Table (CO-2024-001) requirements
+  // Order 1: Glass Dining Table (CO-2025-001) - Sufficient materials
   {
-    materialCode: "MAT-GT-001",
-    materialName: "Tempered Glass Top", 
-    requiredQty: 1,
-    availableQty: 0,
-    shortfall: 1,
-    supplier: "Premium Glass Solutions",
-    leadTime: "7 days",
-    status: "Required",
-    plannedDate: "2024-01-10",
-    relatedOrder: "CO-2024-001"
+    materialCode: "MAT-001-A",
+    materialName: "Aluminum Rods 6mm", 
+    requiredQty: 10,
+    availableQty: 450,
+    shortfall: 0,
+    supplier: "Aluminum Solutions Inc",
+    leadTime: "3 days",
+    status: "Available",
+    plannedDate: "2025-01-20",
+    relatedOrder: "CO-2025-001"
   },
   {
-    materialCode: "MAT-GT-002",
-    materialName: "Steel Table Base",
-    requiredQty: 1, 
-    availableQty: 2,
+    materialCode: "MAT-001-B",
+    materialName: "Steel Bolts M8x50",
+    requiredQty: 20,
+    availableQty: 85,
     shortfall: 0,
     supplier: "MetalCraft Industries",
-    leadTime: "5 days", 
-    status: "Available",
-    plannedDate: "2024-01-08",
-    relatedOrder: "CO-2024-001"
-  },
-  // Steel Office Desk (CO-2024-002) requirements
-  {
-    materialCode: "MAT-SD-001", 
-    materialName: "Steel Sheets",
-    requiredQty: 4,
-    availableQty: 2,
-    shortfall: 2,
-    supplier: "Steel Supply Co",
-    leadTime: "3 days",
-    status: "Ordered",
-    plannedDate: "2024-01-12",
-    relatedOrder: "CO-2024-002"
-  },
-  {
-    materialCode: "MAT-SD-002",
-    materialName: "Desk Hardware Kit",
-    requiredQty: 2,
-    availableQty: 5, 
-    shortfall: 0,
-    supplier: "Office Components Ltd",
     leadTime: "2 days",
-    status: "Available", 
-    plannedDate: "2024-01-10",
-    relatedOrder: "CO-2024-002"
+    status: "Available",
+    plannedDate: "2025-01-20",
+    relatedOrder: "CO-2025-001"
   },
-  // Additional data for pagination
+  
+  // Order 2: Steel Office Desk (CO-2025-002) - Sufficient materials
   {
-    materialCode: "MAT-AL-001",
-    materialName: "Aluminum Extrusions",
-    requiredQty: 50,
-    availableQty: 30,
-    shortfall: 20,
-    supplier: "Aluminum Solutions Inc", 
-    leadTime: "4 days",
-    status: "Shortage",
-    plannedDate: "2024-01-14",
-    relatedOrder: "CO-2024-003"
+    materialCode: "MAT-002-A",
+    materialName: "Aluminum Rods 6mm",
+    requiredQty: 15,
+    availableQty: 440,
+    shortfall: 0,
+    supplier: "Aluminum Solutions Inc",
+    leadTime: "3 days",
+    status: "Available",
+    plannedDate: "2025-01-22",
+    relatedOrder: "CO-2025-002"
   },
   {
-    materialCode: "MAT-RG-001",
-    materialName: "Rubber Material",
+    materialCode: "MAT-002-B",
+    materialName: "Steel Bolts M8x50",
+    requiredQty: 30,
+    availableQty: 65,
+    shortfall: 0,
+    supplier: "MetalCraft Industries",
+    leadTime: "2 days",
+    status: "Available",
+    plannedDate: "2025-01-22",
+    relatedOrder: "CO-2025-002"
+  },
+  
+  // Order 3: Aluminum Window Frame (CO-2025-003) - SHORTAGE (Rubber Gaskets)
+  {
+    materialCode: "MAT-003-A",
+    materialName: "Aluminum Rods 6mm",
     requiredQty: 25,
-    availableQty: 40,
+    availableQty: 425,
     shortfall: 0,
-    supplier: "Rubber Industries",
-    leadTime: "2 days",
-    status: "Available",
-    plannedDate: "2024-01-16",
-    relatedOrder: "CO-2024-004"
-  },
-  {
-    materialCode: "MAT-MA-001",
-    materialName: "Electric Motor Core",
-    requiredQty: 5,
-    availableQty: 1,
-    shortfall: 4,
-    supplier: "Precision Motors Ltd",
-    leadTime: "10 days",
-    status: "Required",
-    plannedDate: "2024-01-18",
-    relatedOrder: "CO-2024-005"
-  },
-  {
-    materialCode: "MAT-MA-002",
-    materialName: "Copper Wiring",
-    requiredQty: 500,
-    availableQty: 200,
-    shortfall: 300,
-    supplier: "Electrical Components Co",
-    leadTime: "6 days",
-    status: "Ordered",
-    plannedDate: "2024-01-20",
-    relatedOrder: "CO-2024-005"
-  },
-  // More entries for pagination
-  {
-    materialCode: "MAT-PC-001",
-    materialName: "Plastic Components",
-    requiredQty: 100,
-    availableQty: 75,
-    shortfall: 25,
-    supplier: "Plastic Tech Ltd",
+    supplier: "Aluminum Solutions Inc",
     leadTime: "3 days",
-    status: "Shortage",
-    plannedDate: "2024-01-22",
-    relatedOrder: "CO-2024-006"
+    status: "Available",
+    plannedDate: "2025-01-24",
+    relatedOrder: "CO-2025-003"
   },
   {
-    materialCode: "MAT-SS-001",
-    materialName: "Stainless Steel Pipes",
+    materialCode: "MAT-003-B",
+    materialName: "Rubber Gaskets",
+    requiredQty: 10,
+    availableQty: 0,
+    shortfall: 10,
+    supplier: "Rubber Industries",
+    leadTime: "5 days",
+    status: "Required",
+    plannedDate: "2025-01-24",
+    relatedOrder: "CO-2025-003"
+  },
+  
+  // Order 4: Motor Assembly Unit (CO-2025-004) - Sufficient materials
+  {
+    materialCode: "MAT-004-A",
+    materialName: "Electric Motors 5HP",
+    requiredQty: 1,
+    availableQty: 15,
+    shortfall: 0,
+    supplier: "Precision Motors Ltd",
+    leadTime: "7 days",
+    status: "Available",
+    plannedDate: "2025-01-26",
+    relatedOrder: "CO-2025-004"
+  },
+  {
+    materialCode: "MAT-004-B",
+    materialName: "Circuit Boards PCB-A1",
+    requiredQty: 2,
+    availableQty: 75,
+    shortfall: 0,
+    supplier: "Electronics Supply Co",
+    leadTime: "4 days",
+    status: "Available",
+    plannedDate: "2025-01-26",
+    relatedOrder: "CO-2025-004"
+  },
+  
+  // Order 5: Circuit Board Assembly (CO-2025-005) - Sufficient materials
+  {
+    materialCode: "MAT-005-A",
+    materialName: "Circuit Boards PCB-A1",
+    requiredQty: 5,
+    availableQty: 73,
+    shortfall: 0,
+    supplier: "Electronics Supply Co",
+    leadTime: "4 days",
+    status: "Available",
+    plannedDate: "2025-01-28",
+    relatedOrder: "CO-2025-005"
+  },
+  
+  // Order 6: Hydraulic System (CO-2025-006) - SHORTAGE (Steel Bolts & Motors)
+  {
+    materialCode: "MAT-006-A",
+    materialName: "Steel Bolts M8x50",
+    requiredQty: 40,
+    availableQty: 35,
+    shortfall: 5,
+    supplier: "MetalCraft Industries",
+    leadTime: "2 days",
+    status: "Shortage",
+    plannedDate: "2025-01-30",
+    relatedOrder: "CO-2025-006"
+  },
+  {
+    materialCode: "MAT-006-B",
+    materialName: "Electric Motors 5HP",
+    requiredQty: 2,
+    availableQty: 14,
+    shortfall: 0,
+    supplier: "Precision Motors Ltd",
+    leadTime: "7 days",
+    status: "Available",
+    plannedDate: "2025-01-30",
+    relatedOrder: "CO-2025-006"
+  },
+  
+  // Order 7: Solar Panel Frame (CO-2025-007) - SHORTAGE (Aluminum & Titanium Screws)
+  {
+    materialCode: "MAT-007-A",
+    materialName: "Aluminum Rods 6mm",
+    requiredQty: 30,
+    availableQty: 400,
+    shortfall: 0,
+    supplier: "Aluminum Solutions Inc",
+    leadTime: "3 days",
+    status: "Available",
+    plannedDate: "2025-02-01",
+    relatedOrder: "CO-2025-007"
+  },
+  {
+    materialCode: "MAT-007-B",
+    materialName: "Titanium Screws",
     requiredQty: 20,
     availableQty: 0,
     shortfall: 20,
-    supplier: "Stainless Corp",
-    leadTime: "8 days",
+    supplier: "Titanium Tech Ltd",
+    leadTime: "10 days",
     status: "Required",
-    plannedDate: "2024-01-24",
-    relatedOrder: "CO-2024-007"
-  },
-  {
-    materialCode: "MAT-LED-001",
-    materialName: "LED Components",
-    requiredQty: 200,
-    availableQty: 180,
-    shortfall: 20,
-    supplier: "LED Systems Inc",
-    leadTime: "4 days",
-    status: "Shortage",
-    plannedDate: "2024-01-26",
-    relatedOrder: "CO-2024-008"
-  },
-  {
-    materialCode: "MAT-VL-001",
-    materialName: "Industrial Valves",
-    requiredQty: 15,
-    availableQty: 12,
-    shortfall: 3,
-    supplier: "Valve Technologies",
-    leadTime: "5 days",
-    status: "Shortage",
-    plannedDate: "2024-01-28",
-    relatedOrder: "CO-2024-009"
+    plannedDate: "2025-02-01",
+    relatedOrder: "CO-2025-007"
   }
 ];
 
-// Extended data for Production Schedule
+// Production Schedule for all 7 orders
 export const productionScheduleData = [
   {
     scheduleId: "PS-2025-001",
@@ -449,12 +382,12 @@ export const productionScheduleData = [
     plannedStartDate: "2025-02-03",
     plannedEndDate: "2025-02-18",
     actualStartDate: "2025-02-03",
-    actualEndDate: "2025-02-17",
-    status: "Completed",
+    actualEndDate: "",
+    status: "In Progress",
     priority: "Medium",
     workstation: "Fabrication Bay B",
     supervisor: "Sarah Johnson",
-    progress: 100
+    progress: 40
   },
   {
     scheduleId: "PS-2025-003",
@@ -464,29 +397,29 @@ export const productionScheduleData = [
     plannedEndDate: "2025-02-20",
     actualStartDate: "",
     actualEndDate: "",
-    status: "Scheduled",
-    priority: "Low",
+    status: "On Hold",
+    priority: "Medium",
     workstation: "Extrusion Line C",
     supervisor: "Mike Wilson",
     progress: 0
   },
   {
     scheduleId: "PS-2025-004",
-    productName: "Rubber Gasket Set",
+    productName: "Motor Assembly Unit",
     orderNumber: "CO-2025-004",
     plannedStartDate: "2025-02-07",
     plannedEndDate: "2025-02-22",
-    actualStartDate: "2025-02-08",
+    actualStartDate: "2025-02-07",
     actualEndDate: "",
-    status: "Delayed",
-    priority: "Medium",
-    workstation: "Molding Station D",
+    status: "Scheduled",
+    priority: "High",
+    workstation: "Motor Assembly D",
     supervisor: "Emily Davis",
-    progress: 30
+    progress: 0
   },
   {
     scheduleId: "PS-2025-005",
-    productName: "Motor Assembly Unit",
+    productName: "Circuit Board Assembly",
     orderNumber: "CO-2025-005",
     plannedStartDate: "2025-02-10",
     plannedEndDate: "2025-02-25",
@@ -494,107 +427,37 @@ export const productionScheduleData = [
     actualEndDate: "",
     status: "In Progress",
     priority: "High",
-    workstation: "Motor Assembly E",
+    workstation: "Electronics Lab E",
     supervisor: "Robert Brown",
-    progress: 45
+    progress: 25
   },
   {
     scheduleId: "PS-2025-006",
-    productName: "Circuit Board Assembly",
+    productName: "Hydraulic System",
     orderNumber: "CO-2025-006",
     plannedStartDate: "2025-02-12",
-    plannedEndDate: "2025-02-26",
+    plannedEndDate: "2025-02-27",
     actualStartDate: "",
     actualEndDate: "",
-    status: "Scheduled",
-    priority: "High",
-    workstation: "Electronics Lab F",
+    status: "On Hold",
+    priority: "Medium",
+    workstation: "Hydraulics Bay F",
     supervisor: "Lisa Chen",
     progress: 0
   },
   {
     scheduleId: "PS-2025-007",
-    productName: "Hydraulic System",
+    productName: "Solar Panel Frame",
     orderNumber: "CO-2025-007",
     plannedStartDate: "2025-02-14",
-    plannedEndDate: "2025-02-27",
-    actualStartDate: "2025-02-14",
-    actualEndDate: "",
-    status: "In Progress",
-    priority: "Medium",
-    workstation: "Hydraulics Bay G",
-    supervisor: "Tom Anderson",
-    progress: 20
-  },
-  {
-    scheduleId: "PS-2025-008",
-    productName: "Stainless Steel Propeller",
-    orderNumber: "CO-2025-008",
-    plannedStartDate: "2025-02-16",
-    plannedEndDate: "2025-02-28",
+    plannedEndDate: "2025-03-01",
     actualStartDate: "",
     actualEndDate: "",
     status: "On Hold",
     priority: "Low",
-    workstation: "Precision Machining H",
-    supervisor: "Alex Rodriguez",
+    workstation: "Frame Assembly G",
+    supervisor: "Tom Anderson",
     progress: 0
-  },
-  {
-    scheduleId: "PS-2025-009",
-    productName: "Solar Panel Frame",
-    orderNumber: "CO-2025-009",
-    plannedStartDate: "2025-02-18",
-    plannedEndDate: "2025-03-01",
-    actualStartDate: "2025-02-18",
-    actualEndDate: "",
-    status: "In Progress",
-    priority: "Medium",
-    workstation: "Frame Assembly I",
-    supervisor: "Maria Garcia",
-    progress: 75
-  },
-  {
-    scheduleId: "PS-2025-010",
-    productName: "Titanium Wing Parts",
-    orderNumber: "CO-2025-010",
-    plannedStartDate: "2025-02-20",
-    plannedEndDate: "2025-03-02",
-    actualStartDate: "2025-02-20",
-    actualEndDate: "2025-03-01",
-    status: "Completed",
-    priority: "High",
-    workstation: "Aerospace Unit J",
-    supervisor: "David Kim",
-    progress: 100
-  },
-  {
-    scheduleId: "PS-2025-011",
-    productName: "Medical Instruments",
-    orderNumber: "CO-2025-011",
-    plannedStartDate: "2025-02-22",
-    plannedEndDate: "2025-03-03",
-    actualStartDate: "",
-    actualEndDate: "",
-    status: "Scheduled",
-    priority: "High",
-    workstation: "Clean Room K",
-    supervisor: "Dr. Jennifer Lee",
-    progress: 0
-  },
-  {
-    scheduleId: "PS-2025-012",
-    productName: "Conveyor Belt System",
-    orderNumber: "CO-2025-012",
-    plannedStartDate: "2025-02-24",
-    plannedEndDate: "2025-03-04",
-    actualStartDate: "2025-02-25",
-    actualEndDate: "",
-    status: "Delayed",
-    priority: "Medium",
-    workstation: "Heavy Assembly L",
-    supervisor: "Mark Thompson",
-    progress: 15
   }
 ];
 
@@ -878,51 +741,46 @@ export const getLogisticsStats = () => {
   return { totalShipments, delivered, inTransit, preparing, delayed };
 };
 
-// Procurement/Purchase Orders Data
+// Procurement Orders for material shortages from orders 3, 6, 7
 export const procurementData = [
   {
     poNumber: "PO-2025-001",
-    supplier: "MetalCraft Industries",
-    materialName: "Steel Sheets",
-    quantity: 100,
-    unitPrice: "₹250.00",
-    totalAmount: "₹25,000.00",
-    orderDate: "2025-01-15",
-    expectedDelivery: "2025-01-22",
-    status: "Pending"
+    supplier: "Rubber Industries",
+    materialName: "Rubber Gaskets",
+    itemCode: "INV-0003",
+    quantity: 50,
+    unitPrice: "₹3.25",
+    totalAmount: "₹162.50",
+    orderDate: "2025-01-24",
+    expectedDelivery: "2025-01-31",
+    status: "Ordered",
+    relatedOrder: "CO-2025-003"
   },
   {
     poNumber: "PO-2025-002",
-    supplier: "Premium Glass Solutions",
-    materialName: "Tempered Glass",
-    quantity: 50,
-    unitPrice: "₹1,200.00",
-    totalAmount: "₹60,000.00",
-    orderDate: "2025-01-18",
-    expectedDelivery: "2025-01-25",
-    status: "Approved"
+    supplier: "MetalCraft Industries",
+    materialName: "Steel Bolts M8x50",
+    itemCode: "INV-0002",
+    quantity: 100,
+    unitPrice: "₹0.75",
+    totalAmount: "₹75.00",
+    orderDate: "2025-01-30",
+    expectedDelivery: "2025-02-03",
+    status: "Approved",
+    relatedOrder: "CO-2025-006"
   },
   {
     poNumber: "PO-2025-003",
-    supplier: "Aluminum Solutions Inc",
-    materialName: "Aluminum Extrusions",
+    supplier: "Titanium Tech Ltd",
+    materialName: "Titanium Screws",
+    itemCode: "INV-0015",
     quantity: 200,
-    unitPrice: "₹180.00",
-    totalAmount: "₹36,000.00",
-    orderDate: "2025-01-20",
-    expectedDelivery: "2025-01-27",
-    status: "Delivered"
-  },
-  {
-    poNumber: "PO-2025-004",
-    supplier: "Rubber Industries",
-    materialName: "Rubber Gaskets",
-    quantity: 500,
-    unitPrice: "₹15.00",
-    totalAmount: "₹7,500.00",
-    orderDate: "2025-01-22",
-    expectedDelivery: "2025-01-29",
-    status: "In Transit"
+    unitPrice: "₹2.50",
+    totalAmount: "₹500.00",
+    orderDate: "2025-02-01",
+    expectedDelivery: "2025-02-13",
+    status: "Pending",
+    relatedOrder: "CO-2025-007"
   }
 ];
 
@@ -956,6 +814,14 @@ export const productMaterialMapping: Record<string, Array<{ itemCode: string; it
   ],
   "Circuit Board Assembly": [
     { itemCode: "INV-0005", itemName: "Circuit Boards PCB-A1", quantity: 5 }
+  ],
+  "Hydraulic System": [
+    { itemCode: "INV-0002", itemName: "Steel Bolts M8x50", quantity: 40 },
+    { itemCode: "INV-0004", itemName: "Electric Motors 5HP", quantity: 2 }
+  ],
+  "Solar Panel Frame": [
+    { itemCode: "INV-0001", itemName: "Aluminum Rods 6mm", quantity: 30 },
+    { itemCode: "INV-0015", itemName: "Titanium Screws", quantity: 20 }
   ]
 };
 
