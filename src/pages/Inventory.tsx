@@ -32,6 +32,7 @@ const Inventory = () => {
   const [statusFilter, setStatusFilter] = useState("all");
   const [locationFilter, setLocationFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
+  const [refreshKey, setRefreshKey] = useState(0);
   const itemsPerPage = 10;
   const [editingItem, setEditingItem] = useState<any>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -50,10 +51,12 @@ const Inventory = () => {
     setInventoryData(prev => prev.map(item => 
       item.itemCode === updatedItem.itemCode ? updatedItem : item
     ));
+    setRefreshKey(prev => prev + 1);
   };
 
   const handleAddItem = (newItem: any) => {
     setInventoryData(prev => [newItem, ...prev]);
+    setRefreshKey(prev => prev + 1);
   };
 
   const handleDeleteClick = (item: any) => {

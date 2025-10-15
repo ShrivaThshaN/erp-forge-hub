@@ -31,6 +31,7 @@ const MasterProductionSchedule = () => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [scheduleToDelete, setScheduleToDelete] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [refreshKey, setRefreshKey] = useState(0);
   const itemsPerPage = 10;
 
   const stats = getProductionStats();
@@ -249,14 +250,14 @@ const MasterProductionSchedule = () => {
       <NewScheduleDialog
         open={isAddDialogOpen}
         onOpenChange={setIsAddDialogOpen}
-        onScheduleAdded={() => {}}
+        onScheduleAdded={() => setRefreshKey(prev => prev + 1)}
       />
 
       <EditScheduleDialog
         open={isEditDialogOpen}
         onOpenChange={setIsEditDialogOpen}
         schedule={selectedSchedule}
-        onScheduleUpdated={() => {}}
+        onScheduleUpdated={() => setRefreshKey(prev => prev + 1)}
       />
 
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>

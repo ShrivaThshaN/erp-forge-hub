@@ -33,6 +33,7 @@ const MaterialRequirementPlanning = () => {
   const [materialFilter, setMaterialFilter] = useState("all");
   const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [refreshKey, setRefreshKey] = useState(0);
   const itemsPerPage = 10;
   const [editingMaterial, setEditingMaterial] = useState<any>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -63,10 +64,12 @@ const MaterialRequirementPlanning = () => {
     setMaterialData(prev => prev.map(item => 
       item.materialCode === updatedMaterial.materialCode ? updatedMaterial : item
     ));
+    setRefreshKey(prev => prev + 1);
   };
 
   const handleAddMaterial = (newMaterial: any) => {
     setMaterialData(prev => [newMaterial, ...prev]);
+    setRefreshKey(prev => prev + 1);
   };
 
   const handleDeleteClick = (material: any) => {

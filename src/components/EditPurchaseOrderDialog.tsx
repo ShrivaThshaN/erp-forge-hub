@@ -13,13 +13,17 @@ import { toast } from "@/hooks/use-toast";
 import { processProcurementReceipt } from "@/lib/procurementInventorySync";
 
 interface PurchaseOrder {
-  id: string;
-  vendor: string;
-  material: string;
+  poNumber: string;
+  supplier: string;
+  materialName: string;
+  itemCode: string;
   quantity: number;
-  unitPrice: number;
-  deliveryDate: string;
+  unitPrice: string;
+  totalAmount: string;
+  orderDate: string;
+  expectedDelivery: string;
   status: string;
+  relatedOrder: string;
 }
 
 interface EditPurchaseOrderDialogProps {
@@ -42,8 +46,8 @@ export const EditPurchaseOrderDialog = ({ open, onOpenChange, order, onOrderUpda
   useEffect(() => {
     if (order) {
       setQuantity(order.quantity.toString());
-      setUnitPrice(order.unitPrice.toString());
-      setDeliveryDate(new Date(order.deliveryDate));
+      setUnitPrice(order.unitPrice.replace('₹', ''));
+      setDeliveryDate(new Date(order.expectedDelivery));
       setStatus(order.status);
       setPreviousStatus(order.status);
     }
@@ -59,9 +63,18 @@ export const EditPurchaseOrderDialog = ({ open, onOpenChange, order, onOrderUpda
       return;
     }
 
+    // Update order data
+    if (order) {
+      order.quantity = parseInt(quantity);
+      order.unitPrice = `₹${parseFloat(unitPrice).toFixed(2)}`;
+      order.totalAmount = `₹${(parseInt(quantity) * parseFloat(unitPrice)).toFixed(2)}`;
+      order.expectedDelivery = deliveryDate.toISOString().split('T')[0];
+      order.status = status;
+    }
+
     // Check if status changed to "Received"
     if (status === "Received" && previousStatus !== "Received" && order) {
-      const result = processProcurementReceipt(order.id, previousStatus, status);
+      const result = processProcurementReceipt(order.poNumber, previousStatus, status);
       
       if (result.success && result.update) {
         toast({
@@ -100,15 +113,15 @@ export const EditPurchaseOrderDialog = ({ open, onOpenChange, order, onOrderUpda
         <div className="grid gap-4 py-4">
           <div className="space-y-2">
             <Label className="text-muted-foreground">PO Number</Label>
-            <div className="text-sm font-medium">{order.id}</div>
+            <div className="text-sm font-medium">{order.poNumber}</div>
           </div>
           <div className="space-y-2">
             <Label className="text-muted-foreground">Vendor</Label>
-            <div className="text-sm">{order.vendor}</div>
+            <div className="text-sm">{order.supplier}</div>
           </div>
           <div className="space-y-2">
             <Label className="text-muted-foreground">Material</Label>
-            <div className="text-sm">{order.material}</div>
+            <div className="text-sm">{order.materialName}</div>
           </div>
           <div className="space-y-2">
             <Label htmlFor="quantity">Quantity</Label>

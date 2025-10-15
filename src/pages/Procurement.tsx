@@ -22,129 +22,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { toast } from "@/hooks/use-toast";
-
-const purchaseOrders = [
-  {
-    id: "PO-2025-001",
-    vendor: "Acme Steel Corp",
-    material: "Steel Sheets",
-    quantity: 500,
-    unitPrice: 150,
-    totalAmount: 75000,
-    deliveryDate: "2025-02-10",
-    status: "Delivered"
-  },
-  {
-    id: "PO-2025-002",
-    vendor: "Global Materials Ltd",
-    material: "Aluminum Rods",
-    quantity: 200,
-    unitPrice: 85,
-    totalAmount: 17000,
-    deliveryDate: "2025-02-15",
-    status: "Pending"
-  },
-  {
-    id: "PO-2025-003",
-    vendor: "Premium Supplies Inc",
-    material: "Copper Wire",
-    quantity: 1000,
-    unitPrice: 25,
-    totalAmount: 25000,
-    deliveryDate: "2025-02-20",
-    status: "Approved"
-  },
-  {
-    id: "PO-2025-004",
-    vendor: "Industrial Components Co",
-    material: "Rubber Gaskets",
-    quantity: 300,
-    unitPrice: 12,
-    totalAmount: 3600,
-    deliveryDate: "2025-02-25",
-    status: "Ordered"
-  },
-  {
-    id: "PO-2025-005",
-    vendor: "Metal Works International",
-    material: "Steel Bolts",
-    quantity: 5000,
-    unitPrice: 2,
-    totalAmount: 10000,
-    deliveryDate: "2025-03-01",
-    status: "Received"
-  },
-  {
-    id: "PO-2025-006",
-    vendor: "Acme Steel Corp",
-    material: "Steel Pipes",
-    quantity: 150,
-    unitPrice: 180,
-    totalAmount: 27000,
-    deliveryDate: "2025-03-05",
-    status: "Pending"
-  },
-  {
-    id: "PO-2025-007",
-    vendor: "Global Materials Ltd",
-    material: "Brass Fittings",
-    quantity: 400,
-    unitPrice: 45,
-    totalAmount: 18000,
-    deliveryDate: "2025-03-10",
-    status: "Approved"
-  },
-  {
-    id: "PO-2025-008",
-    vendor: "Premium Supplies Inc",
-    material: "Plastic Components",
-    quantity: 800,
-    unitPrice: 8,
-    totalAmount: 6400,
-    deliveryDate: "2025-03-15",
-    status: "Ordered"
-  },
-  {
-    id: "PO-2025-009",
-    vendor: "Industrial Components Co",
-    material: "Hydraulic Valves",
-    quantity: 50,
-    unitPrice: 350,
-    totalAmount: 17500,
-    deliveryDate: "2025-03-20",
-    status: "Delivered"
-  },
-  {
-    id: "PO-2025-010",
-    vendor: "Metal Works International",
-    material: "Titanium Plates",
-    quantity: 25,
-    unitPrice: 1200,
-    totalAmount: 30000,
-    deliveryDate: "2025-03-25",
-    status: "Received"
-  },
-  {
-    id: "PO-2025-011",
-    vendor: "Acme Steel Corp",
-    material: "Carbon Steel",
-    quantity: 600,
-    unitPrice: 95,
-    totalAmount: 57000,
-    deliveryDate: "2025-04-01",
-    status: "Pending"
-  },
-  {
-    id: "PO-2025-012",
-    vendor: "Global Materials Ltd",
-    material: "Stainless Steel Wire",
-    quantity: 300,
-    unitPrice: 55,
-    totalAmount: 16500,
-    deliveryDate: "2025-04-05",
-    status: "Approved"
-  }
-];
+import { procurementData, getProcurementStats } from "@/data/mockData";
 
 const getStatusColor = (status: string) => {
   switch (status) {
@@ -174,19 +52,20 @@ const Procurement = () => {
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [orderToDelete, setOrderToDelete] = useState<string | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
   const itemsPerPage = 10;
 
-  const uniqueStatuses = Array.from(new Set(purchaseOrders.map(order => order.status)));
-  const uniqueVendors = Array.from(new Set(purchaseOrders.map(order => order.vendor)));
+  const uniqueStatuses = Array.from(new Set(procurementData.map(order => order.status)));
+  const uniqueVendors = Array.from(new Set(procurementData.map(order => order.supplier)));
 
-  const filteredOrders = purchaseOrders.filter(order => {
+  const filteredOrders = procurementData.filter(order => {
     const matchesSearch = 
-      order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.vendor.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.material.toLowerCase().includes(searchTerm.toLowerCase());
+      order.poNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.supplier.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.materialName.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesStatus = selectedStatuses.length === 0 || selectedStatuses.includes(order.status);
-    const matchesVendor = selectedVendors.length === 0 || selectedVendors.includes(order.vendor);
+    const matchesVendor = selectedVendors.length === 0 || selectedVendors.includes(order.supplier);
 
     return matchesSearch && matchesStatus && matchesVendor;
   });
@@ -195,10 +74,11 @@ const Procurement = () => {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedOrders = filteredOrders.slice(startIndex, startIndex + itemsPerPage);
 
-  const totalOrders = purchaseOrders.length;
-  const totalAmount = purchaseOrders.reduce((sum, order) => sum + order.totalAmount, 0);
-  const pendingCount = purchaseOrders.filter(order => order.status === "Pending").length;
-  const deliveredCount = purchaseOrders.filter(order => order.status === "Delivered").length;
+  const stats = getProcurementStats();
+  const totalValue = procurementData.reduce((sum, order) => {
+    const amount = parseFloat(order.totalAmount.replace('₹', '').replace(',', ''));
+    return sum + amount;
+  }, 0);
 
   const handleEdit = (order: any) => {
     setSelectedOrder(order);
@@ -252,7 +132,7 @@ const Procurement = () => {
               <CardContent className="p-4">
                 <div>
                   <div className="text-sm text-muted-foreground">Total Orders</div>
-                  <div className="text-2xl font-bold">{totalOrders}</div>
+                  <div className="text-2xl font-bold">{stats.totalPOs}</div>
                 </div>
               </CardContent>
             </Card>
@@ -260,7 +140,7 @@ const Procurement = () => {
               <CardContent className="p-4">
                 <div>
                   <div className="text-sm text-muted-foreground">Total Value</div>
-                  <div className="text-2xl font-bold">₹{totalAmount.toLocaleString()}</div>
+                  <div className="text-2xl font-bold">₹{totalValue.toLocaleString()}</div>
                 </div>
               </CardContent>
             </Card>
@@ -268,15 +148,15 @@ const Procurement = () => {
               <CardContent className="p-4">
                 <div>
                   <div className="text-sm text-muted-foreground">Pending Orders</div>
-                  <div className="text-2xl font-bold text-status-pending">{pendingCount}</div>
+                  <div className="text-2xl font-bold text-status-pending">{stats.pending}</div>
                 </div>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="p-4">
                 <div>
-                  <div className="text-sm text-muted-foreground">Delivered Orders</div>
-                  <div className="text-2xl font-bold text-erp-success">{deliveredCount}</div>
+                  <div className="text-sm text-muted-foreground">Approved Orders</div>
+                  <div className="text-2xl font-bold text-erp-success">{stats.approved}</div>
                 </div>
               </CardContent>
             </Card>
@@ -371,14 +251,14 @@ const Procurement = () => {
               </TableHeader>
               <TableBody>
                 {paginatedOrders.map((order) => (
-                  <TableRow key={order.id}>
-                    <TableCell className="font-medium">{order.id}</TableCell>
-                    <TableCell>{order.vendor}</TableCell>
-                    <TableCell>{order.material}</TableCell>
+                  <TableRow key={order.poNumber}>
+                    <TableCell className="font-medium">{order.poNumber}</TableCell>
+                    <TableCell>{order.supplier}</TableCell>
+                    <TableCell>{order.materialName}</TableCell>
                     <TableCell>{order.quantity}</TableCell>
-                    <TableCell>₹{order.unitPrice.toLocaleString()}</TableCell>
-                    <TableCell className="font-medium">₹{order.totalAmount.toLocaleString()}</TableCell>
-                    <TableCell>{order.deliveryDate}</TableCell>
+                    <TableCell>{order.unitPrice}</TableCell>
+                    <TableCell className="font-medium">{order.totalAmount}</TableCell>
+                    <TableCell>{order.expectedDelivery}</TableCell>
                     <TableCell>
                       <Badge className={`${getStatusColor(order.status)} text-white`}>
                         {order.status}
@@ -390,7 +270,7 @@ const Procurement = () => {
                           <Button variant="outline" size="sm" onClick={() => handleEdit(order)}>
                             <Edit className="h-4 w-4" />
                           </Button>
-                          <Button variant="outline" size="sm" onClick={() => handleDelete(order.id)}>
+                          <Button variant="outline" size="sm" onClick={() => handleDelete(order.poNumber)}>
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
@@ -416,14 +296,14 @@ const Procurement = () => {
       <NewPurchaseOrderDialog
         open={isAddDialogOpen}
         onOpenChange={setIsAddDialogOpen}
-        onOrderAdded={() => {}}
+        onOrderAdded={() => setRefreshKey(prev => prev + 1)}
       />
 
       <EditPurchaseOrderDialog
         open={isEditDialogOpen}
         onOpenChange={setIsEditDialogOpen}
         order={selectedOrder}
-        onOrderUpdated={() => {}}
+        onOrderUpdated={() => setRefreshKey(prev => prev + 1)}
       />
 
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
