@@ -10,7 +10,8 @@ import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
-import { processProductionCompletion } from "@/lib/materialInventorySync";
+import { processProductionCompletion, checkInventoryAvailability } from "@/lib/materialInventorySync";
+import { productionScheduleData } from "@/data/mockData";
 
 interface Schedule {
   scheduleId: string;
@@ -77,22 +78,56 @@ export const EditScheduleDialog = ({ open, onOpenChange, schedule, onScheduleUpd
       const productName = schedule?.productName || "";
       const orderNum = schedule?.orderNumber || "";
       
-      const result = processProductionCompletion(productName, orderNum);
-      
-      if (result.success) {
-        const materialsUsed = result.updates.map(u => `${u.itemName} (${u.quantityUsed} units)`).join(", ");
+      // Check if materials are available
+      const availability = checkInventoryAvailability(productName);
+      if (!availability.available) {
+        const missingItems = availability.missing.map(m => 
+          `${m.itemName} (need ${m.required}, have ${m.available})`
+        ).join(", ");
+        
         toast({
-          title: "Production Completed",
-          description: `Schedule updated. Materials used: ${materialsUsed}. Inventory has been updated.`,
-        });
-      } else {
-        toast({
-          title: "Warning",
-          description: `Schedule updated but material processing had issues: ${result.errors.join(", ")}`,
+          title: "Cannot Complete Production",
+          description: `Insufficient materials: ${missingItems}`,
           variant: "destructive",
         });
+        return;
       }
+      
+      const result = processProductionCompletion(productName, orderNum);
+      
+      if (!result.success) {
+        toast({
+          title: "Cannot Complete Production",
+          description: `Material processing failed: ${result.errors.join(", ")}`,
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      // Update the actual schedule data in mockData
+      const scheduleItem = productionScheduleData.find(s => s.scheduleId === schedule.scheduleId);
+      if (scheduleItem) {
+        scheduleItem.plannedStartDate = plannedStartDate.toISOString().split('T')[0];
+        scheduleItem.plannedEndDate = plannedEndDate.toISOString().split('T')[0];
+        scheduleItem.priority = priority;
+        scheduleItem.status = status;
+      }
+      
+      const materialsUsed = result.updates.map(u => `${u.itemName} (${u.quantityUsed} units)`).join(", ");
+      toast({
+        title: "Production Completed",
+        description: `Schedule updated. Materials used: ${materialsUsed}. Inventory has been updated.`,
+      });
     } else {
+      // Update schedule data for non-completed status changes
+      const scheduleItem = productionScheduleData.find(s => s.scheduleId === schedule.scheduleId);
+      if (scheduleItem) {
+        scheduleItem.plannedStartDate = plannedStartDate.toISOString().split('T')[0];
+        scheduleItem.plannedEndDate = plannedEndDate.toISOString().split('T')[0];
+        scheduleItem.priority = priority;
+        scheduleItem.status = status;
+      }
+      
       toast({
         title: "Success",
         description: "Production schedule updated successfully",

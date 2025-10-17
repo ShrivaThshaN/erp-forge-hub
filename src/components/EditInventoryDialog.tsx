@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
+import { inventoryData } from "@/data/mockData";
 
 interface EditInventoryDialogProps {
   open: boolean;
@@ -21,6 +22,18 @@ export function EditInventoryDialog({ open, onOpenChange, item, onSave }: EditIn
     location: item.location,
     unitPrice: item.unitPrice,
   });
+
+  useEffect(() => {
+    if (item) {
+      setFormData({
+        currentStock: item.currentStock,
+        minimumStock: item.minimumStock,
+        maximumStock: item.maximumStock,
+        location: item.location,
+        unitPrice: item.unitPrice,
+      });
+    }
+  }, [item]);
 
   const getStatus = (current: number, minimum: number) => {
     if (current === 0) return "Out of Stock";
@@ -51,6 +64,19 @@ export function EditInventoryDialog({ open, onOpenChange, item, onSave }: EditIn
 
     const status = getStatus(formData.currentStock, formData.minimumStock);
     
+    // Update the actual mockData
+    const inventoryItem = inventoryData.find(i => i.itemCode === item.itemCode);
+    if (inventoryItem) {
+      inventoryItem.currentStock = formData.currentStock;
+      inventoryItem.minimumStock = formData.minimumStock;
+      inventoryItem.maximumStock = formData.maximumStock;
+      inventoryItem.location = formData.location;
+      inventoryItem.unitPrice = formData.unitPrice;
+      inventoryItem.status = status;
+      inventoryItem.lastUpdated = new Date().toISOString().split('T')[0];
+    }
+    
+    // Also call onSave for local state update
     onSave({
       ...item,
       ...formData,

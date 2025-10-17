@@ -11,6 +11,7 @@ import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import { processProcurementReceipt } from "@/lib/procurementInventorySync";
+import { procurementData } from "@/data/mockData";
 
 interface PurchaseOrder {
   poNumber: string;
@@ -63,13 +64,14 @@ export const EditPurchaseOrderDialog = ({ open, onOpenChange, order, onOrderUpda
       return;
     }
 
-    // Update order data
-    if (order) {
-      order.quantity = parseInt(quantity);
-      order.unitPrice = `₹${parseFloat(unitPrice).toFixed(2)}`;
-      order.totalAmount = `₹${(parseInt(quantity) * parseFloat(unitPrice)).toFixed(2)}`;
-      order.expectedDelivery = deliveryDate.toISOString().split('T')[0];
-      order.status = status;
+    // Update the actual procurement data in mockData
+    const procurementOrder = procurementData.find(po => po.poNumber === order?.poNumber);
+    if (procurementOrder) {
+      procurementOrder.quantity = parseInt(quantity);
+      procurementOrder.unitPrice = `₹${parseFloat(unitPrice).toFixed(2)}`;
+      procurementOrder.totalAmount = `₹${(parseInt(quantity) * parseFloat(unitPrice)).toFixed(2)}`;
+      procurementOrder.expectedDelivery = deliveryDate.toISOString().split('T')[0];
+      procurementOrder.status = status;
     }
 
     // Check if status changed to "Received"
