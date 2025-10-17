@@ -92,10 +92,16 @@ const Procurement = () => {
 
   const confirmDelete = () => {
     if (orderToDelete) {
+      // Actually delete from the mockData array
+      const index = procurementData.findIndex(po => po.poNumber === orderToDelete);
+      if (index !== -1) {
+        procurementData.splice(index, 1);
+      }
       toast({
         title: "Success",
         description: "Purchase order deleted successfully",
       });
+      setRefreshKey(prev => prev + 1);
       setIsDeleteDialogOpen(false);
       setOrderToDelete(null);
     }

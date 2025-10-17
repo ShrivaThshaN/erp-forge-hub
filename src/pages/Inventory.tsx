@@ -7,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Search, Filter, Download, Package, TrendingDown, AlertTriangle, CheckCircle, Edit, Trash2 } from "lucide-react";
-import { inventoryData as initialInventoryData, getInventoryStats } from "@/data/mockData";
+import { inventoryData, getInventoryStats } from "@/data/mockData";
 import { PaginationComponent } from "@/components/Pagination";
 import { useUser } from "@/contexts/UserContext";
 import { toast } from "@/hooks/use-toast";
@@ -26,7 +26,7 @@ import {
 
 const Inventory = () => {
   const { user } = useUser();
-  const [inventoryData, setInventoryData] = useState(initialInventoryData);
+  const [localInventory, setLocalInventory] = useState(inventoryData);
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -40,7 +40,13 @@ const Inventory = () => {
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<any>(null);
 
-  const stats = getInventoryStats();
+  // Calculate stats from local state
+  const stats = {
+    totalItems: localInventory.length,
+    inStock: localInventory.filter(item => item.status === "In Stock").length,
+    lowStock: localInventory.filter(item => item.status === "Low Stock").length,
+    outOfStock: localInventory.filter(item => item.status === "Out of Stock").length,
+  };
 
   const handleEditItem = (item: any) => {
     setEditingItem(item);
@@ -48,14 +54,21 @@ const Inventory = () => {
   };
 
   const handleSaveItem = (updatedItem: any) => {
-    setInventoryData(prev => prev.map(item => 
+    // Update both local state and mockData
+    const index = inventoryData.findIndex(item => item.itemCode === updatedItem.itemCode);
+    if (index !== -1) {
+      inventoryData[index] = updatedItem;
+    }
+    setLocalInventory(prev => prev.map(item => 
       item.itemCode === updatedItem.itemCode ? updatedItem : item
     ));
     setRefreshKey(prev => prev + 1);
   };
 
   const handleAddItem = (newItem: any) => {
-    setInventoryData(prev => [newItem, ...prev]);
+    // Update both local state and mockData
+    inventoryData.unshift(newItem);
+    setLocalInventory(prev => [newItem, ...prev]);
     setRefreshKey(prev => prev + 1);
   };
 
@@ -66,18 +79,24 @@ const Inventory = () => {
 
   const handleConfirmDelete = () => {
     if (itemToDelete) {
-      setInventoryData(prev => prev.filter(item => item.itemCode !== itemToDelete.itemCode));
+      // Update both local state and mockData
+      const index = inventoryData.findIndex(item => item.itemCode === itemToDelete.itemCode);
+      if (index !== -1) {
+        inventoryData.splice(index, 1);
+      }
+      setLocalInventory(prev => prev.filter(item => item.itemCode !== itemToDelete.itemCode));
       toast({
         title: "Item Deleted",
         description: `${itemToDelete.itemName} has been removed from inventory`,
         variant: "destructive",
       });
       setItemToDelete(null);
+      setRefreshKey(prev => prev + 1);
     }
     setDeleteConfirmOpen(false);
   };
 
-  const filteredData = inventoryData.filter(item => {
+  const filteredData = localInventory.filter(item => {
     const matchesSearch = item.itemName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.itemCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.category.toLowerCase().includes(searchTerm.toLowerCase());

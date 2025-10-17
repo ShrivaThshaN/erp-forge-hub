@@ -7,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Search, Filter, Download, Edit, Trash2 } from "lucide-react";
-import { customerOrders as initialOrders, getOrderStats } from "@/data/mockData";
+import { customerOrders, getOrderStats } from "@/data/mockData";
 import { PaginationComponent } from "@/components/Pagination";
 import { EditOrderDialog } from "@/components/EditOrderDialog";
 import { NewOrderDialog } from "@/components/NewOrderDialog";
@@ -30,7 +30,7 @@ const OrderManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
-  const [orders, setOrders] = useState<Order[]>(initialOrders);
+  const [orders, setOrders] = useState<Order[]>(customerOrders);
   const [editOrder, setEditOrder] = useState<Order | null>(null);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isNewOrderOpen, setIsNewOrderOpen] = useState(false);
@@ -40,7 +40,13 @@ const OrderManagement = () => {
   const { toast } = useToast();
   const isAdmin = user.role === 'admin';
   
-  const stats = getOrderStats();
+  // Calculate stats from local state
+  const stats = {
+    totalOrders: orders.length,
+    delivered: orders.filter(o => o.status === "Delivered").length,
+    inProgress: orders.filter(o => o.status === "Processing" || o.status === "Shipped" || o.status === "Ready to Ship").length,
+    totalValue: orders.reduce((sum, o) => sum + o.totalValue, 0),
+  };
 
   const filteredOrders = orders.filter(order => {
     const matchesSearch = order.orderNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -62,6 +68,11 @@ const OrderManagement = () => {
   };
 
   const handleSaveOrder = (updatedOrder: Order) => {
+    // Update both local state and mockData
+    const index = customerOrders.findIndex(order => order.id === updatedOrder.id);
+    if (index !== -1) {
+      customerOrders[index] = updatedOrder;
+    }
     setOrders(orders.map(order => 
       order.id === updatedOrder.id ? updatedOrder : order
     ));
@@ -74,6 +85,11 @@ const OrderManagement = () => {
   const handleDeleteOrder = (orderId: number) => {
     const orderToDelete = orders.find(order => order.id === orderId);
     if (orderToDelete) {
+      // Update both local state and mockData
+      const index = customerOrders.findIndex(order => order.id === orderId);
+      if (index !== -1) {
+        customerOrders.splice(index, 1);
+      }
       setOrders(orders.filter(order => order.id !== orderId));
       toast({
         title: "Order Deleted",
@@ -88,6 +104,8 @@ const OrderManagement = () => {
       id: Math.max(...orders.map(o => o.id)) + 1,
       ...newOrderData
     };
+    // Update both local state and mockData
+    customerOrders.unshift(newOrder);
     setOrders([newOrder, ...orders]);
     toast({
       title: "Order Created",
