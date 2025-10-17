@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -40,6 +41,8 @@ export const EditPurchaseOrderDialog = ({ open, onOpenChange, order, onOrderUpda
   const [deliveryDate, setDeliveryDate] = useState<Date>();
   const [status, setStatus] = useState("");
   const [previousStatus, setPreviousStatus] = useState("");
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [pendingStatus, setPendingStatus] = useState("");
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -53,6 +56,22 @@ export const EditPurchaseOrderDialog = ({ open, onOpenChange, order, onOrderUpda
       setPreviousStatus(order.status);
     }
   }, [order]);
+
+  const handleStatusChange = (newStatus: string) => {
+    // If changing to "Received", show confirmation dialog
+    if (newStatus === "Received" && previousStatus !== "Received") {
+      setPendingStatus(newStatus);
+      setShowConfirmDialog(true);
+    } else {
+      setStatus(newStatus);
+    }
+  };
+
+  const handleConfirmReceipt = () => {
+    setStatus(pendingStatus);
+    setShowConfirmDialog(false);
+    setPendingStatus("");
+  };
 
   const handleSubmit = () => {
     if (!quantity || !unitPrice || !deliveryDate || !status) {
@@ -172,7 +191,7 @@ export const EditPurchaseOrderDialog = ({ open, onOpenChange, order, onOrderUpda
           </div>
           <div className="space-y-2">
             <Label htmlFor="status">Status</Label>
-            <Select value={status} onValueChange={setStatus}>
+            <Select value={status} onValueChange={handleStatusChange}>
               <SelectTrigger>
                 <SelectValue placeholder="Select status" />
               </SelectTrigger>
@@ -195,6 +214,21 @@ export const EditPurchaseOrderDialog = ({ open, onOpenChange, order, onOrderUpda
           </Button>
         </div>
       </DialogContent>
+
+      <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm Receipt</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you have received this material? This will update the inventory stock levels.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setPendingStatus("")}>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmReceipt}>Confirm Receipt</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Dialog>
   );
 };

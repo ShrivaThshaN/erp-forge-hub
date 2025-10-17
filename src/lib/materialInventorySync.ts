@@ -135,3 +135,23 @@ export const checkInventoryAvailability = (productName: string): {
     missing
   };
 };
+
+/**
+ * Sync Material Requirements with current Inventory levels
+ */
+export const syncMaterialRequirementsWithInventory = (): void => {
+  materialRequirementData.forEach(mrpItem => {
+    // Find matching inventory item by name match
+    const inventoryItem = inventoryData.find(item => 
+      item.itemName.toLowerCase().includes(mrpItem.materialName.toLowerCase()) ||
+      mrpItem.materialName.toLowerCase().includes(item.itemName.toLowerCase())
+    );
+    
+    if (inventoryItem) {
+      mrpItem.availableQty = inventoryItem.currentStock;
+      mrpItem.shortfall = Math.max(0, mrpItem.requiredQty - mrpItem.availableQty);
+      mrpItem.status = mrpItem.shortfall === 0 ? "Available" : 
+                      mrpItem.shortfall < mrpItem.requiredQty ? "Shortage" : "Required";
+    }
+  });
+};

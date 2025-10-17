@@ -1,5 +1,6 @@
 // Procurement-Inventory synchronization utilities
 import { inventoryData, procurementData } from "@/data/mockData";
+import { syncMaterialRequirementsWithInventory } from "./materialInventorySync";
 
 export interface ProcurementReceived {
   poNumber: string;
@@ -70,6 +71,9 @@ export const processProcurementReceipt = (
   
   // Update last updated date
   inventoryItem.lastUpdated = new Date().toISOString().split('T')[0];
+
+  // Sync material requirements with updated inventory
+  syncMaterialRequirementsWithInventory();
 
   return {
     success: true,

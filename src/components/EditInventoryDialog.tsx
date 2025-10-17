@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
 import { inventoryData } from "@/data/mockData";
+import { syncMaterialRequirementsWithInventory } from "@/lib/materialInventorySync";
 
 interface EditInventoryDialogProps {
   open: boolean;
@@ -75,6 +76,9 @@ export function EditInventoryDialog({ open, onOpenChange, item, onSave }: EditIn
       inventoryItem.status = status;
       inventoryItem.lastUpdated = new Date().toISOString().split('T')[0];
     }
+    
+    // Sync material requirements with updated inventory
+    syncMaterialRequirementsWithInventory();
     
     // Also call onSave for local state update
     onSave({
