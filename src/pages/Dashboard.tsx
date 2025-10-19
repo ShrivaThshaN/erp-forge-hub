@@ -19,6 +19,14 @@ const Dashboard = () => {
     .sort((a, b) => new Date(b.plannedStartDate).getTime() - new Date(a.plannedStartDate).getTime())
     .slice(0, 5);
   
+  // Calculate real-time material overview from materialRequirementData
+  const materialOverview = {
+    totalRequired: materialRequirementData.reduce((sum, item) => sum + item.requiredQty, 0),
+    availableStock: materialRequirementData.reduce((sum, item) => sum + item.availableQty, 0),
+    shortfall: materialRequirementData.reduce((sum, item) => sum + item.shortfall, 0),
+    itemsInShortage: materialRequirementData.filter(item => item.shortfall > 0).length
+  };
+  
   const kpiData = [
     {
       title: "Total Production Orders",
@@ -125,10 +133,7 @@ const Dashboard = () => {
                     <p className="font-medium">{schedule.scheduleId}</p>
                     <p className="text-sm text-muted-foreground">{schedule.productName}</p>
                   </div>
-                  <div className="flex items-center space-x-3">
-                    <div className="text-sm text-muted-foreground">{schedule.progress}%</div>
-                    {getStatusBadge(schedule.status)}
-                  </div>
+                  {getStatusBadge(schedule.status)}
                 </div>
               ))}
             </div>
@@ -148,7 +153,7 @@ const Dashboard = () => {
               <div className="flex items-center justify-between p-3 border rounded-lg">
                 <div>
                   <p className="font-medium">Total Required</p>
-                  <p className="text-2xl font-bold text-foreground">{stats.totalRequired.toLocaleString()}</p>
+                  <p className="text-2xl font-bold text-foreground">{materialOverview.totalRequired.toLocaleString()}</p>
                 </div>
                 <Package className="h-8 w-8 text-muted-foreground" />
               </div>
@@ -156,7 +161,7 @@ const Dashboard = () => {
               <div className="flex items-center justify-between p-3 border rounded-lg">
                 <div>
                   <p className="font-medium">Available Stock</p>
-                  <p className="text-2xl font-bold text-erp-success">{stats.availableStock.toLocaleString()}</p>
+                  <p className="text-2xl font-bold text-erp-success">{materialOverview.availableStock.toLocaleString()}</p>
                 </div>
                 <CheckCircle className="h-8 w-8 text-erp-success" />
               </div>
@@ -164,7 +169,7 @@ const Dashboard = () => {
               <div className="flex items-center justify-between p-3 border rounded-lg">
                 <div>
                   <p className="font-medium">Shortfall</p>
-                  <p className="text-2xl font-bold text-erp-danger">{stats.shortfall.toLocaleString()}</p>
+                  <p className="text-2xl font-bold text-erp-danger">{materialOverview.shortfall.toLocaleString()}</p>
                 </div>
                 <AlertTriangle className="h-8 w-8 text-erp-danger" />
               </div>
@@ -172,7 +177,7 @@ const Dashboard = () => {
               <div className="flex items-center justify-between p-3 border rounded-lg">
                 <div>
                   <p className="font-medium">Items in Shortage</p>
-                  <p className="text-2xl font-bold text-erp-warning">{stats.itemsInShortage}</p>
+                  <p className="text-2xl font-bold text-erp-warning">{materialOverview.itemsInShortage}</p>
                 </div>
                 <AlertTriangle className="h-8 w-8 text-erp-warning" />
               </div>
