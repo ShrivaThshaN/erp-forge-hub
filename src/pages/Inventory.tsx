@@ -203,7 +203,31 @@ const Inventory = () => {
               </div>
             </DialogContent>
           </Dialog>
-          <Button variant="outline">
+          <Button variant="outline" onClick={() => {
+            const headers = ["Item Code", "Item Name", "Category", "Current Stock", "Minimum Stock", "Maximum Stock", "Location", "Unit Price", "Status", "Last Updated"];
+            const csvContent = [
+              headers.join(","),
+              ...filteredData.map(item => [
+                item.itemCode,
+                item.itemName,
+                item.category,
+                item.currentStock,
+                item.minimumStock,
+                item.maximumStock,
+                item.location,
+                item.unitPrice,
+                item.status,
+                item.lastUpdated
+              ].join(","))
+            ].join("\n");
+            const blob = new Blob([csvContent], { type: "text/csv" });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "inventory.csv";
+            a.click();
+            window.URL.revokeObjectURL(url);
+          }}>
             <Download className="w-4 h-4 mr-2" />
             Export
           </Button>

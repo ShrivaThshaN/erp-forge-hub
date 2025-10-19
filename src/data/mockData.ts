@@ -465,8 +465,8 @@ export const productionScheduleData = [
 export const qualityControlData = [
   {
     inspectionId: "QC-2025-001",
-    productName: "Widget A v3",
-    batchNumber: "BA-001",
+    productName: "Glass Dining Table",
+    batchNumber: "GDT-001",
     inspectionDate: "2025-01-15",
     inspector: "John Smith",
     testType: "Dimensional Check",
@@ -476,19 +476,19 @@ export const qualityControlData = [
   },
   {
     inspectionId: "QC-2025-002",
-    productName: "Gadget B v3", 
-    batchNumber: "BB-002",
+    productName: "Steel Office Desk", 
+    batchNumber: "SOD-002",
     inspectionDate: "2025-01-16",
     inspector: "Sarah Johnson",
     testType: "Functional Test",
     result: "Fail",
     defectCount: 3,
-    notes: "Motor performance below specification"
+    notes: "Drawer mechanism needs adjustment"
   },
   {
     inspectionId: "QC-2025-003",
-    productName: "Component C v3",
-    batchNumber: "BC-003",
+    productName: "Aluminum Window Frame",
+    batchNumber: "AWF-003",
     inspectionDate: "2025-01-17",
     inspector: "Mike Wilson",
     testType: "Material Analysis",
@@ -498,8 +498,8 @@ export const qualityControlData = [
   },
   {
     inspectionId: "QC-2025-004",
-    productName: "Assembly D v3",
-    batchNumber: "BD-004", 
+    productName: "Motor Assembly Unit",
+    batchNumber: "MAU-004", 
     inspectionDate: "2025-01-18",
     inspector: "Emily Davis",
     testType: "Assembly Check",
@@ -509,69 +509,69 @@ export const qualityControlData = [
   },
   {
     inspectionId: "QC-2025-005",
-    productName: "Module E v3",
-    batchNumber: "BE-005",
+    productName: "Circuit Board Assembly",
+    batchNumber: "CBA-005",
     inspectionDate: "2025-01-19",
     inspector: "Robert Brown",
     testType: "Stress Test",
     result: "Warning", 
     defectCount: 1,
-    notes: "Minor surface defect detected"
+    notes: "Minor solder joint defect detected"
   },
   {
     inspectionId: "QC-2025-006",
-    productName: "Circuit Board PCB-A1",
-    batchNumber: "CB-006",
+    productName: "Hydraulic System",
+    batchNumber: "HS-006",
     inspectionDate: "2025-01-20",
     inspector: "Lisa Chen",
-    testType: "Electrical Test",
+    testType: "Pressure Test",
     result: "Pass",
     defectCount: 0,
-    notes: "All circuits functioning correctly"
+    notes: "All pressure tests passed"
   },
   {
     inspectionId: "QC-2025-007",
-    productName: "Hydraulic Cylinder HC-7",
-    batchNumber: "HC-007",
+    productName: "Solar Panel Frame",
+    batchNumber: "SPF-007",
     inspectionDate: "2025-01-21",
     inspector: "Tom Anderson",
-    testType: "Pressure Test",
-    result: "Fail",
-    defectCount: 2,
-    notes: "Pressure leak detected at seal"
+    testType: "Weather Resistance",
+    result: "Pass",
+    defectCount: 0,
+    notes: "Weather resistance verified"
   },
   {
     inspectionId: "QC-2025-008",
-    productName: "Steel Propeller SP-8",
-    batchNumber: "SP-008",
+    productName: "Glass Dining Table",
+    batchNumber: "GDT-008",
     inspectionDate: "2025-01-22",
     inspector: "Alex Rodriguez",
-    testType: "Balance Test",
+    testType: "Stress Test",
     result: "Pass",
     defectCount: 0,
-    notes: "Perfect balance achieved"
+    notes: "Glass strength verified"
   },
   {
     inspectionId: "QC-2025-009",
-    productName: "Solar Frame SF-9",
-    batchNumber: "SF-009",
+    productName: "Steel Office Desk",
+    batchNumber: "SOD-009",
     inspectionDate: "2025-01-23",
     inspector: "Maria Garcia",
-    testType: "Weather Resistance",
+    testType: "Dimensional Check",
     result: "Warning",
     defectCount: 1,
-    notes: "Minor corrosion on corner joint"
+    notes: "Minor dimensional variance on leg"
   },
   {
     inspectionId: "QC-2025-010",
-    productName: "Titanium Part TP-10",
-    batchNumber: "TP-010",
+    productName: "Aluminum Window Frame",
+    batchNumber: "AWF-010",
     inspectionDate: "2025-01-24",
     inspector: "David Kim",
-    testType: "Strength Test",
+    testType: "Functional Test",
     result: "Pass",
     defectCount: 0,
-    notes: "Exceeds strength requirements"
+    notes: "All functions working correctly"
   }
 ];
 

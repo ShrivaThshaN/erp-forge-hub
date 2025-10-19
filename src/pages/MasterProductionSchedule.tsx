@@ -105,7 +105,30 @@ const MasterProductionSchedule = () => {
           <p className="text-muted-foreground">Plan and track production schedules for all orders</p>
         </div>
         <div className="flex space-x-2">
-          <Button variant="outline">
+          <Button variant="outline" onClick={() => {
+            const headers = ["Schedule ID", "Order Number", "Product Name", "Planned Start", "Planned End", "Actual Start", "Actual End", "Status", "Progress"];
+            const csvContent = [
+              headers.join(","),
+              ...filteredData.map(item => [
+                item.scheduleId,
+                item.orderNumber,
+                item.productName,
+                item.plannedStartDate,
+                item.plannedEndDate,
+                item.actualStartDate || "N/A",
+                item.actualEndDate || "N/A",
+                item.status,
+                item.progress
+              ].join(","))
+            ].join("\n");
+            const blob = new Blob([csvContent], { type: "text/csv" });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "production-schedule.csv";
+            a.click();
+            window.URL.revokeObjectURL(url);
+          }}>
             <Download className="w-4 h-4 mr-2" />
             Export
           </Button>

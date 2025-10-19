@@ -192,7 +192,30 @@ const Quality = () => {
               </div>
             </DialogContent>
           </Dialog>
-          <Button variant="outline">
+          <Button variant="outline" onClick={() => {
+            const headers = ["Inspection ID", "Product Name", "Batch Number", "Inspection Date", "Inspector", "Test Type", "Defects", "Result", "Notes"];
+            const csvContent = [
+              headers.join(","),
+              ...filteredData.map(item => [
+                item.inspectionId,
+                item.productName,
+                item.batchNumber,
+                item.inspectionDate,
+                item.inspector,
+                item.testType,
+                item.defectCount,
+                item.result,
+                `"${item.notes}"`
+              ].join(","))
+            ].join("\n");
+            const blob = new Blob([csvContent], { type: "text/csv" });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "quality-inspections.csv";
+            a.click();
+            window.URL.revokeObjectURL(url);
+          }}>
             <Download className="w-4 h-4 mr-2" />
             Export
           </Button>

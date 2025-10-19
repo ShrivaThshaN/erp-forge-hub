@@ -169,7 +169,29 @@ const OrderManagement = () => {
               </div>
             </DialogContent>
           </Dialog>
-          <Button variant="outline">
+          <Button variant="outline" onClick={() => {
+            const headers = ["Order Number", "Customer Name", "Product Name", "Order Date", "Delivery Date", "Status", "Total Value", "Items"];
+            const csvContent = [
+              headers.join(","),
+              ...filteredOrders.map(order => [
+                order.orderNumber,
+                order.customerName,
+                order.productName,
+                order.orderDate,
+                order.deliveryDate,
+                order.status,
+                order.totalValue,
+                order.items
+              ].join(","))
+            ].join("\n");
+            const blob = new Blob([csvContent], { type: "text/csv" });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "orders.csv";
+            a.click();
+            window.URL.revokeObjectURL(url);
+          }}>
             <Download className="w-4 h-4 mr-2" />
             Export
           </Button>

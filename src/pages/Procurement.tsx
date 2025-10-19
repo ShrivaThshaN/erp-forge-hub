@@ -115,7 +115,32 @@ const Procurement = () => {
           <p className="text-muted-foreground">Manage purchase orders and vendor relationships</p>
         </div>
         <div className="flex space-x-2">
-          <Button variant="outline">
+          <Button variant="outline" onClick={() => {
+            const headers = ["PO Number", "Supplier", "Material Name", "Item Code", "Quantity", "Unit Price", "Total Amount", "Order Date", "Expected Delivery", "Status", "Related Order"];
+            const csvContent = [
+              headers.join(","),
+              ...filteredOrders.map(item => [
+                item.poNumber,
+                item.supplier,
+                item.materialName,
+                item.itemCode,
+                item.quantity,
+                item.unitPrice,
+                item.totalAmount,
+                item.orderDate,
+                item.expectedDelivery,
+                item.status,
+                item.relatedOrder
+              ].join(","))
+            ].join("\n");
+            const blob = new Blob([csvContent], { type: "text/csv" });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "procurement.csv";
+            a.click();
+            window.URL.revokeObjectURL(url);
+          }}>
             <Download className="w-4 h-4 mr-2" />
             Export
           </Button>

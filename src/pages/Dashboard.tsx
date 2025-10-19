@@ -9,7 +9,7 @@ import {
   Clock,
   DollarSign
 } from "lucide-react";
-import { getDashboardStats, productionScheduleData, materialRequirementData } from "@/data/mockData";
+import { getDashboardStats, productionScheduleData, materialRequirementData, inventoryData } from "@/data/mockData";
 
 const Dashboard = () => {
   const stats = getDashboardStats();
@@ -19,10 +19,10 @@ const Dashboard = () => {
     .sort((a, b) => new Date(b.plannedStartDate).getTime() - new Date(a.plannedStartDate).getTime())
     .slice(0, 5);
   
-  // Calculate real-time material overview from materialRequirementData
+  // Calculate real-time material overview from inventory and material requirements
   const materialOverview = {
     totalRequired: materialRequirementData.reduce((sum, item) => sum + item.requiredQty, 0),
-    availableStock: materialRequirementData.reduce((sum, item) => sum + item.availableQty, 0),
+    availableStock: inventoryData.reduce((sum, item) => sum + item.currentStock, 0),
     shortfall: materialRequirementData.reduce((sum, item) => sum + item.shortfall, 0),
     itemsInShortage: materialRequirementData.filter(item => item.shortfall > 0).length
   };
