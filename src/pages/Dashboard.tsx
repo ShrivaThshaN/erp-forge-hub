@@ -9,10 +9,15 @@ import {
   Clock,
   DollarSign
 } from "lucide-react";
-import { getDashboardStats, productionOrders } from "@/data/mockData";
+import { getDashboardStats, productionScheduleData, materialRequirementData } from "@/data/mockData";
 
 const Dashboard = () => {
   const stats = getDashboardStats();
+  
+  // Get recent production schedules - sorted by planned start date (most recent first)
+  const recentSchedules = [...productionScheduleData]
+    .sort((a, b) => new Date(b.plannedStartDate).getTime() - new Date(a.plannedStartDate).getTime())
+    .slice(0, 5);
   
   const kpiData = [
     {
@@ -49,7 +54,7 @@ const Dashboard = () => {
     },
   ];
 
-  const recentOrders = productionOrders;
+  
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -61,6 +66,8 @@ const Dashboard = () => {
         return <Badge className="bg-status-scheduled text-white">Scheduled</Badge>;
       case "Delayed":
         return <Badge className="bg-status-delayed text-white">Delayed</Badge>;
+      case "On Hold":
+        return <Badge className="bg-yellow-500 text-white">On Hold</Badge>;
       default:
         return <Badge variant="secondary">{status}</Badge>;
     }
@@ -112,15 +119,15 @@ const Dashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {recentOrders.map((order) => (
-                <div key={order.id} className="flex items-center justify-between p-3 border rounded-lg">
+              {recentSchedules.map((schedule) => (
+                <div key={schedule.scheduleId} className="flex items-center justify-between p-3 border rounded-lg">
                   <div className="space-y-1">
-                    <p className="font-medium">{order.id}</p>
-                    <p className="text-sm text-muted-foreground">{order.product}</p>
+                    <p className="font-medium">{schedule.scheduleId}</p>
+                    <p className="text-sm text-muted-foreground">{schedule.productName}</p>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <div className="text-sm text-muted-foreground">{order.progress}%</div>
-                    {getStatusBadge(order.status)}
+                    <div className="text-sm text-muted-foreground">{schedule.progress}%</div>
+                    {getStatusBadge(schedule.status)}
                   </div>
                 </div>
               ))}
