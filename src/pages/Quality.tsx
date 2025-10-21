@@ -47,13 +47,20 @@ const Quality = () => {
   };
 
   const handleSaveInspection = (updatedInspection: any) => {
-    setQualityData(prev => prev.map(item => 
-      item.inspectionId === updatedInspection.inspectionId ? updatedInspection : item
-    ));
+    // Update mockData
+    const index = initialQualityData.findIndex(item => item.inspectionId === updatedInspection.inspectionId);
+    if (index !== -1) {
+      initialQualityData[index] = updatedInspection;
+    }
+    // Update local state
+    setQualityData([...initialQualityData]);
   };
 
   const handleAddInspection = (newInspection: any) => {
-    setQualityData(prev => [newInspection, ...prev]);
+    // Add to mockData
+    initialQualityData.push(newInspection);
+    // Update local state
+    setQualityData([...initialQualityData]);
   };
 
   const handleDeleteClick = (inspection: any) => {
@@ -63,7 +70,13 @@ const Quality = () => {
 
   const handleConfirmDelete = () => {
     if (inspectionToDelete) {
-      setQualityData(prev => prev.filter(item => item.inspectionId !== inspectionToDelete.inspectionId));
+      // Delete from mockData
+      const index = initialQualityData.findIndex(item => item.inspectionId === inspectionToDelete.inspectionId);
+      if (index !== -1) {
+        initialQualityData.splice(index, 1);
+      }
+      // Update local state
+      setQualityData([...initialQualityData]);
       toast({
         title: "Inspection Deleted",
         description: `Inspection ${inspectionToDelete.inspectionId} has been removed`,

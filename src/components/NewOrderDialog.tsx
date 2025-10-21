@@ -64,10 +64,15 @@ export const NewOrderDialog: React.FC<NewOrderDialogProps> = ({
     });
   };
 
-  // Generate order number
+  // Generate order number based on last order
   React.useEffect(() => {
     if (isOpen && !formData.orderNumber) {
-      const orderNumber = `CO-2025-${String(Date.now()).slice(-6)}${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`;
+      const { customerOrders } = require('@/data/mockData');
+      const lastOrderNumber = customerOrders.length > 0 
+        ? Math.max(...customerOrders.map((o: any) => parseInt(o.orderNumber.split('-')[2])))
+        : 0;
+      const nextNumber = (lastOrderNumber + 1).toString().padStart(3, '0');
+      const orderNumber = `CO-2025-${nextNumber}`;
       setFormData(prev => ({ ...prev, orderNumber }));
     }
   }, [isOpen]);

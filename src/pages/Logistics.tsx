@@ -45,13 +45,20 @@ const Logistics = () => {
   };
 
   const handleSaveShipment = (updatedShipment: any) => {
-    setLogisticsData(prev => prev.map(item => 
-      item.shipmentId === updatedShipment.shipmentId ? updatedShipment : item
-    ));
+    // Update mockData
+    const index = initialLogisticsData.findIndex(item => item.shipmentId === updatedShipment.shipmentId);
+    if (index !== -1) {
+      initialLogisticsData[index] = updatedShipment;
+    }
+    // Update local state
+    setLogisticsData([...initialLogisticsData]);
   };
 
   const handleAddShipment = (newShipment: any) => {
-    setLogisticsData(prev => [newShipment, ...prev]);
+    // Add to mockData
+    initialLogisticsData.push(newShipment);
+    // Update local state
+    setLogisticsData([...initialLogisticsData]);
   };
 
   const handleDeleteClick = (shipment: any) => {
@@ -61,7 +68,13 @@ const Logistics = () => {
 
   const handleConfirmDelete = () => {
     if (shipmentToDelete) {
-      setLogisticsData(prev => prev.filter(item => item.shipmentId !== shipmentToDelete.shipmentId));
+      // Delete from mockData
+      const index = initialLogisticsData.findIndex(item => item.shipmentId === shipmentToDelete.shipmentId);
+      if (index !== -1) {
+        initialLogisticsData.splice(index, 1);
+      }
+      // Update local state
+      setLogisticsData([...initialLogisticsData]);
       toast({
         title: "Shipment Deleted",
         description: `Shipment ${shipmentToDelete.shipmentId} has been cancelled`,

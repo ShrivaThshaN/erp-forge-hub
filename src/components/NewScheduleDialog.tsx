@@ -54,7 +54,26 @@ export const NewScheduleDialog = ({ open, onOpenChange, onScheduleAdded }: NewSc
       return;
     }
 
-    // Here you would normally add the schedule to your data
+    // Add to mockData
+    const { productionScheduleData } = require('@/data/mockData');
+    const scheduleId = `PS-2025-${String(productionScheduleData.length + 1).padStart(3, '0')}`;
+    const newSchedule = {
+      scheduleId,
+      productName,
+      orderNumber,
+      plannedStartDate: plannedStartDate.toISOString().split('T')[0],
+      plannedEndDate: plannedEndDate.toISOString().split('T')[0],
+      actualStartDate: "",
+      actualEndDate: "",
+      status: "Scheduled",
+      priority,
+      workstation,
+      supervisor,
+      progress: 0
+    };
+    
+    productionScheduleData.push(newSchedule);
+    
     toast({
       title: "Success",
       description: "Production schedule created successfully",

@@ -54,21 +54,21 @@ const Inventory = () => {
   };
 
   const handleSaveItem = (updatedItem: any) => {
-    // Update both local state and mockData
+    // Update mockData
     const index = inventoryData.findIndex(item => item.itemCode === updatedItem.itemCode);
     if (index !== -1) {
       inventoryData[index] = updatedItem;
     }
-    setLocalInventory(prev => prev.map(item => 
-      item.itemCode === updatedItem.itemCode ? updatedItem : item
-    ));
+    // Update local state from mockData
+    setLocalInventory([...inventoryData]);
     setRefreshKey(prev => prev + 1);
   };
 
   const handleAddItem = (newItem: any) => {
-    // Update both local state and mockData
-    inventoryData.unshift(newItem);
-    setLocalInventory(prev => [newItem, ...prev]);
+    // Add to mockData
+    inventoryData.push(newItem);
+    // Update local state from mockData
+    setLocalInventory([...inventoryData]);
     setRefreshKey(prev => prev + 1);
   };
 

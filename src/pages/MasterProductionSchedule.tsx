@@ -88,10 +88,16 @@ const MasterProductionSchedule = () => {
 
   const confirmDelete = () => {
     if (scheduleToDelete) {
+      // Delete from mockData
+      const index = productionScheduleData.findIndex(s => s.scheduleId === scheduleToDelete);
+      if (index !== -1) {
+        productionScheduleData.splice(index, 1);
+      }
       toast({
         title: "Success",
         description: "Production schedule deleted successfully",
       });
+      setRefreshKey(prev => prev + 1);
       setIsDeleteDialogOpen(false);
       setScheduleToDelete(null);
     }

@@ -61,14 +61,21 @@ const MaterialRequirementPlanning = () => {
   };
 
   const handleSaveMaterial = (updatedMaterial: any) => {
-    setMaterialData(prev => prev.map(item => 
-      item.materialCode === updatedMaterial.materialCode ? updatedMaterial : item
-    ));
+    // Update mockData
+    const index = initialMaterialData.findIndex(item => item.materialCode === updatedMaterial.materialCode);
+    if (index !== -1) {
+      initialMaterialData[index] = updatedMaterial;
+    }
+    // Update local state
+    setMaterialData([...initialMaterialData]);
     setRefreshKey(prev => prev + 1);
   };
 
   const handleAddMaterial = (newMaterial: any) => {
-    setMaterialData(prev => [newMaterial, ...prev]);
+    // Add to mockData first
+    initialMaterialData.push(newMaterial);
+    // Then update local state
+    setMaterialData([...initialMaterialData]);
     setRefreshKey(prev => prev + 1);
   };
 
@@ -79,7 +86,13 @@ const MaterialRequirementPlanning = () => {
 
   const handleConfirmDelete = () => {
     if (materialToDelete) {
-      setMaterialData(prev => prev.filter(item => item.materialCode !== materialToDelete.materialCode));
+      // Delete from mockData
+      const index = initialMaterialData.findIndex(item => item.materialCode === materialToDelete.materialCode);
+      if (index !== -1) {
+        initialMaterialData.splice(index, 1);
+      }
+      // Update local state
+      setMaterialData([...initialMaterialData]);
       toast({
         title: "Material Deleted",
         description: `${materialToDelete.materialName} has been removed`,

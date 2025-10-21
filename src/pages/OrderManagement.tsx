@@ -101,12 +101,13 @@ const OrderManagement = () => {
 
   const handleNewOrder = (newOrderData: Omit<Order, 'id'>) => {
     const newOrder: Order = {
-      id: Math.max(...orders.map(o => o.id)) + 1,
+      id: Math.max(...customerOrders.map(o => o.id), 0) + 1,
       ...newOrderData
     };
-    // Update both local state and mockData
-    customerOrders.unshift(newOrder);
-    setOrders([newOrder, ...orders]);
+    // Add to mockData first
+    customerOrders.push(newOrder);
+    // Then update local state from mockData
+    setOrders([...customerOrders]);
     toast({
       title: "Order Created",
       description: `Order ${newOrder.orderNumber} has been created successfully.`,
